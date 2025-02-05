@@ -7,12 +7,13 @@ import SimpleLineIcons from 'react-native-vector-icons/dist/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/dist/Feather';
 import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
-import Navigation from '../../GlobalNavigator/Navigation';
 
-const SignUp = ({navigation}) => {
+const CreateAccount = ({navigation}) => {
 	const [name, setName] = useState('');
 	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
+	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
 	return (
 		<View style={styles.container}>
@@ -52,6 +53,27 @@ const SignUp = ({navigation}) => {
 						)}
 					</TouchableOpacity>
 				</View>
+				<View style={styles.textInputContainer}>
+					<SimpleLineIcons name='lock' size={18} color={'#D1D1D1'} />
+					<TextInput
+						placeholder='Re-enter password'
+						value={confirmPassword}
+						onChangeText={text => setConfirmPassword(text)}
+						style={styles.textInput}
+						placeholderTextColor={'#D1D1D1'}
+						secureTextEntry={!confirmPasswordVisible}
+					/>
+					<TouchableOpacity
+						style={styles.eyeBtn}
+						onPress={() => setConfirmPasswordVisible(!confirmPasswordVisible)}
+					>
+						{confirmPasswordVisible ? (
+							<Feather name='eye' size={19} color={'#8F8F8F'} />
+						) : (
+							<Feather name='eye-off' size={19} color={'#8F8F8F'} />
+						)}
+					</TouchableOpacity>
+				</View>
 			</View>
 			<View style={styles.rememberContainer}>
 				<View style={styles.rememberMe}>
@@ -62,13 +84,7 @@ const SignUp = ({navigation}) => {
 						Remember me
 					</Text>
 				</View>
-				<TouchableOpacity>
-					<View>
-						<Text style={styles.forgetPasswordText}>
-							Forgot Password?
-						</Text>
-					</View>
-				</TouchableOpacity>
+
 
 			</View>
 			<TouchableOpacity>
@@ -76,22 +92,22 @@ const SignUp = ({navigation}) => {
 					<Text style={styles.SignInBtnText}>Sign In</Text>
 				</View>
 			</TouchableOpacity>
-			<TouchableOpacity onPress={()=> navigation.navigate('CreateAccount')}>
+			<TouchableOpacity onPress={()=>navigation.navigate('SignUp')}>
 				<View style={{ alignSelf: 'center', marginTop: 55, }}>
-					<Text style={styles.accountText}>Didn't have an account?</Text>
+					<Text style={styles.accountText}>Already have an account?</Text>
 				</View>
 			</TouchableOpacity>
 
-			<View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20,gap:5, }}>
+			<View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20, gap: 5, }}>
 				<LeftLineSvg />
 				<Text style={{ fontSize: 14, color: '#ACACAC', fontFamily: 'Poppins-SemiBold' }}>or</Text>
 				<RightLineSvg />
 			</View>
 			<TouchableOpacity>
-			<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, }}>
-				<Image style={{ width: 23, height: 23, resizeMode: 'contain',marginTop:2,}} source={require('../../assets/images/onboardImg/google.png')} />
-				<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>Google</Text>
-			</View>
+				<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, }}>
+					<Image style={{ width: 23, height: 23, resizeMode: 'contain', marginTop: 2, }} source={require('../../assets/images/onboardImg/google.png')} />
+					<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>Google</Text>
+				</View>
 			</TouchableOpacity>
 
 			<View style={styles.footer}>
@@ -101,7 +117,7 @@ const SignUp = ({navigation}) => {
 	);
 };
 
-export default SignUp;
+export default CreateAccount;
 
 const styles = StyleSheet.create({
 	container: {
@@ -174,7 +190,7 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 150,
+		marginTop: 100,
 	},
 	SignInBtnText: {
 		fontSize: 20,

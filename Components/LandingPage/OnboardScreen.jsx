@@ -3,7 +3,7 @@ import { ImageBackground, StyleSheet, Text, TouchableOpacity, View, FlatList, Di
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import SplaceLogo from '../../SvgIcons/SplaceLogo';
 import Footer from './Footer';
-import Svg1 from '../../assets/images/onboardImg/onboardSvgs/svg1';
+import Svg1 from '../../assets/images/onboardImg/onboardSvgs/Svg1';
 import Svg2 from '../../assets/images/onboardImg/onboardSvgs/Svg2';
 import Svg3 from '../../assets/images/onboardImg/onboardSvgs/Svg3';
 import Svg4 from '../../assets/images/onboardImg/onboardSvgs/Svg4';
@@ -153,13 +153,14 @@ const styles = StyleSheet.create({
 	navContainer: {
 		width: '100%',
 		paddingHorizontal: 20,
+		paddingTop:20,
 		flexDirection: 'row',
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		position: 'absolute',
 		top: 0,
 		backgroundColor: 'white',
-		height: 70,
+		// height: 70,
 		zIndex: 1,
 	},
 	leftNav: {
@@ -169,13 +170,14 @@ const styles = StyleSheet.create({
 	cbx: {
 		color: '#1E1E1E',
 		fontSize: 18,
-		fontWeight: '600',
+		fontFamily:'Poppins-SemiBold',
 		marginLeft: 10,
 	},
 	skip: {
 		color: '#598931',
 		fontSize: 16,
-		fontWeight: '500',
+		// fontWeight: '500',
+		fontFamily:'Poppins-Medium',
 	},
 	imageStyle: {
 		width: 270,
