@@ -89,7 +89,7 @@ const SignUp = ({navigation}) => {
 			</View>
 			<TouchableOpacity>
 			<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, }}>
-				<Image style={{ width: 23, height: 23, resizeMode: 'contain',marginTop:2,}} source={require('../../assets/images/onboardImg/google.png')} />
+				<Image style={{ width: 25, height: 25, resizeMode: 'contain',marginTop:2,}} source={require('../../assets/images/onboardImg/google.png')} />
 				<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>Google</Text>
 			</View>
 			</TouchableOpacity>

@@ -5,6 +5,7 @@ import SplaceScreen from "../Components/LandingPage/SplaceScreen";
 import OnboardScreen from "../Components/LandingPage/OnboardScreen";
 import SignUp from "../Components/LandingPage/SignUp";
 import CreateAccount from "../Components/LandingPage/CreateAccount";
+import Onboard from "../Components/LandingPage/Onboard";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ const Navigation = () => {
 			<Stack.Navigator initialRouteName="SplaceScreen">
 				<Stack.Screen name="SplaceScreen" component={SplaceScreen} options={{headerShown:false}} />
 				<Stack.Screen name="OnboardScreen" component={OnboardScreen} options={{headerShown:false}} />
+				<Stack.Screen name="Onboard" component={Onboard} options={{headerShown:false}} />
 				<Stack.Screen name="SignUp" component={SignUp} options={{headerShown:false}} />
 				<Stack.Screen name="CreateAccount" component={CreateAccount} options={{headerShown:false}} />
 			</Stack.Navigator>
