@@ -7,6 +7,7 @@ import SimpleLineIcons from 'react-native-vector-icons/dist/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/dist/Feather';
 import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
+import { configureGoogleSignIn, signInWithGoogle } from '../Utils/GoogleLogin';
 
 const CreateAccount = ({navigation}) => {
 	const [name, setName] = useState('');
@@ -15,31 +16,40 @@ const CreateAccount = ({navigation}) => {
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
+	const googleLogin = async () => {
+			try {
+				await configureGoogleSignIn();
+				await signInWithGoogle(navigation);
+			} catch (error) {
+				console.error("Google Login Error:", error);
+			}
+		};
+
 	return (
 		<View style={styles.container}>
 			<TopNavbar />
 			<View style={styles.inputContainer}>
 				{/* Name Input */}
 				<View style={styles.textInputContainer}>
-					<MaterialCommunityIcons name='email-outline' size={18} color={'#D1D1D1'} />
+					<MaterialCommunityIcons name='email-outline' size={18} color={'#8F8F8F'} />
 					<TextInput
 						placeholder='Name'
 						value={name}
 						onChangeText={text => setName(text)}
 						style={styles.textInput}
-						placeholderTextColor={'#D1D1D1'}
+						placeholderTextColor={'#8F8F8F'}
 					/>
 				</View>
 
 				{/* Password Input */}
 				<View style={styles.textInputContainer}>
-					<SimpleLineIcons name='lock' size={18} color={'#D1D1D1'} />
+					<SimpleLineIcons name='lock' size={18} color={'#8F8F8F'} />
 					<TextInput
 						placeholder='Password'
 						value={password}
 						onChangeText={text => setPassword(text)}
 						style={styles.textInput}
-						placeholderTextColor={'#D1D1D1'}
+						placeholderTextColor={'#8F8F8F'}
 						secureTextEntry={!passwordVisible}
 					/>
 					<TouchableOpacity
@@ -54,13 +64,13 @@ const CreateAccount = ({navigation}) => {
 					</TouchableOpacity>
 				</View>
 				<View style={styles.textInputContainer}>
-					<SimpleLineIcons name='lock' size={18} color={'#D1D1D1'} />
+					<SimpleLineIcons name='lock' size={18} color={'#8F8F8F'} />
 					<TextInput
 						placeholder='Re-enter password'
 						value={confirmPassword}
 						onChangeText={text => setConfirmPassword(text)}
 						style={styles.textInput}
-						placeholderTextColor={'#D1D1D1'}
+						placeholderTextColor={'#8F8F8F'}
 						secureTextEntry={!confirmPasswordVisible}
 					/>
 					<TouchableOpacity
@@ -102,7 +112,7 @@ const CreateAccount = ({navigation}) => {
 				<Text style={{ fontSize: 14, color: '#ACACAC', fontFamily: 'Poppins-SemiBold' }}>or</Text>
 				<RightLineSvg />
 			</View>
-			<TouchableOpacity>
+			<TouchableOpacity  onPress={googleLogin}>
 				<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, }}>
 					<Image style={{ width: 25, height: 25, resizeMode: 'contain', marginTop: 2, }} source={require('../../assets/images/onboardImg/google.png')} />
 					<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>Google</Text>
