@@ -6,7 +6,8 @@ import OnboardScreen from "../Components/LandingPage/OnboardScreen";
 import SignUp from "../Components/LandingPage/SignUp";
 import CreateAccount from "../Components/LandingPage/CreateAccount";
 import Onboard from "../Components/LandingPage/Onboard";
-import HomeScreen from "../Components/LandingPage/HomeScreen";
+import HomeScreen from "../Components/LandingPage/NewHeroSection/Home";
+// import HomeScreen from "../Components/LandingPage/HomeScreen";
 
 const Stack = createNativeStackNavigator();
 

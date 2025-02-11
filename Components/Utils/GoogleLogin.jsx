@@ -39,6 +39,8 @@ export const signInWithGoogle = async (navigation) => {
             }
         };
 
+        console.log('42 userin', userInfo.data)
+
         // Send data to backend API
         const response = await axios.post('https://notes.ceoitbox.com/api/signin/mobile', data);
 
