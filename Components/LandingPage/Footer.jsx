@@ -17,7 +17,7 @@ export default Footer;
 const styles = StyleSheet.create({
 	footer: {
 		flex: 1,
-		backgroundColor: '#FFF',
+		// backgroundColor: '#FFF',
 		justifyContent: 'center',
 		alignItems: 'center',
 		flexDirection: 'row',

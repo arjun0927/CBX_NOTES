@@ -7,7 +7,7 @@ const SplaceScreen = ({navigation}) => {
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
-		  navigation.replace('OnboardScreen');
+		  navigation.replace('Onboard');
 		}, 2000);
 	
 		return () => clearTimeout(timer);
