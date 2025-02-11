@@ -1,0 +1,13 @@
+import React from "react";
+import Svg, { Path } from "react-native-svg";
+
+const TrashIcon = ({ width = 20, height = 21, color = "#5F6368" }) => (
+  <Svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} viewBox="0 0 20 21" fill="none" >
+    <Path
+      d="M4.36317 20.0381C3.70822 20.0381 3.14754 19.8308 2.68114 19.4162C2.21473 19.0017 1.98153 18.5033 1.98153 17.9211V4.16052H0.79071V2.04351H6.74481V0.985001H13.8897V2.04351H19.8438V4.16052H18.653V17.9211C18.653 18.5033 18.4198 19.0017 17.9534 19.4162C17.487 19.8308 16.9263 20.0381 16.2714 20.0381H4.36317ZM16.2714 4.16052H4.36317V17.9211H16.2714V4.16052ZM6.74481 15.8041H9.12645V6.27753H6.74481V15.8041ZM11.5081 15.8041H13.8897V6.27753H11.5081V15.8041Z"
+      fill={color}
+    />
+  </Svg>
+);
+
+export default TrashIcon;

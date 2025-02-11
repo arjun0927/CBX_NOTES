@@ -8,7 +8,7 @@ import Feather from 'react-native-vector-icons/dist/Feather';
 import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
 
-const CreateAccount = ({navigation}) => {
+const CreateAccount = ({ navigation }) => {
 	const [name, setName] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
@@ -87,12 +87,14 @@ const CreateAccount = ({navigation}) => {
 
 
 			</View>
-			<TouchableOpacity>
+
+			<TouchableOpacity onPress={() => navigation.navigate('Home')}>
 				<View style={styles.signInBtn}>
 					<Text style={styles.SignInBtnText}>Sign In</Text>
 				</View>
 			</TouchableOpacity>
-			<TouchableOpacity onPress={()=>navigation.navigate('SignUp')}>
+
+			<TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
 				<View style={{ alignSelf: 'center', marginTop: 55, }}>
 					<Text style={styles.accountText}>Already have an account?</Text>
 				</View>

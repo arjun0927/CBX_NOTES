@@ -9,7 +9,7 @@ import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
 import Navigation from '../../GlobalNavigator/Navigation';
 
-const SignUp = ({navigation}) => {
+const SignUp = ({ navigation }) => {
 	const [name, setName] = useState('');
 	const [password, setPassword] = useState('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
@@ -71,27 +71,27 @@ const SignUp = ({navigation}) => {
 				</TouchableOpacity>
 
 			</View>
-			<TouchableOpacity>
+			<TouchableOpacity onPress={() => navigation.navigate('Home')}>
 				<View style={styles.signInBtn}>
 					<Text style={styles.SignInBtnText}>Sign In</Text>
 				</View>
 			</TouchableOpacity>
-			<TouchableOpacity onPress={()=> navigation.navigate('CreateAccount')}>
+			<TouchableOpacity onPress={() => navigation.navigate('CreateAccount')}>
 				<View style={{ alignSelf: 'center', marginTop: 55, }}>
 					<Text style={styles.accountText}>Didn't have an account?</Text>
 				</View>
 			</TouchableOpacity>
 
-			<View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20,gap:5, }}>
+			<View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 20, gap: 5, }}>
 				<LeftLineSvg />
 				<Text style={{ fontSize: 14, color: '#ACACAC', fontFamily: 'Poppins-SemiBold' }}>or</Text>
 				<RightLineSvg />
 			</View>
 			<TouchableOpacity>
-			<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, }}>
-				<Image style={{ width: 23, height: 23, resizeMode: 'contain',marginTop:2,}} source={require('../../assets/images/onboardImg/google.png')} />
-				<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>Google</Text>
-			</View>
+				<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, }}>
+					<Image style={{ width: 23, height: 23, resizeMode: 'contain', marginTop: 2, }} source={require('../../assets/images/onboardImg/google.png')} />
+					<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>Google</Text>
+				</View>
 			</TouchableOpacity>
 
 			<View style={styles.footer}>

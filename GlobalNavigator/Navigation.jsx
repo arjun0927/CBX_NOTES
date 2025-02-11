@@ -5,6 +5,7 @@ import SplaceScreen from "../Components/LandingPage/SplaceScreen";
 import OnboardScreen from "../Components/LandingPage/OnboardScreen";
 import SignUp from "../Components/LandingPage/SignUp";
 import CreateAccount from "../Components/LandingPage/CreateAccount";
+import Home from "../Components/LandingPage/NewHeroSection/Home"
 
 const Stack = createNativeStackNavigator();
 
@@ -12,10 +13,11 @@ const Navigation = () => {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator initialRouteName="SplaceScreen">
-				<Stack.Screen name="SplaceScreen" component={SplaceScreen} options={{headerShown:false}} />
-				<Stack.Screen name="OnboardScreen" component={OnboardScreen} options={{headerShown:false}} />
-				<Stack.Screen name="SignUp" component={SignUp} options={{headerShown:false}} />
-				<Stack.Screen name="CreateAccount" component={CreateAccount} options={{headerShown:false}} />
+				<Stack.Screen name="SplaceScreen" component={SplaceScreen} options={{ headerShown: false }} />
+				<Stack.Screen name="OnboardScreen" component={OnboardScreen} options={{ headerShown: false }} />
+				<Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
+				<Stack.Screen name="CreateAccount" component={CreateAccount} options={{ headerShown: false }} />
+				<Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
 			</Stack.Navigator>
 		</NavigationContainer>
 	)
