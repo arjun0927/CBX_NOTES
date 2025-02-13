@@ -7,7 +7,6 @@ import PlusIcon from '../../../SvgIcons/PlusIcon'
 const Empty = () => {
 
   return (
-
     <View style={styles.container}>
       <Elst style={[styles.box]} />
 
@@ -51,14 +50,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 100,
-    // zIndex: 1,
   },
 
   box: {
     position: 'absolute',
     alignItems: 'center',
     justifyContent: 'center',
-    // zIndex: 1,
+    zIndex: 1,
   },
 
   card: {
