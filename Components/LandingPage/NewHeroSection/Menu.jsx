@@ -1,146 +1,221 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
-import Noteicon from '../../../SvgIcons/Noteicon'
-import Staricon from '../../../SvgIcons/Staricon'
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Pressable,
+  Dimensions,
+} from "react-native";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  interpolate,
+} from "react-native-reanimated";
+
+import Noteicon from "../../../SvgIcons/Noteicon";
+import Staricon from "../../../SvgIcons/Staricon";
 import ArchieveIcon from "../../../SvgIcons/Archiveicon";
 import Deletedicon from "../../../SvgIcons/Deletedicon";
 import Tasksicon from "../../../SvgIcons/Tasksicon";
 import Videoicon from "../../../SvgIcons/Videoicon";
 import Updatesicon from "../../../SvgIcons/Updatesicon";
 import Logouticon from "../../../SvgIcons/Logouticon";
+import CBXNOTES from "../../../SvgIcons/CBXNOTES"
+import Labelicon from "../../../SvgIcons/Labelicon"
+
+const screenWidth = Dimensions.get("window").width;
 
 const Menu = ({ setModalVisible }) => {
+  const translateX = useSharedValue(-screenWidth * 0.7); // Start off-screen
+  const opacity = useSharedValue(0); // For overlay dimming
+
+  // Open the menu with animation
+  React.useEffect(() => {
+    translateX.value = withSpring(0, { damping: 10, stiffness: 35 });
+    opacity.value = withTiming(0.6, { duration: 300 });
+  }, []);
+
+  // Close menu function
+  const closeMenu = () => {
+    translateX.value = withSpring(-screenWidth * 0.7, {
+      damping: 10,
+      stiffness: 150,
+    });
+    opacity.value = withTiming(0, { duration: 200 });
+    setTimeout(() => setModalVisible(false), 300);
+  };
+
+  // Animations
+  const animatedMenu = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
+
   return (
+    <View style={styles.fullScreen}>
 
-    <TouchableOpacity
-      activeOpacity={1}
-      style={styles.overlay}
-      onPress={() => setModalVisible(false)} // Close menu when clicking outside
-    >
+      <Animated.View style={[styles.container, animatedMenu]}>
 
-      <View style={styles.container}>
-        <TouchableOpacity >
-          <View style={[styles.flex, styles.box, styles.border]}>
+        <TouchableOpacity>
+          <View style={[styles.flex, styles.cbx_box]}>
+            <CBXNOTES />
+            <Text style={styles.cbx}>CBX NOTES</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity>
+          <View style={[styles.flex, styles.box]}>
             <Noteicon />
-            <Text style={styles.text} >Notes</Text>
+            <Text style={styles.text}>Notes</Text>
           </View>
         </TouchableOpacity>
-
-        <View style={styles.separator} />
+        <View style={styles.first_separator} />
 
         <TouchableOpacity>
-          <View style={[styles.flex, styles.box, styles.border]}>
+          <View style={[styles.flex, styles.box]}>
+            <Labelicon />
+            <Text style={styles.text}>Labels</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.first_separator} />
+
+        <TouchableOpacity>
+          <View style={[styles.flex, styles.box]}>
             <Staricon />
-            <Text style={styles.text} >Stared</Text>
+            <Text style={styles.text}>Stared</Text>
           </View>
         </TouchableOpacity>
-
         <View style={styles.separator} />
 
         <TouchableOpacity>
-          <View style={[styles.flex, styles.box, styles.border]}>
+          <View style={[styles.flex, styles.box]}>
             <ArchieveIcon />
-            <Text style={styles.text} >Archived</Text>
+            <Text style={styles.text}>Archived</Text>
           </View>
         </TouchableOpacity>
-
         <View style={styles.separator} />
 
-        <TouchableOpacity >
-          <View style={[styles.flex, styles.box, styles.border]}>
+        <TouchableOpacity>
+          <View style={[styles.flex, styles.box]}>
             <Deletedicon />
-            <Text style={styles.text} >Deleted</Text>
+            <Text style={styles.text}>Deleted</Text>
           </View>
         </TouchableOpacity>
-
         <View style={styles.separator} />
 
         <TouchableOpacity>
-          <View style={[styles.flex, styles.box, styles.border]}>
+          <View style={[styles.flex, styles.box]}>
             <Tasksicon />
-            <Text style={styles.text} >Tasks</Text>
+            <Text style={styles.text}>Tasks</Text>
           </View>
         </TouchableOpacity>
-
         <View style={styles.separator} />
 
         <TouchableOpacity>
-          <View style={[styles.flex, styles.box, styles.border]}>
+          <View style={[styles.flex, styles.box]}>
             <Videoicon />
-            <Text style={styles.text} >Instructions</Text>
+            <Text style={styles.text}>Instructions</Text>
           </View>
         </TouchableOpacity>
-
-        <View style={styles.separator} />
-
-        <TouchableOpacity >
-          <View style={[styles.flex, styles.box, styles.border]}>
-            <Updatesicon />
-            <Text style={styles.text} >Updates</Text>
-          </View>
-        </TouchableOpacity>
-
         <View style={styles.separator} />
 
         <TouchableOpacity>
-          <View style={[styles.flex, styles.box, styles.border]}>
+          <View style={[styles.flex, styles.box]}>
+            <Updatesicon />
+            <Text style={styles.text}>Updates</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.separator} />
+
+        <TouchableOpacity>
+          <View style={[styles.flex, styles.box]}>
             <Logouticon />
-            <Text style={styles.text} >Logout</Text>
+            <Text style={styles.text}>Logout</Text>
           </View>
         </TouchableOpacity>
 
-      </View>
-
-    </TouchableOpacity>
+      </Animated.View>
+    </View>
   );
 };
 
-export default Menu
+// Component for Menu Items
+const MenuItem = ({ Icon, label }) => (
+  <>
+    <TouchableOpacity>
+      <View style={[styles.flex, styles.box]}>
+        <Icon />
+        <Text style={styles.text}>{label}</Text>
+      </View>
+    </TouchableOpacity>
+    <View style={styles.separator} />
+  </>
+);
+
+export default Menu;
 
 const styles = StyleSheet.create({
-
-  overlay: {
+  fullScreen: {
     position: "absolute",
     width: "100%",
     height: "100%",
-    top: 0,
-    left: 0,
-    zIndex: 9, // Ensure overlay is behind the menu
+    zIndex: 9,
   },
 
   container: {
-    backgroundColor: "#FFFFFF", // Optional background color
-    paddingLeft: 15, // Optional padding
-    justifyContent: "space-evenly", // Distributes items evenly
-    position: 'absolute',
+    backgroundColor: "#FFFFFF",
+    paddingLeft: 15,
+    position: "absolute",
     left: 0,
-    top: 75,
+    top: 0,
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
-    zIndex: 999, // Ensure the menu is above all elements
-    elevation: 5, // For Android shadow
-    shadowColor: "#000", // iOS shadow
+    zIndex: 999,
+    elevation: 5,
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
+    width: "100%",
+    height: '100%',
+  },
+
+  cbx_box: {
+    paddingLeft: 20,
+    paddingVertical: 30,
+  },
+  cbx: {
+    color: '#1E1E1E',
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    marginLeft: 10,
   },
   flex: {
     flexDirection: "row",
     alignItems: "center",
   },
+
   box: {
     paddingHorizontal: 15,
-    width: 200,
+    width: '90%',
     height: 50,
   },
 
   text: {
-    marginLeft: 11, // Gap between icon and text
+    marginLeft: 11,
   },
 
+  first_separator: {
+    height: 1,
+    width: '90%',
+    marginVertical: 2,
+    backgroundColor: '#F4F6F8',
+  },
   separator: {
     height: 1,
-    backgroundColor: "#F9F9F9",
+    width: '90%',
     marginVertical: 2,
   },
-})
+});
