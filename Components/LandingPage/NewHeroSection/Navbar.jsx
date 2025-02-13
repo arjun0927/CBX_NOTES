@@ -104,7 +104,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     top: 0,
-    width: 230,
+    width: '75%',
+    height: '100%',
   },
   navContainer: {
     width: '100%',

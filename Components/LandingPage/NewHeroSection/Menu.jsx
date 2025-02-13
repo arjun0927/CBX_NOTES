@@ -23,6 +23,8 @@ import Tasksicon from "../../../SvgIcons/Tasksicon";
 import Videoicon from "../../../SvgIcons/Videoicon";
 import Updatesicon from "../../../SvgIcons/Updatesicon";
 import Logouticon from "../../../SvgIcons/Logouticon";
+import CBXNOTES from "../../../SvgIcons/CBXNOTES"
+import Labelicon from "../../../SvgIcons/Labelicon"
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -57,13 +59,27 @@ const Menu = ({ setModalVisible }) => {
       <Animated.View style={[styles.container, animatedMenu]}>
 
         <TouchableOpacity>
+          <View style={[styles.flex, styles.cbx_box]}>
+            <CBXNOTES />
+            <Text style={styles.cbx}>CBX NOTES</Text>
+          </View>
+        </TouchableOpacity>
+
+        <TouchableOpacity>
           <View style={[styles.flex, styles.box]}>
             <Noteicon />
             <Text style={styles.text}>Notes</Text>
           </View>
         </TouchableOpacity>
-        <View style={styles.separator} />
+        <View style={styles.first_separator} />
 
+        <TouchableOpacity>
+          <View style={[styles.flex, styles.box]}>
+            <Labelicon />
+            <Text style={styles.text}>Labels</Text>
+          </View>
+        </TouchableOpacity>
+        <View style={styles.first_separator} />
 
         <TouchableOpacity>
           <View style={[styles.flex, styles.box]}>
@@ -151,10 +167,9 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#FFFFFF",
     paddingLeft: 15,
-    justifyContent: "space-evenly",
     position: "absolute",
     left: 0,
-    top: 75,
+    top: 0,
     borderTopRightRadius: 12,
     borderBottomRightRadius: 12,
     zIndex: 999,
@@ -163,22 +178,43 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 5,
+    width: "100%",
+    height: '100%',
+  },
+
+  cbx_box: {
+    paddingLeft: 20,
+    paddingVertical: 30,
+  },
+  cbx: {
+    color: '#1E1E1E',
+    fontSize: 18,
+    fontFamily: 'Poppins-SemiBold',
+    marginLeft: 10,
   },
   flex: {
     flexDirection: "row",
     alignItems: "center",
   },
+
   box: {
     paddingHorizontal: 15,
-    width: 200,
+    width: '90%',
     height: 50,
   },
+
   text: {
     marginLeft: 11,
   },
+
+  first_separator: {
+    height: 1,
+    width: '90%',
+    marginVertical: 2,
+    backgroundColor: '#F4F6F8',
+  },
   separator: {
     height: 1,
-    backgroundColor: "#F9F9F9",
     width: '90%',
     marginVertical: 2,
   },
