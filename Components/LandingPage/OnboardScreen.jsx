@@ -7,6 +7,7 @@ import Svg1 from '../../assets/images/onboardImg/onboardSvgs/Svg1';
 import Svg2 from '../../assets/images/onboardImg/onboardSvgs/Svg2';
 import Svg3 from '../../assets/images/onboardImg/onboardSvgs/Svg3';
 import Svg4 from '../../assets/images/onboardImg/onboardSvgs/Svg4';
+import { rS, rVS } from '../Utils/Responsive';
 
 const { width, height } = Dimensions.get('window');
 
@@ -180,8 +181,8 @@ const styles = StyleSheet.create({
 		fontFamily:'Poppins-Medium',
 	},
 	imageStyle: {
-		width: 270,
-		height: 270,
+		width: rS(200),
+		height: rVS(270),
 		resizeMode: 'cover',
 		marginTop: 20,
 	},

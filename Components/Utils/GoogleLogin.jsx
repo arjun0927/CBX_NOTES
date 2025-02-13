@@ -11,7 +11,7 @@ export const configureGoogleSignIn = () => {
     });
 };
 
-// Function to handle Google Sign-In
+
 export const signInWithGoogle = async (navigation) => {
     try {
         await GoogleSignin.hasPlayServices();
@@ -45,7 +45,7 @@ export const signInWithGoogle = async (navigation) => {
         const response = await axios.post('https://notes.ceoitbox.com/api/signin/mobile', data);
 
         if (response?.data?.token) {
-            setItem('token', response?.data?.token); // Store token using MMKV
+            setItem('token', response?.data?.token);
             navigation.navigate('HomeScreen');
         }
     } catch (error) {

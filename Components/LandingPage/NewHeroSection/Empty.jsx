@@ -36,9 +36,7 @@ const Empty = () => {
           <PlusIcon />
         </View>
       </TouchableOpacity>
-
-
-    </View >
+    </View>
   )
 }
 

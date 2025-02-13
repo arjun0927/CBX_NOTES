@@ -1,27 +1,30 @@
 import React from "react";
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
-
-import Navbar from '../NewHeroSection/Navbar';
-import Empty from '../NewHeroSection/Empty'
-
+import { View, StyleSheet, FlatList, SafeAreaView, StatusBar } from "react-native";
+import Navbar from "../NewHeroSection/Navbar";
+import MainNotesCard from "./MainNotesCard";
+import { rMS } from "../../Utils/Responsive";
 
 const Home = () => {
   return (
-    <View style={styles.container}>
-      <Navbar />
-      <Empty />
-    </View>
-  )
-
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FBF4FF" />
+      <View style={styles.container}>
+        <Navbar />
+        <MainNotesCard />
+      </View>
+    </SafeAreaView>
+  );
 };
 
-export default Home;
-
 const styles = StyleSheet.create({
-
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FBF4FF",
+  },
   container: {
     flex: 1,
-    backgroundColor: '#FBF4FF',
+    paddingHorizontal:rMS(10),
   },
+});
 
-})
+export default Home;

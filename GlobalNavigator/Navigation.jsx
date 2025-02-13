@@ -7,6 +7,7 @@ import SignUp from "../Components/LandingPage/SignUp";
 import CreateAccount from "../Components/LandingPage/CreateAccount";
 import Onboard from "../Components/LandingPage/Onboard";
 import HomeScreen from "../Components/LandingPage/NewHeroSection/Home";
+import NoteDetailScreen from "../Components/LandingPage/NewHeroSection/NoteDetailScreen";
 // import HomeScreen from "../Components/LandingPage/HomeScreen";
 
 const Stack = createNativeStackNavigator();
@@ -14,6 +15,7 @@ const Stack = createNativeStackNavigator();
 const Navigation = () => {
 	return (
 		<NavigationContainer>
+		
 			<Stack.Navigator initialRouteName="SplaceScreen">
 				<Stack.Screen name="SplaceScreen" component={SplaceScreen} options={{ headerShown: false }} />
 				<Stack.Screen name="OnboardScreen" component={OnboardScreen} options={{ headerShown: false }} />
@@ -21,6 +23,8 @@ const Navigation = () => {
 				<Stack.Screen name="SignUp" component={SignUp} options={{ headerShown: false }} />
 				<Stack.Screen name="CreateAccount" component={CreateAccount} options={{ headerShown: false }} />
 				<Stack.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
+				<Stack.Screen name="NoteDetailScreen" component={NoteDetailScreen} options={{ headerShown: false }} />
+
 			</Stack.Navigator>
 		</NavigationContainer>
 	)

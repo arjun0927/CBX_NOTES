@@ -8,6 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
 import { signInWithGoogle, configureGoogleSignIn } from '../Utils/GoogleLogin';
+import { rMS, rVS } from '../Utils/Responsive';
 
 const SignUp = ({ navigation }) => {
 	const [name, setName] = useState('');
@@ -84,9 +85,9 @@ const SignUp = ({ navigation }) => {
 
 			{/* Google Sign-In Button */}
 			<TouchableOpacity onPress={googleLogin}>
-				<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, }}>
-					<Image style={{ width: 25, height: 25, resizeMode: 'contain', marginTop: 2, }} source={require('../../assets/images/onboardImg/google.png')} />
-					<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>Google</Text>
+				<View style={styles.googleButton}>
+					<Image style={styles.googleIcon} source={require('../../assets/images/onboardImg/google.png')} />
+					<Text style={styles.googleText}>Google</Text>
 				</View>
 			</TouchableOpacity>
 
@@ -113,12 +114,12 @@ const styles = StyleSheet.create({
 		borderColor: '#FAFFF9',
 		borderWidth: 1,
 		alignSelf: 'center',
-		backgroundColor: 'rgba(58, 187, 1, 0.04)',
+		backgroundColor: 'rgba(57, 187, 1, 0.06)',
 		borderRadius: 15,
 		flexDirection: 'row',
 		alignItems: 'center',
-		paddingLeft: 15,
-		height: 50,
+		paddingLeft: rMS(15),
+		height: rVS(37),
 	},
 	textInput: {
 		color: 'black',
@@ -140,8 +141,8 @@ const styles = StyleSheet.create({
 		marginTop: 150,
 	},
 	SignInBtnText: {
-		fontSize: 20,
-		padding: 12,
+		fontSize: rMS(18),
+		padding: rMS(10),
 		color: '#FFF',
 		fontFamily: 'Poppins-SemiBold',
 	},
@@ -149,43 +150,35 @@ const styles = StyleSheet.create({
 		fontFamily: 'Poppins-SemiBold',
 		textDecorationLine: 'underline',
 		color: '#598931',
-		fontSize: 14,
+		fontSize: rMS(13),
 		letterSpacing: 0.4,
 	},
 	divider: {
 		flexDirection: 'row',
 		justifyContent: 'center',
 		alignItems: 'center',
-		marginTop: 20,
+		marginTop: rMS(20),
 		gap: 5,
 	},
 	orText: {
-		fontSize: 14,
+		fontSize: rMS(14),
 		color: '#ACACAC',
 		fontFamily: 'Poppins-SemiBold',
 	},
 	googleButton: {
 		flexDirection: 'row',
 		alignSelf: 'center',
-		marginTop: 20,
-		alignItems: 'center',
-		backgroundColor: '#fff',
-		borderWidth: 1,
-		borderColor: '#d1d1d1',
-		borderRadius: 10,
-		padding: 10,
-		width: '90%',
-		justifyContent: 'center',
+		marginTop: rMS(20),
 	},
 	googleIcon: {
-		width: 25,
-		height: 25,
+		width: rMS(30),
+		height: rMS(30),
 		resizeMode: 'contain',
-		marginRight: 10,
+		marginRight:3,
 	},
 	googleText: {
 		fontFamily: 'Poppins-SemiBold',
-		fontSize: 16,
+		fontSize: rMS(20),
 		letterSpacing: 0.4,
 	},
 	footer: {

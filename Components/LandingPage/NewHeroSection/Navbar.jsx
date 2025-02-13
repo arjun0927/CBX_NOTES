@@ -1,7 +1,6 @@
 import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
 import React, { useState } from 'react'
-import Icon from "react-native-vector-icons/Ionicons"; // Optional Icon'
-
+import Icon from "react-native-vector-icons/Ionicons";
 import BurgerIcon from '../../../SvgIcons/BurgerIcon'
 import List_view from '../../../SvgIcons/List_view'
 import Bell from '../../../SvgIcons/Bell'
@@ -45,15 +44,15 @@ const Navbar = () => {
         </View>
 
         <View style={styles.rightNav} >
-          <TouchableOpacity onPress={() => showList()} >
+          <TouchableOpacity>
             <List_view />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => showNotification()} >
+          <TouchableOpacity>
             <Bell />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => ShowUser()} >
+          <TouchableOpacity>
             <User_icon />
           </TouchableOpacity>
         </View>

@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import SplaceLogo from '../../SvgIcons/SplaceLogo'
+import { rMS } from '../Utils/Responsive'
 
 const TopNavbar = () => {
 	return (
@@ -21,9 +22,9 @@ export default TopNavbar
 const styles = StyleSheet.create({
 	navContainer: {
 		width: '100%',
-		paddingHorizontal: 20,
+		paddingHorizontal: rMS(20),
 		flexDirection: 'row',
-		paddingTop:20,
+		paddingTop:rMS(20),
 		alignItems: 'center',
 		justifyContent: 'space-between',
 		position: 'absolute',
