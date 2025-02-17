@@ -1,7 +1,7 @@
 import React from "react";
 import Svg, { Path } from "react-native-svg";
 
-const PlusIcon = ({ width = 30, height = 30, color = "white" }) => (
+const PlusIcon = ({ width, height, color }) => (
   <Svg width={width} height={height} viewBox="0 0 30 30" fill="none" >
     <Path
       d="M6.25 15H23.75"
