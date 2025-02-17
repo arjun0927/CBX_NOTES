@@ -84,6 +84,17 @@ const Add = () => {
 export default Add;
 
 const styles = StyleSheet.create({
+
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    zIndex: 999,
+  },
+  fullScreenTouch: {
+    ...StyleSheet.absoluteFillObject,
+  },
+
   container: {
     position: 'absolute',
     bottom: '3%',

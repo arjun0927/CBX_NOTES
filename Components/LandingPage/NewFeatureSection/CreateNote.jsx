@@ -292,6 +292,7 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#FFF",
+    // padding: 10,
   },
 
   navContainer: {
@@ -325,7 +326,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: "#333",
     textAlignVertical: "top",
-    backgroundColor: 'red',
+    // backgroundColor: 'red',
     borderRadius: 10,
   },
 
@@ -343,8 +344,8 @@ const styles = StyleSheet.create({
     position: "relative",
     flexDirection: "row",
     alignItems: "center",
-    // backgroundColor: 'red',
-    marginRight: 50,
+    backgroundColor: 'red',
+    marginRight: 45,
   },
 
   image: {

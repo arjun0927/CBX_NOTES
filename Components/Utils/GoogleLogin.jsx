@@ -42,13 +42,14 @@ export const signInWithGoogle = async (navigation) => {
         console.log('42 userin', userInfo.data)
 
         // Send data to backend API
-        const response = await axios.post('https://notes.ceoitbox.com/api/signin/mobile', data);
+        const response = await axios.post('https://notes.ceoitbox.com/api/signin/mobile/v2', data);
 
         if (response?.data?.token) {
             setItem('token', response?.data?.token);
             navigation.navigate('HomeScreen');
         }
     } catch (error) {
+        console.log('52 ', error)
         console.error('Google login error:', error);
     }
 };

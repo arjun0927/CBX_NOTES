@@ -17,13 +17,13 @@ const CreateAccount = ({ navigation }) => {
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 
 	const googleLogin = async () => {
-			try {
-				await configureGoogleSignIn();
-				await signInWithGoogle(navigation);
-			} catch (error) {
-				console.error("Google Login Error:", error);
-			}
-		};
+		try {
+			await configureGoogleSignIn();
+			await signInWithGoogle(navigation);
+		} catch (error) {
+			console.error("Google Login Error:", error);
+		}
+	};
 
 	return (
 		<View style={styles.container}>
@@ -114,7 +114,7 @@ const CreateAccount = ({ navigation }) => {
 				<Text style={{ fontSize: 14, color: '#ACACAC', fontFamily: 'Poppins-SemiBold' }}>or</Text>
 				<RightLineSvg />
 			</View>
-			<TouchableOpacity  onPress={googleLogin}>
+			<TouchableOpacity onPress={googleLogin}>
 				<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, }}>
 					<Image style={{ width: 25, height: 25, resizeMode: 'contain', marginTop: 2, }} source={require('../../assets/images/onboardImg/google.png')} />
 					<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>Google</Text>
