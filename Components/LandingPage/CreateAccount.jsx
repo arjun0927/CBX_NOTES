@@ -7,7 +7,8 @@ import SimpleLineIcons from 'react-native-vector-icons/dist/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/dist/Feather';
 import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
-import { configureGoogleSignIn, signInWithGoogle } from '../Utils/GoogleLogin';
+import { configureGoogleSignIn, signInWithGoogle } from '../../apis';
+
 
 const CreateAccount = ({ navigation }) => {
 	const [name, setName] = useState('');

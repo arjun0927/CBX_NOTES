@@ -1,6 +1,9 @@
+import axios from "axios";
+const api = axios.create({
+    baseURL: "https://notes.ceoitbox.com",
+});
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import axios from 'axios';
-import { setItem } from './Storage';
+import { setItem } from "../Components/Utils/Storage";
 
 // Configure Google Sign-In
 export const configureGoogleSignIn = () => {
@@ -10,7 +13,6 @@ export const configureGoogleSignIn = () => {
         offlineAccess: true,
     });
 };
-
 
 export const signInWithGoogle = async (navigation) => {
     try {
@@ -52,3 +54,43 @@ export const signInWithGoogle = async (navigation) => {
         console.error('Google login error:', error);
     }
 };
+
+export const getAllNotes = async (token) => {
+    try {
+        const { data } = await api.get("/api/getNotes/v2?archived=false&trashed=false", {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+		})
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getSingleNote = async (token,id) => {
+    try {
+        const { data } = await api.get(`/api/getNote/view/note/v2/${id}`, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+				'Content-Type': 'application/json',
+			},
+		})
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const SignInWithEmailAndPassword = async (loginInfo) => {
+    try {
+        const { data } = await api.post(`/api/signin`,loginInfo)
+        setItem('token',data?.token)
+        return data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+ 

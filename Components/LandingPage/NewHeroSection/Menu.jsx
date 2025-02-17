@@ -28,11 +28,15 @@ import Labelicon from "../../../SvgIcons/Labelicon"
 
 const screenWidth = Dimensions.get("window").width;
 
-const Menu = ({ setModalVisible }) => {
+const Menu = ({ setModalVisible , setShowStarred }) => {
   const translateX = useSharedValue(-screenWidth * 0.7); // Start off-screen
-  const opacity = useSharedValue(0); // For overlay dimming
+  const opacity = useSharedValue(0);
 
-  // Open the menu with animation
+  const handleStarredClick = () => {
+    setShowStarred(true);
+    setModalVisible(false);
+  };
+
   React.useEffect(() => {
     translateX.value = withSpring(0, { damping: 10, stiffness: 35 });
     opacity.value = withTiming(0.6, { duration: 300 });
@@ -81,10 +85,10 @@ const Menu = ({ setModalVisible }) => {
         </TouchableOpacity>
         <View style={styles.first_separator} />
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={handleStarredClick}>
           <View style={[styles.flex, styles.box]}>
             <Staricon />
-            <Text style={styles.text}>Stared</Text>
+            <Text style={styles.text}>Starred</Text>
           </View>
         </TouchableOpacity>
         <View style={styles.separator} />

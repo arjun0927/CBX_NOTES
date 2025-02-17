@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Alert } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, ScrollView, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState } from 'react';
 import Footer from '../LandingPage/Footer';
 import TopNavbar from './TopNavbar';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -7,94 +7,123 @@ import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
-import { signInWithGoogle, configureGoogleSignIn } from '../Utils/GoogleLogin';
 import { rMS, rVS } from '../Utils/Responsive';
+import { configureGoogleSignIn, SignInWithEmailAndPassword, signInWithGoogle } from '../../apis';
+import { ActivityIndicator } from 'react-native-paper';
 
 const SignUp = ({ navigation }) => {
-	const [name, setName] = useState('');
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
-
-
+	const [loader, setLoader] = useState(false);
 
 	const googleLogin = async () => {
 		try {
 			await configureGoogleSignIn();
-			await signInWithGoogle(navigation);
+			const userInfo = await signInWithGoogle(navigation);
 		} catch (error) {
-			console.error("Google Login Error:", error);
+			console.error("Google Login Error:", error.message, error.code);
 		}
 	};
 
+	const login = async () => {
+		try {
+			setLoader(true);
+			const userInfo = {
+				email: email,
+				loginWith: "EMAIL",
+				password: password,
+			};
+			const response = await SignInWithEmailAndPassword(userInfo);
+			if (response) {
+				setLoader(false);
+				setEmail('');
+				setPassword('');
+				navigation.navigate('HomeScreen');
+			}
+		} catch (error) {
+			setLoader(false);
+			console.log(error);
+		}
+	};
 
 	return (
-		<View style={styles.container}>
-			<TopNavbar />
-			<View style={styles.inputContainer}>
-				<View style={styles.textInputContainer}>
-					<MaterialCommunityIcons name="email-outline" size={18} color={'#8F8F8F'} />
-					<TextInput
-						placeholder="Name"
-						value={name}
-						onChangeText={(text) => setName(text)}
-						style={styles.textInput}
-						placeholderTextColor={'#8F8F8F'}
-					/>
+		<KeyboardAvoidingView
+			style={styles.container}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+		>
+			<ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}>
+				<TopNavbar />
+				<View style={styles.inputContainer}>
+					<View style={styles.textInputContainer}>
+						<MaterialCommunityIcons name="email-outline" size={18} color={'#8F8F8F'} />
+						<TextInput
+							placeholder="Email"
+							value={email}
+							onChangeText={(text) => setEmail(text)}
+							style={styles.textInput}
+							placeholderTextColor={'#8F8F8F'}
+						/>
+					</View>
+
+					<View style={styles.textInputContainer}>
+						<SimpleLineIcons name="lock" size={18} color={'#8F8F8F'} />
+						<TextInput
+							placeholder="Password"
+							value={password}
+							onChangeText={(text) => setPassword(text)}
+							style={styles.textInput}
+							placeholderTextColor={'#8F8F8F'}
+							secureTextEntry={!passwordVisible}
+						/>
+						<TouchableOpacity
+							style={styles.eyeBtn}
+							onPress={() => setPasswordVisible(!passwordVisible)}
+						>
+							{passwordVisible ? (
+								<Feather name="eye" size={19} color={'#8F8F8F'} />
+							) : (
+								<Feather name="eye-off" size={19} color={'#8F8F8F'} />
+							)}
+						</TouchableOpacity>
+					</View>
 				</View>
 
-				<View style={styles.textInputContainer}>
-					<SimpleLineIcons name="lock" size={18} color={'#8F8F8F'} />
-					<TextInput
-						placeholder="Password"
-						value={password}
-						onChangeText={(text) => setPassword(text)}
-						style={styles.textInput}
-						placeholderTextColor={'#8F8F8F'}
-						secureTextEntry={!passwordVisible}
-					/>
-					<TouchableOpacity
-						style={styles.eyeBtn}
-						onPress={() => setPasswordVisible(!passwordVisible)}
-					>
-						{passwordVisible ? (
-							<Feather name="eye" size={19} color={'#8F8F8F'} />
+				<TouchableOpacity onPress={login} activeOpacity={0.5}>
+					<View style={styles.signInBtn}>
+						{loader ? (
+							<ActivityIndicator style={{ padding: rMS(14) }} size={'small'} color='white' />
 						) : (
-							<Feather name="eye-off" size={19} color={'#8F8F8F'} />
+							<Text style={styles.SignInBtnText}>Sign In</Text>
 						)}
-					</TouchableOpacity>
+					</View>
+				</TouchableOpacity>
+
+				<TouchableOpacity onPress={() => navigation.navigate('CreateAccount')}>
+					<View style={{ alignSelf: 'center', marginTop: 55 }}>
+						<Text style={styles.accountText}>Didn't have an account?</Text>
+					</View>
+				</TouchableOpacity>
+
+				<View style={styles.divider}>
+					<LeftLineSvg />
+					<Text style={styles.orText}>or</Text>
+					<RightLineSvg />
 				</View>
-			</View>
 
-			<TouchableOpacity>
-				<View style={styles.signInBtn}>
-					<Text style={styles.SignInBtnText}>Sign In</Text>
+				{/* Google Sign-In Button */}
+				<TouchableOpacity onPress={googleLogin}>
+					<View style={styles.googleButton}>
+						<Image style={styles.googleIcon} source={require('../../assets/images/onboardImg/google.png')} />
+						<Text style={styles.googleText}>Google</Text>
+					</View>
+				</TouchableOpacity>
+
+				<View style={styles.footer}>
+					<Footer />
 				</View>
-			</TouchableOpacity>
-
-			<TouchableOpacity onPress={() => navigation.navigate('CreateAccount')}>
-				<View style={{ alignSelf: 'center', marginTop: 55 }}>
-					<Text style={styles.accountText}>Didn't have an account?</Text>
-				</View>
-			</TouchableOpacity>
-
-			<View style={styles.divider}>
-				<LeftLineSvg />
-				<Text style={styles.orText}>or</Text>
-				<RightLineSvg />
-			</View>
-
-			{/* Google Sign-In Button */}
-			<TouchableOpacity onPress={googleLogin}>
-				<View style={styles.googleButton}>
-					<Image style={styles.googleIcon} source={require('../../assets/images/onboardImg/google.png')} />
-					<Text style={styles.googleText}>Google</Text>
-				</View>
-			</TouchableOpacity>
-
-			<View style={styles.footer}>
-				<Footer />
-			</View>
-		</View>
+			</ScrollView>
+		</KeyboardAvoidingView>
 	);
 };
 
@@ -174,7 +203,7 @@ const styles = StyleSheet.create({
 		width: rMS(30),
 		height: rMS(30),
 		resizeMode: 'contain',
-		marginRight:3,
+		marginRight: 3,
 	},
 	googleText: {
 		fontFamily: 'Poppins-SemiBold',
@@ -183,7 +212,9 @@ const styles = StyleSheet.create({
 	},
 	footer: {
 		position: 'absolute',
-		bottom: 20,
+		bottom: 10,
+		width: '100%',
 		alignSelf: 'center',
-	},
+	}
+
 });

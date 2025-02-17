@@ -1,79 +1,61 @@
-<<<<<<< HEAD
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
-import BurgerIcon from '../../../SvgIcons/BurgerIcon'
-import List_view from '../../../SvgIcons/List_view'
-import Bell from '../../../SvgIcons/Bell'
-import User_icon from '../../../SvgIcons/User_icon'
-import Menu from '../NewHeroSection/Menu'
-=======
-import { StyleSheet, View, TextInput, TouchableOpacity, Animated, TouchableWithoutFeedback } from 'react-native';
-import React, { useState, useRef } from 'react';
-import Icon from "react-native-vector-icons/Ionicons";
-
 import BurgerIcon from '../../../SvgIcons/BurgerIcon';
 import List_view from '../../../SvgIcons/List_view';
 import Bell from '../../../SvgIcons/Bell';
 import User_icon from '../../../SvgIcons/User_icon';
 import Menu from '../NewHeroSection/Menu';
->>>>>>> 392cf6455675ffd8b51477a1e3716a7f9a604015
 
-const Navbar = ({ menuVisible, setMenuVisible }) => {
-  const slideAnim = useRef(new Animated.Value(-250)).current;
-  const fadeAnim = useRef(new Animated.Value(0)).current;
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  runOnJS,
+} from "react-native-reanimated";
+
+const Navbar = () => {
+  const [menuVisible, setMenuVisible] = useState(false)
+  const slideAnim = useSharedValue(-250);
+  const fadeAnim = useSharedValue(0);
+
+  const fadeStyle = useAnimatedStyle(() => ({
+    opacity: fadeAnim.value,
+  }));
+
+  const slideStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: slideAnim.value }],
+  }));
 
   const openMenu = () => {
     setMenuVisible(true);
-    Animated.parallel([
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    slideAnim.value = withTiming(0, { duration: 300 });
+    fadeAnim.value = withTiming(1, { duration: 300 });
   };
 
   const closeMenu = () => {
-    Animated.parallel([
-      Animated.timing(slideAnim, {
-        toValue: -250,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      setMenuVisible(false);
+    slideAnim.value = withTiming(-250, { duration: 300 });
+    fadeAnim.value = withTiming(0, { duration: 300 }, () => {
+      // setMenuVisible(false);
+      runOnJS(setMenuVisible)(false)
     });
   };
 
   return (
     <>
-      {/* Overlay */}
       {menuVisible && (
-        <Animated.View style={[styles.overlay, { opacity: fadeAnim }]}>
+        <Animated.View style={[styles.overlay, fadeStyle]}>
           <TouchableWithoutFeedback onPress={closeMenu}>
             <View style={styles.fullScreenTouch} />
           </TouchableWithoutFeedback>
 
-          <Animated.View style={[styles.menuContainer, { transform: [{ translateX: slideAnim }] }]}>
+          <Animated.View style={[styles.menuContainer, slideStyle]}>
             <Menu setModalVisible={setMenuVisible} />
           </Animated.View>
         </Animated.View>
       )}
 
-      {/* Navbar */}
       <View style={styles.navContainer}>
-        {/* Left Side */}
         <View style={styles.leftNav}>
           <TouchableOpacity onPress={openMenu}>
             <BurgerIcon />
@@ -88,26 +70,16 @@ const Navbar = ({ menuVisible, setMenuVisible }) => {
           </View>
         </View>
 
-<<<<<<< HEAD
-        <View style={styles.rightNav} >
+        <View style={styles.rightNav}>
           <TouchableOpacity>
             <List_view />
           </TouchableOpacity>
-
           <TouchableOpacity>
             <Bell />
           </TouchableOpacity>
-
           <TouchableOpacity>
             <User_icon />
           </TouchableOpacity>
-=======
-        {/* Right Side */}
-        <View style={styles.rightNav}>
-          <TouchableOpacity><List_view /></TouchableOpacity>
-          <TouchableOpacity><Bell /></TouchableOpacity>
-          <TouchableOpacity><User_icon /></TouchableOpacity>
->>>>>>> 392cf6455675ffd8b51477a1e3716a7f9a604015
         </View>
       </View>
     </>
@@ -135,16 +107,16 @@ const styles = StyleSheet.create({
   },
   navContainer: {
     width: '100%',
-    flexDirection: 'row', // Keep elements in one row
-    alignItems: 'center', // Align properly
-    justifyContent: 'space-between', // Push elements apart
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 20,
     paddingVertical: 20,
   },
   leftNav: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1, // Prevents search from pushing rightNav
+    flex: 1,
   },
   search_container: {
     flexDirection: "row",
@@ -153,8 +125,8 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 17,
     marginLeft: 10,
-    flexShrink: 1, // Prevents overflow
-    maxWidth: 180, // Ensures it fits
+    flexShrink: 1,
+    maxWidth: 180,
   },
   icon: {
     marginRight: 5,
