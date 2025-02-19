@@ -1,72 +1,23 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, TextInput, View, TouchableOpacity } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
 import BurgerIcon from '../../../SvgIcons/BurgerIcon';
 import List_view from '../../../SvgIcons/List_view';
 import Bell from '../../../SvgIcons/Bell';
 import User_icon from '../../../SvgIcons/User_icon';
-import Menu from '../NewHeroSection/Menu';
-
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  runOnJS,
-} from "react-native-reanimated";
+// import MenuComponent from './MenuComponent';
 
 const Navbar = () => {
-  const [menuVisible, setMenuVisible] = useState(false)
-  const slideAnim = useSharedValue(-250);
-  const fadeAnim = useSharedValue(0);
-
-  const fadeStyle = useAnimatedStyle(() => ({
-    opacity: fadeAnim.value,
-  }));
-
-  const slideStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: slideAnim.value }],
-  }));
-
-  const openMenu = () => {
-    setMenuVisible(true);
-    slideAnim.value = withTiming(0, { duration: 300 });
-    fadeAnim.value = withTiming(1, { duration: 300 });
-  };
-
-  const closeMenu = () => {
-    slideAnim.value = withTiming(-250, { duration: 300 });
-    fadeAnim.value = withTiming(0, { duration: 300 }, () => {
-      // setMenuVisible(false);
-      runOnJS(setMenuVisible)(false)
-    });
-  };
+  const [menuVisible, setMenuVisible] = useState(false);
 
   return (
     <>
-      {menuVisible && (
-        <Animated.View style={[styles.overlay, fadeStyle]}>
-          <TouchableWithoutFeedback onPress={closeMenu}>
-            <View style={styles.fullScreenTouch} />
-          </TouchableWithoutFeedback>
-
-          <Animated.View style={[styles.menuContainer, slideStyle]}>
-            <Menu setModalVisible={setMenuVisible} />
-          </Animated.View>
-        </Animated.View>
-      )}
 
       <View style={styles.navContainer}>
         <View style={styles.leftNav}>
-          <TouchableOpacity onPress={openMenu}>
-            <BurgerIcon />
-          </TouchableOpacity>
-
           <View style={styles.search_container}>
             <Icon name="search" size={14} color="gray" style={styles.icon} />
-            <TextInput
-              style={styles.input}
-              placeholder="Search Notes"
-            />
+            <TextInput style={styles.input} placeholder="Search Notes" />
           </View>
         </View>
 
@@ -89,28 +40,12 @@ const Navbar = () => {
 export default Navbar;
 
 const styles = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    zIndex: 999,
-  },
-  fullScreenTouch: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  menuContainer: {
-    position: 'absolute',
-    left: 0,
-    top: 0,
-    width: '75%',
-    height: '100%',
-  },
   navContainer: {
-    width: '100%',
+    // flex:1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20,
+    paddingRight: 10,
     paddingVertical: 20,
   },
   leftNav: {

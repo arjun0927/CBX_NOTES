@@ -28,14 +28,9 @@ import Labelicon from "../../../SvgIcons/Labelicon"
 
 const screenWidth = Dimensions.get("window").width;
 
-const Menu = ({ setModalVisible , setShowStarred }) => {
+const Menu = ({ setModalVisible, setActiveSection, activeSection  }) => {
   const translateX = useSharedValue(-screenWidth * 0.7); // Start off-screen
   const opacity = useSharedValue(0);
-
-  const handleStarredClick = () => {
-    setShowStarred(true);
-    setModalVisible(false);
-  };
 
   React.useEffect(() => {
     translateX.value = withSpring(0, { damping: 10, stiffness: 35 });
@@ -57,6 +52,11 @@ const Menu = ({ setModalVisible , setShowStarred }) => {
     transform: [{ translateX: translateX.value }],
   }));
 
+  const handleSectionClick = (section) => {
+    setActiveSection(section);
+    // setModalVisible(false);
+  };
+
   return (
     <View style={styles.fullScreen}>
 
@@ -69,67 +69,49 @@ const Menu = ({ setModalVisible , setShowStarred }) => {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity>
-          <View style={[styles.flex, styles.box]}>
+        <TouchableOpacity onPress={() => handleSectionClick("Notes")} style={[styles.flex, styles.box, activeSection === "Notes" && styles.activeItem]}>
             <Noteicon />
             <Text style={styles.text}>Notes</Text>
-          </View>
         </TouchableOpacity>
         <View style={styles.first_separator} />
 
-        <TouchableOpacity>
-          <View style={[styles.flex, styles.box]}>
+        <TouchableOpacity onPress={() => handleSectionClick("Labels")} style={[styles.flex, styles.box, activeSection === "Labels" && styles.activeItem]}>
             <Labelicon />
             <Text style={styles.text}>Labels</Text>
-          </View>
         </TouchableOpacity>
         <View style={styles.first_separator} />
 
-        <TouchableOpacity onPress={handleStarredClick}>
-          <View style={[styles.flex, styles.box]}>
-            <Staricon />
-            <Text style={styles.text}>Starred</Text>
-          </View>
+        <TouchableOpacity onPress={() => handleSectionClick("starred")} style={[styles.flex, styles.box, activeSection === "starred" && styles.activeItem]}>
+          <Staricon />
+          <Text style={styles.text}>Starred</Text>
         </TouchableOpacity>
-        <View style={styles.separator} />
 
-        <TouchableOpacity>
-          <View style={[styles.flex, styles.box]}>
-            <ArchieveIcon />
-            <Text style={styles.text}>Archived</Text>
-          </View>
+        <TouchableOpacity onPress={() => handleSectionClick("archived")} style={[styles.flex, styles.box, activeSection === "archived" && styles.activeItem]}>
+          <ArchieveIcon />
+          <Text style={styles.text}>Archived</Text>
         </TouchableOpacity>
-        <View style={styles.separator} />
 
-        <TouchableOpacity>
-          <View style={[styles.flex, styles.box]}>
+        <TouchableOpacity onPress={() => handleSectionClick("Deleted")} style={[styles.flex, styles.box, activeSection === "Deleted" && styles.activeItem]}>
             <Deletedicon />
             <Text style={styles.text}>Deleted</Text>
-          </View>
         </TouchableOpacity>
         <View style={styles.separator} />
 
-        <TouchableOpacity>
-          <View style={[styles.flex, styles.box]}>
+        <TouchableOpacity onPress={() => handleSectionClick("Tasks")} style={[styles.flex, styles.box, activeSection === "Tasks" && styles.activeItem]}>
             <Tasksicon />
             <Text style={styles.text}>Tasks</Text>
-          </View>
         </TouchableOpacity>
         <View style={styles.separator} />
 
-        <TouchableOpacity>
-          <View style={[styles.flex, styles.box]}>
+        <TouchableOpacity onPress={() => handleSectionClick("Instructions")} style={[styles.flex, styles.box, activeSection === "Instructions" && styles.activeItem]}>
             <Videoicon />
             <Text style={styles.text}>Instructions</Text>
-          </View>
         </TouchableOpacity>
         <View style={styles.separator} />
 
-        <TouchableOpacity>
-          <View style={[styles.flex, styles.box]}>
+        <TouchableOpacity onPress={() => handleSectionClick("Updates")} style={[styles.flex, styles.box, activeSection === "Updates" && styles.activeItem]}>
             <Updatesicon />
             <Text style={styles.text}>Updates</Text>
-          </View>
         </TouchableOpacity>
         <View style={styles.separator} />
 
@@ -184,6 +166,10 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     width: "100%",
     height: '100%',
+  },
+  activeItem: {
+    backgroundColor: "#E5F6D6",
+    borderRadius: 8,
   },
 
   cbx_box: {

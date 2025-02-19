@@ -4,6 +4,7 @@ import NotesCard from "./NoteCard";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { getItem } from "../../Utils/Storage";
 import { getAllNotes } from "../../../apis";
+import Navbar from "./Navbar";
 
 const MainNotesCard = () => {
 	const [data , setData] = useState([]);
@@ -12,7 +13,7 @@ const MainNotesCard = () => {
 		try {
 			const token = await getItem('token');
 			const response = await getAllNotes(token)
-			// console.log('Response:', response);
+			console.log('Response:', response);
 			setData(response);
 		} catch (error) {
 			console.error('Error fetching notes:', error);
@@ -26,6 +27,8 @@ const MainNotesCard = () => {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
+			{/* <Navbar/> */}
+			
 				<FlatList
 					data={data}
 					keyExtractor={(item) => item._id}
@@ -34,7 +37,6 @@ const MainNotesCard = () => {
 					showsVerticalScrollIndicator={false}
 					columnWrapperStyle={styles.rowStyle}
 				/>
-				
 			</SafeAreaView>
 		</SafeAreaProvider>
 	);

@@ -9,6 +9,8 @@ import { useNavigation } from "@react-navigation/native";
 
 const NotesCard = ({ item }) => {
 
+	// console.log('item',item)
+
 	const navigation = useNavigation();
 	const isoDate = item.time;
 
