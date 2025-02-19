@@ -7,22 +7,53 @@ import SimpleLineIcons from 'react-native-vector-icons/dist/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/dist/Feather';
 import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
-import { configureGoogleSignIn, signInWithGoogle } from '../../apis';
+import { configureGoogleSignIn, SignInWithEmailAndPassword, signInWithGoogle } from '../../apis';
+import { ActivityIndicator } from 'react-native-paper';
+import { rMS } from '../Utils/Responsive';
+import { getItem } from '../Utils/Storage';
 
 
 const CreateAccount = ({ navigation }) => {
-	const [name, setName] = useState('');
+	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
+	const [loader, setLoader] = useState(false);
 
 	const googleLogin = async () => {
 		try {
 			await configureGoogleSignIn();
 			await signInWithGoogle(navigation);
+			const token = getItem('token')
+			if (token) {
+				setLoader(false);
+				navigation.navigate('HomeScreen');
+			}
 		} catch (error) {
-			console.error("Google Login Error:", error);
+			console.error("Google Login Error:", error.message, error.code);
+		}
+	};
+
+	const login = async () => {
+		try {
+			setLoader(true);
+			const userInfo = {
+				email: email,
+				loginWith: "EMAIL",
+				password: password,
+			};
+			// await SignInWithEmailAndPassword(userInfo);
+			const token = getItem('token');
+			if (token) {
+				setLoader(false);
+				setEmail('');
+				setPassword('');
+				navigation.navigate('HomeScreen');
+			}
+		} catch (error) {
+			setLoader(false);
+			console.log(error);
 		}
 	};
 
@@ -35,8 +66,8 @@ const CreateAccount = ({ navigation }) => {
 					<MaterialCommunityIcons name='email-outline' size={18} color={'#8F8F8F'} />
 					<TextInput
 						placeholder='Name'
-						value={name}
-						onChangeText={text => setName(text)}
+						value={email}
+						onChangeText={text => setEmail(text)}
 						style={styles.textInput}
 						placeholderTextColor={'#8F8F8F'}
 					/>
@@ -98,9 +129,13 @@ const CreateAccount = ({ navigation }) => {
 
 			</View>
 
-			<TouchableOpacity onPress={() => navigation.navigate('Home')}>
+			<TouchableOpacity onPress={login} activeOpacity={0.5}>
 				<View style={styles.signInBtn}>
-					<Text style={styles.SignInBtnText}>Sign In</Text>
+					{loader ? (
+						<ActivityIndicator style={{ padding: rMS(14) }} size={'small'} color='white' />
+					) : (
+						<Text style={styles.SignInBtnText}>Sign In</Text>
+					)}
 				</View>
 			</TouchableOpacity>
 

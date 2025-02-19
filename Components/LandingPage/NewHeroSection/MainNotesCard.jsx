@@ -4,7 +4,6 @@ import NotesCard from "./NoteCard";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { getItem } from "../../Utils/Storage";
 import { getAllNotes } from "../../../apis";
-import Navbar from "./Navbar";
 
 const MainNotesCard = () => {
 	const [data , setData] = useState([]);
@@ -27,7 +26,6 @@ const MainNotesCard = () => {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
-			{/* <Navbar/> */}
 			
 				<FlatList
 					data={data}
@@ -47,6 +45,9 @@ export default MainNotesCard;
 const styles = StyleSheet.create({
 	container: {
 		paddingHorizontal: 10,
+		flex:1,
+		justifyContent:'center',
+		alignItems:'center'
 	},
 	rowStyle: {
 		justifyContent: "space-between",

@@ -2,16 +2,22 @@ import { StyleSheet, Text, View } from "react-native"
 import React, { useEffect } from "react";
 import SplaceLogo from "../../SvgIcons/SplaceLogo";
 import Footer from "./Footer";
+import { getItem } from "../Utils/Storage";
 
-const SplaceScreen = ({navigation}) => {
+const SplaceScreen = ({ navigation }) => {
 
 	useEffect(() => {
 		const timer = setTimeout(() => {
-		  navigation.replace('Onboard');
+			const token = getItem('token');
+			if (token) {
+				navigation.replace('HomeScreen');
+			} else {
+				navigation.replace('Onboard');
+			}
 		}, 2000);
-	
+
 		return () => clearTimeout(timer);
-	  }, [navigation]);
+	}, [navigation]);
 
 	return (
 		<View style={styles.container}>
@@ -28,12 +34,12 @@ export default SplaceScreen;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor:'#FFF',
+		backgroundColor: '#FFF',
 		justifyContent: 'center',
 		alignItems: 'center',
 	},
-	footer:{
-		position:'absolute',
-		bottom:20,
+	footer: {
+		position: 'absolute',
+		bottom: 20,
 	}
 })

@@ -64,16 +64,18 @@ const Home = ({ navigation }) => {
           </Animated.View>
         )}
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', paddingLeft: 10 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <TouchableOpacity onPress={() => setMenuVisible(true)}>
             <BurgerIcon />
           </TouchableOpacity>
-          {activeSection === "Notes" && (
-            <>
-              <Navbar />
-              <MainNotesCard />
-            </>
-          )}
+
+          <Navbar />
+        </View>
+        <View>
+
+          {activeSection === "Notes" && <View style={{ position: 'absolute' }}>
+            <MainNotesCard />
+          </View>}
           {activeSection === "Deleted" && <DeletedNotes />}
           {activeSection === "Instructions" && <Instruction />}
           {activeSection === "Tasks" && <Tasks />}
@@ -82,7 +84,6 @@ const Home = ({ navigation }) => {
           {activeSection === "starred" && <Stared />}
         </View>
         <Add />
-
       </View>
     </SafeAreaView>
   );

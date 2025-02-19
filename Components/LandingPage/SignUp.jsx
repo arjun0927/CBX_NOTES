@@ -10,6 +10,7 @@ import RightLineSvg from '../../SvgIcons/RightLineSvg';
 import { rMS, rVS } from '../Utils/Responsive';
 import { configureGoogleSignIn, SignInWithEmailAndPassword, signInWithGoogle } from '../../apis';
 import { ActivityIndicator } from 'react-native-paper';
+import { getItem } from '../Utils/Storage';
 
 const SignUp = ({ navigation }) => {
 	const [email, setEmail] = useState('');
@@ -20,7 +21,14 @@ const SignUp = ({ navigation }) => {
 	const googleLogin = async () => {
 		try {
 			await configureGoogleSignIn();
-			const userInfo = await signInWithGoogle(navigation);
+			await signInWithGoogle(navigation);
+			const token = getItem('token')
+			if (token) {
+				setLoader(false);
+				setEmail('');
+				setPassword('');
+				navigation.navigate('HomeScreen');
+			}
 		} catch (error) {
 			console.error("Google Login Error:", error.message, error.code);
 		}
@@ -34,8 +42,9 @@ const SignUp = ({ navigation }) => {
 				loginWith: "EMAIL",
 				password: password,
 			};
-			const response = await SignInWithEmailAndPassword(userInfo);
-			if (response) {
+			await SignInWithEmailAndPassword(userInfo);
+			const token = getItem('token');
+			if (token) {
 				setLoader(false);
 				setEmail('');
 				setPassword('');
