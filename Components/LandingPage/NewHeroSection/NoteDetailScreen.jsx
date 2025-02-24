@@ -15,13 +15,13 @@ import Redo from "../../../SvgIcons/Redo";
 import Theme from "../../../SvgIcons/Theme";
 import Feather from "react-native-vector-icons/Feather"
 import AntDesign from "react-native-vector-icons/FontAwesome5"
-import { getSingleNote } from "../../../apis";
 import ThreeDotModal from "../Modal/ThreeDotModal";
 import ThreeDots from "../../../SvgIcons/ThreeDots";
+import { useGlobalContext } from "../../Context/Context";
 
 const NoteDetailScreen = ({ route }) => {
-  const [singleNoteData, setSingleNoteData] = useState([]);
   const [threeDotModalVisible, setThreeDotModalVisible] = useState(false);
+  const { getSingleNote, singleNoteData } = useGlobalContext();
 
   const item = route?.params?.item;
   const navigation = useNavigation();
@@ -30,10 +30,9 @@ const NoteDetailScreen = ({ route }) => {
     try {
       const token = await getItem("token");
 
-      const response = await getSingleNote(token, item._id);
+      await getSingleNote(token, item._id);
 
-      console.log("singleNote api data", response);
-      setSingleNoteData(response);
+      // setSingleNoteData(response);
     } catch (error) {
       console.error("Error fetching notes:", error);
     }
@@ -95,7 +94,6 @@ const NoteDetailScreen = ({ route }) => {
         contentContainerStyle={{ paddingBottom: 70 }}
       />
 
-      {/* Bottom Toolbar */}
       <View style={styles.bottomToolbar}>
         <TouchableOpacity>
           <Plus />

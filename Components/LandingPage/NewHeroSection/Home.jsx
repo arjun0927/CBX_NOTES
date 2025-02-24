@@ -20,12 +20,14 @@ import DeletedNotes from "./DeletedNotes";
 import Instruction from "./Instruction";
 import Update from "./Update";
 import Tasks from "./Tasks";
+import { useGlobalContext } from "../../Context/Context";
 
 const Home = ({ navigation }) => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const [activeSection, setActiveSection] = useState("Notes");
+  const { activeSection, setActiveSection } = useGlobalContext();
   const slideAnim = useSharedValue(-250);
   const fadeAnim = useSharedValue(0);
+
 
   const fadeStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
@@ -52,37 +54,36 @@ const Home = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="dark-content" backgroundColor="#FBF4FF" />
-      <View style={styles.container}>
-        {menuVisible && (
-          <Animated.View style={[styles.overlay, fadeStyle]}>
-            <TouchableWithoutFeedback onPress={closeMenu}>
-              <View style={styles.fullScreenTouch} />
-            </TouchableWithoutFeedback>
-            <Animated.View style={[styles.menuContainer, slideStyle]}>
-              <Menu setModalVisible={setMenuVisible} setActiveSection={setActiveSection} activeSection={activeSection} />
-            </Animated.View>
+      {menuVisible && (
+        <Animated.View style={[styles.overlay, fadeStyle]}>
+          <TouchableWithoutFeedback onPress={closeMenu}>
+            <View style={styles.fullScreenTouch} />
+          </TouchableWithoutFeedback>
+          <Animated.View style={[styles.menuContainer, slideStyle]}>
+            <Menu setModalVisible={setMenuVisible} setActiveSection={setActiveSection} activeSection={activeSection} />
           </Animated.View>
-        )}
+        </Animated.View>
+      )}
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <TouchableOpacity onPress={() => setMenuVisible(true)}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+        <TouchableOpacity onPress={() => setMenuVisible(true)}>
+          <View style={{ marginLeft: rMS(10) , marginBottom:3 }}>
             <BurgerIcon />
-          </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+        <Navbar />
+      </View>
+      <View style={styles.container}>
+        {activeSection === "Notes" &&
+          <MainNotesCard />
+        }
+        {activeSection === "Deleted" && <DeletedNotes />}
+        {activeSection === "Instructions" && <Instruction />}
+        {activeSection === "Tasks" && <Tasks />}
+        {activeSection === "Updates" && <Update />}
+        {activeSection === "archived" && <Archived />}
+        {activeSection === "starred" && <Stared />}
 
-          <Navbar />
-        </View>
-        <View>
-
-          {activeSection === "Notes" && <View style={{ position: 'absolute' }}>
-            <MainNotesCard />
-          </View>}
-          {activeSection === "Deleted" && <DeletedNotes />}
-          {activeSection === "Instructions" && <Instruction />}
-          {activeSection === "Tasks" && <Tasks />}
-          {activeSection === "Updates" && <Update />}
-          {activeSection === "archived" && <Archived />}
-          {activeSection === "starred" && <Stared />}
-        </View>
         <Add />
       </View>
     </SafeAreaView>
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     top: 0,
-    width: "75%",
+    width: "55%",
     height: "100%",
   },
 });

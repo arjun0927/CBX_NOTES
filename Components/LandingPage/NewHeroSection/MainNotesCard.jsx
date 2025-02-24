@@ -3,17 +3,18 @@ import React, { useEffect, useState } from "react";
 import NotesCard from "./NoteCard";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { getItem } from "../../Utils/Storage";
-import { getAllNotes } from "../../../apis";
+import { useGlobalContext } from "../../Context/Context";
 
 const MainNotesCard = () => {
-	const [data , setData] = useState([]);
+	const { getAllNotes, allNotesData } = useGlobalContext();
+
+	// console.log('all notes data', allNotesData);
 
 	const getNoteData = async () => {
 		try {
 			const token = await getItem('token');
-			const response = await getAllNotes(token)
-			console.log('Response:', response);
-			setData(response);
+			await getAllNotes(token);
+
 		} catch (error) {
 			console.error('Error fetching notes:', error);
 		}
@@ -26,11 +27,13 @@ const MainNotesCard = () => {
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
-			
 				<FlatList
-					data={data}
+					data={allNotesData}
 					keyExtractor={(item) => item._id}
-					renderItem={({ item }) => <NotesCard item={item} />}
+					renderItem={({ item }) =>
+						<View style={{ marginHorizontal: 2, }}>
+							<NotesCard item={item} />
+						</View>}
 					numColumns={2}
 					showsVerticalScrollIndicator={false}
 					columnWrapperStyle={styles.rowStyle}
@@ -44,10 +47,12 @@ export default MainNotesCard;
 
 const styles = StyleSheet.create({
 	container: {
-		paddingHorizontal: 10,
-		flex:1,
-		justifyContent:'center',
-		alignItems:'center'
+		// paddingHorizontal: 10,
+		// flex:1,
+		width: '100%',
+		height: '100%',
+		// justifyContent:'space-between',
+		// alignItems:'center',
 	},
 	rowStyle: {
 		justifyContent: "space-between",

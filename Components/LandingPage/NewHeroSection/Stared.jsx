@@ -1,56 +1,51 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import List_view from '../../../SvgIcons/List_view';
-import AntDesign from 'react-native-vector-icons/AntDesign'
+import { FlatList, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import { rMS, rS, rVS } from '../../Utils/Responsive';
+import { useGlobalContext } from '../../Context/Context';
+import MainNotesCard from './MainNotesCard';
+import NotesCard from './NoteCard';
 
 const Stared = () => {
-	return (
-		<SafeAreaView style={styles.container}>
-			<View style={styles.navContainer}>
-				<Text style={styles.navText}>Stared</Text>
-				<View style={styles.rightNav}>
-					<View style={styles.searchContainer}>
-						<AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
-					</View>
-					<List_view />
-				</View>
-			</View>
+	const { getStarredNotesData , starredData } = useGlobalContext();
 
-		</SafeAreaView>
+	const getStarredData = async () => {
+		await getStarredNotesData();
+	}
+	useEffect(() => {
+		getStarredData();
+	}, []);
+
+	return (
+		<SafeAreaProvider>
+			<SafeAreaView style={styles.container}>
+				<FlatList
+					data={starredData}
+					keyExtractor={(item) => item._id}
+					renderItem={({ item }) =>
+						<View style={{ marginHorizontal: 2, }}>
+							<NotesCard item={item} />
+						</View>}
+					numColumns={2}
+					showsVerticalScrollIndicator={false}
+					columnWrapperStyle={styles.rowStyle}
+				/>
+			</SafeAreaView>
+		</SafeAreaProvider>
 	)
 }
 
 export default Stared;
 
 const styles = StyleSheet.create({
-	container:{
-		flex:1,
-		paddingHorizontal:10,
-		paddingVertical:10,
+	container: {
+		// paddingHorizontal: 10,
+		// flex:1,
+		width: '100%',
+		height: '100%',
 	},
-	navContainer:{
-		flexDirection:'row',
-		justifyContent:'space-between',
-		alignItems:'center',
+	rowStyle: {
+		justifyContent: "space-between",
+		marginBottom: 20,
 	},
-	navText:{
-		fontSize:rMS(20),
-		fontFamily:'Poppins-Medium',
-		color:'#000',
-	},
-	rightNav:{
-		flexDirection:'row',
-		gap:20,
-		alignItems:'center'
-	},
-	searchContainer:{
-		backgroundColor:'#FFF',
-		width:rS(30),
-		height:rS(30),
-		justifyContent:'center',
-		alignItems:'center',
-		borderRadius:rS(15)
-	}
 })

@@ -1,10 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import Navigation from './GlobalNavigator/Navigation'
+import { GlobalProvider } from './Components/Context/Context'
 
 const App = () => {
   return (
-    <Navigation/>
+    <GlobalProvider>
+      <Navigation />
+    </GlobalProvider>
   )
 }
 

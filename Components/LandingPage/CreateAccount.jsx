@@ -7,10 +7,10 @@ import SimpleLineIcons from 'react-native-vector-icons/dist/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/dist/Feather';
 import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
-import { configureGoogleSignIn, SignInWithEmailAndPassword, signInWithGoogle } from '../../apis';
 import { ActivityIndicator } from 'react-native-paper';
 import { rMS } from '../Utils/Responsive';
 import { getItem } from '../Utils/Storage';
+import { useGlobalContext } from '../Context/Context';
 
 
 const CreateAccount = ({ navigation }) => {
@@ -20,6 +20,7 @@ const CreateAccount = ({ navigation }) => {
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 	const [loader, setLoader] = useState(false);
+	const { configureGoogleSignIn, SignInWithEmailAndPassword, signInWithGoogle } = useGlobalContext()
 
 	const googleLogin = async () => {
 		try {

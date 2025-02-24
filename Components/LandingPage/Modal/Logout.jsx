@@ -3,13 +3,20 @@ import React from 'react'
 import { rMS } from '../../Utils/Responsive';
 import { removeItem } from '../../Utils/Storage';
 import { useNavigation } from '@react-navigation/native';
+import { useGlobalContext } from '../../Context/Context';
 
 const Logout = ({ setLogoutModalVisible, isLogoutModalVisible }) => {
+	const {UserLogout , showToast}=useGlobalContext()
 
 	const navigation = useNavigation();
 
 	const handleLogoutConfirm = async () => {
-		await removeItem('token');
+		const message = await UserLogout();
+		// console.log(message)
+		showToast({
+			type:'SUCCESS',
+			message:message,
+		})
 		setLogoutModalVisible(false);
 		navigation.replace('SignUp');
 	};

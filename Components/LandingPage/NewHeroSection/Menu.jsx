@@ -52,20 +52,18 @@ const Menu = ({ setModalVisible, setActiveSection, activeSection }) => {
 
 
   const handleLogoutPress = () => {
-		setLogoutModalVisible(true);
-	};
+    setLogoutModalVisible(true);
+  };
 
- 
+
 
   return (
     <View style={styles.fullScreen}>
       <Animated.View style={[styles.container, animatedMenu]}>
-        <TouchableOpacity>
           <View style={[styles.flex, styles.cbx_box]}>
             <CBXNOTES />
             <Text style={styles.cbx}>CBX NOTES</Text>
           </View>
-        </TouchableOpacity>
 
         <TouchableOpacity
           onPress={() => setActiveSection("Notes")}
@@ -74,7 +72,7 @@ const Menu = ({ setModalVisible, setActiveSection, activeSection }) => {
           <Noteicon />
           <Text style={styles.text}>Notes</Text>
         </TouchableOpacity>
-        <View style={styles.first_separator} />
+        {/* <View style={styles.first_separator} /> */}
 
         <TouchableOpacity
           onPress={() => setActiveSection("Labels")}
@@ -83,7 +81,7 @@ const Menu = ({ setModalVisible, setActiveSection, activeSection }) => {
           <Labelicon />
           <Text style={styles.text}>Labels</Text>
         </TouchableOpacity>
-        <View style={styles.first_separator} />
+        {/* <View style={styles.first_separator} /> */}
 
         <TouchableOpacity
           onPress={() => setActiveSection("starred")}
@@ -175,8 +173,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   activeItem: {
-    backgroundColor: "#E5F6D6",
-    borderRadius: 8,
+    // backgroundColor: "#E5F6D6",
+    // borderRadius: 8,
   },
   cbx_box: {
     paddingLeft: 20,
@@ -211,5 +209,5 @@ const styles = StyleSheet.create({
     width: "90%",
     marginVertical: 2,
   },
-  
+
 });
