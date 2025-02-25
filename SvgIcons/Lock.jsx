@@ -5,8 +5,8 @@ function Lock(props) {
   return (
     <Svg
       xmlns="http://www.w3.org/2000/svg"
-      width={20}
-      height={24}
+      width={16}
+      height={17}
       viewBox="0 0 20 24"
       fill="none"
       {...props}

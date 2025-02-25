@@ -1,44 +1,118 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { rS, rVS } from "../../Utils/Responsive";
 import DownArrow from "../../../SvgIcons/DownArrow";
 import Star from "../../../SvgIcons/Star";
 import Pin from "../../../SvgIcons/Pin";
 import { useNavigation } from "@react-navigation/native";
-import Feather from 'react-native-vector-icons/Feather'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FilledStar from "../../../SvgIcons/FilledStar";
 import { useGlobalContext } from "../../Context/Context";
 import axios from "axios";
+import { getItem } from "../../Utils/Storage";
+
 
 const NotesCard = ({ item }) => {
-	const { userProfileInfo, header, apiLink } = useGlobalContext();
+	const { header, apiLink } = useGlobalContext();
 	const [pinned, setPinned] = useState(false);
-	const [starred, setStarred] = useState(item?.userStarred || item?.userPreferences?.find((el) => el?.userID == userProfileInfo?._id)?.starred || false,);
+	const [userProfileInfo, setUserProfileInfo] = useState(null);
+	const [starred, setStarred] = useState(false);
 	const [data, setData] = useState(item);
-
-
-	// console.log('userProfileInfo',userProfileInfo)
 
 	const navigation = useNavigation();
 	const isoDate = item.time;
-
 	const date = new Date(isoDate);
-
 	const formattedDate = date.toLocaleString();
 
-	const starring = async() => {
-		const preferenceExists = data?.userPreferences?.find(
-			(e) => e?.userID == userProfileInfo?._id
-		);
+	// Fetch user profile info
+	useEffect(() => {
+		const fetchUserProfile = async () => {
+			const profile = await getItem('userProfileInfo');
+			setUserProfileInfo(profile);
+
+			// Update starred state based on fetched userProfileInfo
+			if (profile) {
+				setStarred(
+					item?.userStarred ||
+					item?.userPreferences?.find((el) => el?.userID === profile?._id)?.starred || false
+				);
+				setPinned(
+					item?.pinned ||
+					item?.userPreferences?.find((el) => el?.userID === profile?._id)?.pinned || false
+				)
+			}
+		};
+
+		fetchUserProfile();
+	}, []);
+
+	const starring = async () => {
+		if (!userProfileInfo) return;
+
+		const preferenceExists = data?.userPreferences?.find((e) => e?.userID === userProfileInfo?._id);
 		const isStarred = !preferenceExists?.starred;
-		let updatedPreference
-		let updatedNote
+		let updatedPreference;
+		let updatedNote;
+
 		setData((prev) => {
 			updatedNote = {
-				...prev, userStarred: isStarred, userPreferences: prev?.userPreferences?.map((e) => {
+				...prev,
+				userStarred: isStarred,
+				userPreferences: prev?.userPreferences?.map((e) => {
+					if (e?.userID === userProfileInfo?._id) {
+						updatedPreference = {
+							...e,
+							starred: isStarred,
+							userID: userProfileInfo?._id,
+							pinned: e?.pinned || false,
+							email: userProfileInfo?.email
+						};
+						return updatedPreference;
+					}
+					return e;
+				}),
+			};
+
+			if (!preferenceExists) {
+				updatedPreference = {
+					pinned: false,
+					userID: userProfileInfo?._id,
+					starred: isStarred,
+					email: userProfileInfo?.email
+				};
+				updatedNote.userPreferences.push(updatedPreference);
+			}
+
+			return updatedNote;
+		});
+
+		// console.log('body', { userID: userProfileInfo?._id, preference: updatedPreference });
+
+		try {
+			await axios.patch(`${apiLink}/api/updateUserPreference/${item._id}`,
+				{ userID: userProfileInfo?._id, preference: updatedPreference },
+				header
+			);
+			setStarred(!starred);
+		} catch (err) {
+			console.log(err);
+		}
+	};
+
+	const pinning = async () => {
+		// const isPinned = !data.pinned;
+		const preferenceExists = data?.userPreferences?.find(
+			(e) => e?.userID == userProfileInfo?._id)
+		const isPinned = !preferenceExists?.pinned
+		// return
+		let updatedNote
+		let updatedPreference
+		setData((prev) => {
+			updatedNote = {
+				...prev, userPinned: isPinned, userPreferences: prev?.userPreferences?.map((e) => {
 					if (e?.userID == userProfileInfo?._id) {
-						updatedPreference = { ...e, starred: isStarred, userID: userProfileInfo?._id, pinned: e?.pinned || false, email: userProfileInfo?.email };
+						updatedPreference = { ...e, pinned: isPinned, userID: userProfileInfo?._id, starred: e?.starred || false, email: userProfileInfo?.email };
 						return updatedPreference
 					} else {
 						return e;
@@ -46,118 +120,78 @@ const NotesCard = ({ item }) => {
 				})
 			};
 			if (!preferenceExists) {
+				updatedPreference = { pinned: isPinned, userID: userProfileInfo?._id, starred: false, email: userProfileInfo?.email };
 				updatedNote.userPreferences.push(updatedPreference)
-				updatedPreference = { pinned: false, userID: userProfileInfo?._id, starred: isStarred, email: userProfileInfo?.email };
 			}
+
+			// setData((prevNotes) => {
+			// 	// Filter out the updated note from both arrays
+			// 	let pinnedNotes = prevNotes.filter(
+			// 		(n) => n.userPinned && n._id !== updatedNote._id
+			// 	);
+			// 	let unpinnedNotes = prevNotes.filter(
+			// 		(n) => !n.userPinned && n._id !== updatedNote._id
+			// 	);
+
+			// 	if (isPinned) {
+			// 		// If pinning, add to pinned notes
+			// 		pinnedNotes = [updatedNote, ...pinnedNotes];
+			// 	} else {
+			// 		// If unpinning, add to unpinned notes
+			// 		unpinnedNotes.push(updatedNote);
+			// 		// Sort unpinned notes by time
+			// 		unpinnedNotes = unpinnedNotes.sort(
+			// 			(a, b) =>
+			// 				new Date(b?.lastEdited?.time) - new Date(a?.lastEdited?.time)
+			// 		);
+			// 	}
+
+			// 	// Combine pinned and sorted unpinned notes
+			// 	return [...pinnedNotes, ...unpinnedNotes];
+			// });
 
 			return updatedNote;
 		});
 
-		console.log('body', { userID: userProfileInfo?._id, preference: updatedPreference })
-
 		await axios.patch(`${apiLink}/api/updateUserPreference/${item._id}`, { userID: userProfileInfo?._id, preference: updatedPreference }, header)
 			.then((res) => {
-				console.log(res);
-				setStarred(!starred)
+				console.log('Pinned response', res);
+				setPinned(!pinned)
 			})
 			.catch((err) => {
 				console.log(err);
 			});
 	};
 
-
-
-	// const pinning = () => {
-	// 	// const isPinned = !data.pinned;
-	// 	const preferenceExists = data?.userPreferences?.find(
-	// 		(e) => e?.userID == user?._id)
-	// 	const isPinned = !preferenceExists?.pinned
-	// 	// return
-	// 	let updatedNote
-	// 	let updatedPreference
-	// 	setData((prev) => {
-	// 		updatedNote = {
-	// 			...prev, userPinned: isPinned, userPreferences: prev?.userPreferences?.map((e) => {
-	// 				if (e?.userID == user?._id) {
-	// 					updatedPreference = { ...e, pinned: isPinned, userID: user?._id, starred: e?.starred || false, email: user?.email };
-	// 					return updatedPreference
-	// 				} else {
-	// 					return e;
-	// 				}
-	// 			})
-	// 		};
-	// 		if (!preferenceExists) {
-	// 			updatedNote.userPreferences.push(updatedPreference)
-	// 			updatedPreference = { pinned: isPinned, userID: user?._id, starred: false, email: user?.email };
-	// 		}
-
-	// 		setAllNotes((prevNotes) => {
-	// 			// Filter out the updated note from both arrays
-	// 			let pinnedNotes = prevNotes.filter(
-	// 				(n) => n.userPinned && n._id !== updatedNote._id
-	// 			);
-	// 			let unpinnedNotes = prevNotes.filter(
-	// 				(n) => !n.userPinned && n._id !== updatedNote._id
-	// 			);
-
-	// 			if (isPinned) {
-	// 				// If pinning, add to pinned notes
-	// 				pinnedNotes = [updatedNote, ...pinnedNotes];
-	// 			} else {
-	// 				// If unpinning, add to unpinned notes
-	// 				unpinnedNotes.push(updatedNote);
-	// 				// Sort unpinned notes by time
-	// 				unpinnedNotes = unpinnedNotes.sort(
-	// 					(a, b) =>
-	// 						new Date(b?.lastEdited?.time) - new Date(a?.lastEdited?.time)
-	// 				);
-	// 			}
-
-	// 			// Combine pinned and sorted unpinned notes
-	// 			return [...pinnedNotes, ...unpinnedNotes];
-	// 		});
-
-	// 		return updatedNote;
-	// 	});
-
-	// 	axios
-	// 		.patch(`${apiLink}/api/updateUserPreference/${note._id}`, { userID: user?._id, preference: updatedPreference }, header)
-	// 		.then((res) => {
-	// 			console.log(res);
-	// 		})
-	// 		.catch((err) => {
-	// 			console.log(err);
-	// 		});
-	// };
-
 	return (
-
 		<View style={styles.card}>
-			<View style={{}}>
+			<View>
 				<View style={{ flexDirection: 'row', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
-					<TouchableOpacity onPress={() => starring()}>
+					<TouchableOpacity onPress={starring}>
 						{starred ? <FilledStar /> : <Star />}
 					</TouchableOpacity>
-					<Pin />
+					<TouchableOpacity onPress={pinning}>
+						{pinned ? <MaterialIcons name={'push-pin'} />
+						: <Pin />}
+					</TouchableOpacity>
 				</View>
-				<View style={{ height: 1, width: '100%', backgroundColor: '#F2F1F1', marginVertical: 7, alignSelf: 'center' }}>
-				</View>
+				<View style={styles.separator} />
 			</View>
-			<TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate("NoteDetailScreen", { item })}>
-				<Text style={styles.title}>{data?.title}</Text>
 
-				{/* <ScrollView style={{ maxHeight: "60%", }}> */}
+			<TouchableOpacity
+				activeOpacity={0.8}
+				onPress={() => navigation.navigate("NoteDetailScreen", { item })}
+			>
+				<Text style={styles.title}>{data?.title}</Text>
 				<FlatList
 					data={data.details}
-					keyExtractor={(item) => item.key}
-					renderItem={({ item }) => (
+					keyExtractor={(detail) => detail.key}
+					renderItem={({ item: detailItem }) => (
 						<View>
-							<Text style={styles.description}>{item.value}</Text>
+							<Text style={styles.description}>{detailItem.value}</Text>
 						</View>
 					)}
 				/>
-				{/* </ScrollView> */}
-
 			</TouchableOpacity>
 
 			<LinearGradient
@@ -173,12 +207,12 @@ const NotesCard = ({ item }) => {
 
 			<View style={styles.bottomComponent}>
 				<View>
-					<Text style={{ fontSize: 8, color: 'white', fontWeight: 'bold' }}>Last Edited</Text>
-					<Text style={{ fontSize: 10, color: 'white', fontWeight: 'bold' }}>{formattedDate}</Text>
+					<Text style={styles.bottomText}>Last Edited</Text>
+					<Text style={styles.dateText}>{formattedDate}</Text>
 					<View style={{ flexDirection: 'row', gap: 10 }}>
-						<Text style={{ fontSize: 8, color: 'white', fontWeight: 'bold' }}>You</Text>
-						<View style={{ width: 12, height: 12, borderRadius: 6, backgroundColor: '#FFF', justifyContent: 'center', alignItems: 'center' }}>
-							<Text style={{ fontSize: 9, color: 'black', fontWeight: '500' }}>K</Text>
+						<Text style={styles.bottomText}>You</Text>
+						<View style={styles.userIcon}>
+							<Text style={styles.userInitial}>K</Text>
 						</View>
 					</View>
 				</View>
@@ -187,7 +221,6 @@ const NotesCard = ({ item }) => {
 				</TouchableOpacity>
 			</View>
 		</View>
-		// </TouchableOpacity>
 	);
 };
 
@@ -200,7 +233,6 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		overflow: "hidden",
 		position: "relative",
-
 	},
 	title: {
 		fontSize: 12,
@@ -211,7 +243,7 @@ const styles = StyleSheet.create({
 		fontSize: 9,
 		color: "#555",
 		marginTop: 5,
-		fontFamily: 'Poppins-Medium'
+		fontFamily: 'Poppins-Medium',
 	},
 	gradient: {
 		position: "absolute",
@@ -231,7 +263,36 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: "center",
 	},
-
+	bottomText: {
+		fontSize: 8,
+		color: 'white',
+		fontWeight: 'bold',
+	},
+	dateText: {
+		fontSize: 10,
+		color: 'white',
+		fontWeight: 'bold',
+	},
+	userIcon: {
+		width: 12,
+		height: 12,
+		borderRadius: 6,
+		backgroundColor: '#FFF',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	userInitial: {
+		fontSize: 9,
+		color: 'black',
+		fontWeight: '500',
+	},
+	separator: {
+		height: 1,
+		width: '100%',
+		backgroundColor: '#F2F1F1',
+		marginVertical: 7,
+		alignSelf: 'center',
+	},
 });
 
 export default NotesCard;

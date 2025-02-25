@@ -20,7 +20,6 @@ const apiLink = "https://notes.ceoitbox.com";
 export const GlobalProvider = ({ children }) => {
   const [activeSection, setActiveSection] = useState("Notes");
   const [token, setToken] = useState(getItem('token'));
-  const [userProfileInfo, setUserProfileInfo] = useState('');
   const [allNotesData, setAllNotesData] = useState([]);
   const [singleNoteData, setSingleNoteData] = useState([]);
   const [starredData, setStarredData] = useState(undefined);
@@ -84,8 +83,8 @@ export const GlobalProvider = ({ children }) => {
   };
 
   const UserLogout = async () => {
+    await removeItem('userProfileInfo');
     await removeItem('token');
-    setUserProfileInfo('');
     return "Logged Out Successfully!";
   };
 
@@ -130,8 +129,9 @@ export const GlobalProvider = ({ children }) => {
       // console.log('userInfo',response.data);
 
       if (response?.data?.token) {
-        setUserProfileInfo(response?.data?.body);
-        setItem('token', response?.data?.token);
+        // console.log('userProfile',response?.data?.body)
+        await setItem('userProfileInfo',response?.data?.body);
+        await setItem('token', response?.data?.token);
         navigation.navigate('HomeScreen');
       }
     } catch (error) {
@@ -173,7 +173,7 @@ export const GlobalProvider = ({ children }) => {
       // console.log('userInfo', data);
       if (data) {
         setItem('token', data?.token);
-        setUserProfileInfo(data?.body);
+        setItem('userProfileInfo',data?.body);
       }
     } catch (error) {
       throw error;
@@ -205,8 +205,6 @@ export const GlobalProvider = ({ children }) => {
     activeSection,
     setActiveSection,
     configureGoogleSignIn,
-    userProfileInfo,
-    setUserProfileInfo,
     signInWithGoogle,
     getAllNotes,
     allNotesData,

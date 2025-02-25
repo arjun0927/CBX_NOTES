@@ -37,6 +37,7 @@ const Menu = ({ setModalVisible, setActiveSection, activeSection }) => {
     opacity.value = withTiming(0.6, { duration: 300 });
   }, []);
 
+
   const closeMenu = () => {
     translateX.value = withSpring(-screenWidth * 0.7, {
       damping: 10,
@@ -60,31 +61,38 @@ const Menu = ({ setModalVisible, setActiveSection, activeSection }) => {
   return (
     <View style={styles.fullScreen}>
       <Animated.View style={[styles.container, animatedMenu]}>
-          <View style={[styles.flex, styles.cbx_box]}>
-            <CBXNOTES />
-            <Text style={styles.cbx}>CBX NOTES</Text>
-          </View>
+        <View style={[styles.flex, styles.cbx_box]}>
+          <CBXNOTES />
+          <Text style={styles.cbx}>CBX NOTES</Text>
+        </View>
 
         <TouchableOpacity
-          onPress={() => setActiveSection("Notes")}
+          onPress={() => {
+            setActiveSection("Notes");
+            closeMenu();
+          }}
           style={[styles.flex, styles.box, activeSection === "Notes" && styles.activeItem]}
         >
           <Noteicon />
           <Text style={styles.text}>Notes</Text>
         </TouchableOpacity>
-        {/* <View style={styles.first_separator} /> */}
 
         <TouchableOpacity
-          onPress={() => setActiveSection("Labels")}
+          onPress={() => {
+            setActiveSection("Labels");
+            closeMenu();
+          }}
           style={[styles.flex, styles.box, activeSection === "Labels" && styles.activeItem]}
         >
           <Labelicon />
           <Text style={styles.text}>Labels</Text>
         </TouchableOpacity>
-        {/* <View style={styles.first_separator} /> */}
 
         <TouchableOpacity
-          onPress={() => setActiveSection("starred")}
+          onPress={() => {
+            setActiveSection("starred");
+            closeMenu();
+          }}
           style={[styles.flex, styles.box, activeSection === "starred" && styles.activeItem]}
         >
           <Staricon />
@@ -92,7 +100,10 @@ const Menu = ({ setModalVisible, setActiveSection, activeSection }) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => setActiveSection("archived")}
+          onPress={() => {
+            setActiveSection("archived");
+            closeMenu();
+          }}
           style={[styles.flex, styles.box, activeSection === "archived" && styles.activeItem]}
         >
           <ArchieveIcon />
@@ -100,39 +111,49 @@ const Menu = ({ setModalVisible, setActiveSection, activeSection }) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => setActiveSection("Deleted")}
+          onPress={() => {
+            setActiveSection("Deleted");
+            closeMenu();
+          }}
           style={[styles.flex, styles.box, activeSection === "Deleted" && styles.activeItem]}
         >
           <Deletedicon />
           <Text style={styles.text}>Deleted</Text>
         </TouchableOpacity>
-        <View style={styles.separator} />
 
         <TouchableOpacity
-          onPress={() => setActiveSection("Tasks")}
+          onPress={() => {
+            setActiveSection("Tasks");
+            closeMenu();
+          }}
           style={[styles.flex, styles.box, activeSection === "Tasks" && styles.activeItem]}
         >
           <Tasksicon />
           <Text style={styles.text}>Tasks</Text>
         </TouchableOpacity>
-        <View style={styles.separator} />
 
         <TouchableOpacity
-          onPress={() => setActiveSection("Instructions")}
+          onPress={() => {
+            setActiveSection("Instructions");
+            closeMenu();
+          }}
           style={[styles.flex, styles.box, activeSection === "Instructions" && styles.activeItem]}
         >
           <Videoicon />
           <Text style={styles.text}>Instructions</Text>
         </TouchableOpacity>
-        <View style={styles.separator} />
 
         <TouchableOpacity
-          onPress={() => setActiveSection("Updates")}
+          onPress={() => {
+            setActiveSection("Updates");
+            closeMenu();
+          }}
           style={[styles.flex, styles.box, activeSection === "Updates" && styles.activeItem]}
         >
           <Updatesicon />
           <Text style={styles.text}>Updates</Text>
         </TouchableOpacity>
+
         <View style={styles.separator} />
 
         <TouchableOpacity onPress={handleLogoutPress} style={[styles.flex, styles.box]}>
