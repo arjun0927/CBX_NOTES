@@ -40,8 +40,7 @@ const ThreeDotModal = ({ threeDotModalVisible, setThreeDotModalVisible }) => {
 	};
 
 	return (
-		<>
-			{/* ThreeDot Modal */}
+		<View>
 			<Modal transparent={true} visible={threeDotModalVisible} animationType="fade">
 				<Pressable style={styles.modalOverlay} onPress={() => setThreeDotModalVisible(false)}>
 					<Pressable style={styles.modalContainer} onPress={(e) => e.stopPropagation()}>
@@ -90,7 +89,7 @@ const ThreeDotModal = ({ threeDotModalVisible, setThreeDotModalVisible }) => {
 				setAddLabeModal={setAddLabeModal}
 			/>
 
-		</>
+		</View>
 	);
 };
 

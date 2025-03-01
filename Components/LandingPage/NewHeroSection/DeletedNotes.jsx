@@ -5,11 +5,12 @@ import List_view from '../../../SvgIcons/List_view';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { rMS, rS, rVS } from '../../Utils/Responsive';
 import MainNotesCard from './MainNotesCard';
+import Empty2 from './Empty2';
 
 const DeletedNotes = () => {
 	return (
 		<SafeAreaView style={styles.container}>
-			
+			<Empty2/>
 		</SafeAreaView>
 	)
 }
@@ -19,8 +20,6 @@ export default DeletedNotes;
 const styles = StyleSheet.create({
 	container:{
 		flex:1,
-		paddingHorizontal:10,
-		paddingVertical:10,
 	},
 	navContainer:{
 		flexDirection:'row',

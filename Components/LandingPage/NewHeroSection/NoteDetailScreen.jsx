@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput, Dimensions } from "react-native";
 import { getItem } from "../../Utils/Storage";
 import axios from "axios";
 import { rMS, rVS } from "../../Utils/Responsive";
@@ -18,13 +18,33 @@ import AntDesign from "react-native-vector-icons/FontAwesome5"
 import ThreeDotModal from "../Modal/ThreeDotModal";
 import ThreeDots from "../../../SvgIcons/ThreeDots";
 import { useGlobalContext } from "../../Context/Context";
+import AddFields from "../Modal/AddFields";
+import RenderHtml from 'react-native-render-html';
+import ReactNativeHtml from "../../Features/jsFunctions/ReactNativeHtml";
 
 const NoteDetailScreen = ({ route }) => {
   const [threeDotModalVisible, setThreeDotModalVisible] = useState(false);
+  const [addFieldsVisible, setAddFieldsVisible] = useState(false);
+  const [text, setText] = useState('');
   const { getSingleNote, singleNoteData } = useGlobalContext();
+
+  const { width } = Dimensions.get("window");
 
   const item = route?.params?.item;
   const navigation = useNavigation();
+
+  const bottomSheetRef = useRef(null)
+
+  const handleOpenBottomSheet = () => {
+    console.log("Button Pressed", bottomSheetRef.current);
+    if (bottomSheetRef.current) {
+      bottomSheetRef.current.expand();
+    } else {
+      console.log("bottomSheetRef is null, AddFields might not be mounted yet");
+    }
+  };
+
+
 
   const getSingleNoteData = async () => {
     try {
@@ -40,6 +60,9 @@ const NoteDetailScreen = ({ route }) => {
 
   useEffect(() => {
     getSingleNoteData();
+    if(singleNoteData){
+      console.log('singleNoteData',singleNoteData)
+    }
   }, []);
 
   return (
@@ -78,16 +101,17 @@ const NoteDetailScreen = ({ route }) => {
         </Text>
       </View>
 
-      {/* Divider */}
       <View style={styles.divider} />
 
-      {/* Note Content */}
+
+      {/* <RenderHtml contentWidth={width} source={source} /> */}
+
       <FlatList
         data={singleNoteData.details}
         keyExtractor={(item) => item.key}
         renderItem={({ item }) => (
-          <View>
-            <Text style={styles.description}>{item?.value}</Text>
+          <View style={styles.description}>
+            <ReactNativeHtml item={item.value} />
           </View>
         )}
         showsVerticalScrollIndicator={false}
@@ -95,7 +119,7 @@ const NoteDetailScreen = ({ route }) => {
       />
 
       <View style={styles.bottomToolbar}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setAddFieldsVisible(!addFieldsVisible)}>
           <Plus />
         </TouchableOpacity>
         <TouchableOpacity>
@@ -107,14 +131,21 @@ const NoteDetailScreen = ({ route }) => {
         <TouchableOpacity>
           <Theme />
         </TouchableOpacity>
-        <TextInput style={styles.input} placeholder="Type here..." placeholderTextColor="#999" />
+        <TextInput
+          style={styles.input}
+          placeholder="Type here..."
+          placeholderTextColor="#999"
+          onChangeText={(text) => setText(text)}
+        />
         <TouchableOpacity onPress={() => setThreeDotModalVisible(true)}>
-
           <ThreeDots />
         </TouchableOpacity>
       </View>
+      <AddFields
+        setAddFieldsVisible={setAddFieldsVisible}
+        addFieldsVisible={addFieldsVisible}
+      />
       <ThreeDotModal setThreeDotModalVisible={setThreeDotModalVisible} threeDotModalVisible={threeDotModalVisible} />
-
     </View>
   );
 };
@@ -177,15 +208,17 @@ const styles = StyleSheet.create({
   bottomToolbar: {
     position: "absolute",
     bottom: 0,
-    left: 0,
     right: 0,
+    left: 0,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-evenly",
     backgroundColor: "#fff",
     paddingVertical: 15,
     paddingHorizontal: 20,
-    gap: rMS(15)
+    gap: rMS(15),
+    zIndex: 100,
+    elevation: 5,
   },
   input: {
     flex: 1,

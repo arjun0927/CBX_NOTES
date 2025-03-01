@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 
@@ -6,9 +6,11 @@ import { useNavigation } from '@react-navigation/native';
 import PlusIcon from '../../../SvgIcons/PlusIcon';
 import AddNote from '../../../SvgIcons/AddNote';
 import Labelicon from '../../../SvgIcons/Labelicon';
+import AddLabelModal from '../Modal/AddLabelModal';
 
 const Add = () => {
   const [expanded, setExpanded] = useState(false);
+  const [addLabelModalVisible, setAddLabelModalVisible] = useState(false);
   const navigation = useNavigation();
 
   // Animation values
@@ -53,14 +55,22 @@ const Add = () => {
     opacity: expanded ? withTiming(1) : withTiming(0),
   }));
 
+  useEffect(() => {
+    console.log("Modal visibility changed:", addLabelModalVisible);
+  }, [addLabelModalVisible]);
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.options, animatedOptionList]}>
         <View style={styles.list_ontainer}>
           {/* Option 1 */}
-          <TouchableOpacity style={styles.optionButton}>
+          <TouchableOpacity style={styles.optionButton} onPress={() => {
+            console.log("Before:", addLabelModalVisible);
+            setAddLabelModalVisible(true);
+            console.log("After:", addLabelModalVisible);
+          }}>
             <View style={styles.button_circle}><Labelicon /></View>
           </TouchableOpacity>
+
 
           {/* Option 2 */}
           <TouchableOpacity style={styles.optionButton} onPress={() => navigation.navigate('CreateNote')}>
@@ -69,14 +79,19 @@ const Add = () => {
         </View>
       </Animated.View>
 
-      {/* Floating Action Button */}
-      <TouchableOpacity style={styles.add_plus_btn} onPress={toggleMenu}>
+      <TouchableOpacity activeOpacity={0.6} style={styles.add_plus_btn} onPress={toggleMenu}>
         <View style={styles.add_button}>
           <Animated.View style={iconStyle}>
             <PlusIcon width={'30'} height={'30'} color={"white"} />
           </Animated.View>
         </View>
       </TouchableOpacity>
+      <View style={{flex:1,}}>
+      <AddLabelModal
+        addLabelModalVisible={addLabelModalVisible}
+        setAddLabelModalVisible={setAddLabelModalVisible}
+      />
+      </View>
     </View>
   );
 };

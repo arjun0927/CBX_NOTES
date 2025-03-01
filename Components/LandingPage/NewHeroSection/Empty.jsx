@@ -30,11 +30,11 @@ const Empty = () => {
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.add_plus_btn]} >
+      {/* <TouchableOpacity style={[styles.add_plus_btn]} >
         <View style={styles.add_button}>
           <PlusIcon />
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   )
 }

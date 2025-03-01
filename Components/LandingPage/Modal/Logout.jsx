@@ -1,12 +1,11 @@
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { rMS } from '../../Utils/Responsive';
-import { removeItem } from '../../Utils/Storage';
 import { useNavigation } from '@react-navigation/native';
 import { useGlobalContext } from '../../Context/Context';
 
 const Logout = ({ setLogoutModalVisible, isLogoutModalVisible }) => {
-	const {UserLogout , showToast}=useGlobalContext()
+	const { UserLogout, showToast } = useGlobalContext()
 
 	const navigation = useNavigation();
 
@@ -14,13 +13,13 @@ const Logout = ({ setLogoutModalVisible, isLogoutModalVisible }) => {
 		const message = await UserLogout();
 		// console.log(message)
 		showToast({
-			type:'SUCCESS',
-			message:message,
+			type: 'SUCCESS',
+			message: message,
 		})
 		setLogoutModalVisible(false);
 		navigation.replace('SignUp');
 	};
-	
+
 	return (
 		<Modal transparent={true} visible={isLogoutModalVisible} animationType="fade">
 			<View style={styles.modalOverlay}>
@@ -75,7 +74,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-between",
 		width: "100%",
-		paddingHorizontal:rMS(10)
+		paddingHorizontal: rMS(10)
 	},
 	cancelButton: {
 		paddingHorizontal: rMS(15),

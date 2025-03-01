@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, TextInput, Text, View, Image, TouchableOpacity } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
 import List_view from '../../../SvgIcons/List_view';
 import Bell from '../../../SvgIcons/Bell';
@@ -7,37 +7,66 @@ import User_icon from '../../../SvgIcons/User_icon';
 import { useGlobalContext } from '../../Context/Context';
 import { rMS, rS } from '../../Utils/Responsive';
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import Notification from '../Modal/Notification';
+import { getItem } from '../../Utils/Storage';
+import UserProfileModal from '../Modal/UserProfileModal';
 
 const Navbar = () => {
 
   const { activeSection, setActiveSection } = useGlobalContext();
+  const [isNotificationModalVisible, setNotificationModalVisible] = useState(false)
+  const [userProfileModal, setUserProfileModal] = useState(false)
+  const userInfo = getItem('userProfileInfo');
+  const userImage = userInfo?.picture || null;
+
+  // console.log('User Image URL:', userImage);
 
   return (
     <>
-      {
-        activeSection === 'Notes' && (
-          <View style={styles.navContainer}>
-            <View style={styles.leftNav}>
-              <View style={styles.search_container}>
-                <Icon name="search" size={14} color="gray" style={styles.icon} />
-                <TextInput style={styles.input} placeholder="Search Notes" />
-              </View>
-            </View>
-
-            <View style={styles.rightNav}>
-              <TouchableOpacity>
-                <List_view />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <Bell />
-              </TouchableOpacity>
-              <TouchableOpacity>
-                <User_icon />
-              </TouchableOpacity>
+      {activeSection === 'Notes' && (
+        <View style={styles.navContainer}>
+          <View style={styles.leftNav}>
+            <View style={styles.search_container}>
+              <Icon name="search" size={14} color="gray" style={styles.icon} />
+              <TextInput style={styles.input} placeholder="Search Notes" />
             </View>
           </View>
-        )
-      }
+
+          <View style={styles.rightNav}>
+            <TouchableOpacity>
+              <List_view />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setNotificationModalVisible(!isNotificationModalVisible)}>
+              <Bell />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={()=>setUserProfileModal(true)}>
+              {userImage ? (
+                <Image source={{ uri: userImage }} style={styles.userImage} />
+              ) : (
+                <User_icon/>
+              )}
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {/* ✅ Baaki sections ko as it is rakha hai */}
+      {activeSection === 'starred' && (
+        <View style={styles.navContainer}>
+          <Text style={styles.navText}>Starred</Text>
+          <View style={styles.rightNav}>
+            <View style={styles.searchContainer}>
+              <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
+            </View>
+            <List_view />
+          </View>
+        </View>
+      )}
+
+      <Notification
+        isNotificationModalVisible={isNotificationModalVisible}
+        setNotificationModalVisible={setNotificationModalVisible}
+      />
       {
         activeSection === 'starred' && (
           <View style={styles.navContainer}>
@@ -68,7 +97,7 @@ const Navbar = () => {
         activeSection === 'Deleted' && (
           <View style={styles.navContainer}>
             <Text style={styles.navText}>Deleted</Text>
-            
+
           </View>
         )
       }
@@ -89,7 +118,7 @@ const Navbar = () => {
         activeSection === 'Instructions' && (
           <View style={styles.navContainer}>
             <Text style={styles.navText}>Instructions</Text>
-            
+
           </View>
         )
       }
@@ -104,6 +133,19 @@ const Navbar = () => {
             </View>
           </View>
         )
+      }
+
+      {
+        <Notification
+          isNotificationModalVisible={isNotificationModalVisible}
+          setNotificationModalVisible={setNotificationModalVisible}
+        />
+      }
+      {
+        <UserProfileModal 
+          userProfileModal={userProfileModal}
+          setUserProfileModal={setUserProfileModal}
+        />
       }
 
     </>
@@ -161,5 +203,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: rS(15)
-  }
+  },
+  userImage: {
+    width: 24,
+    height: 24,  
+    borderRadius: 12, 
+  },
 });

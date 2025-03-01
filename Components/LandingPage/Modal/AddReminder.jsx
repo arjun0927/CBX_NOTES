@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
 	cencelBtn: {
 		justifyContent: 'center',
 		alignItems: 'center',
-		paddingVertical: 5,
+		paddingVertical: 4,
 		paddingHorizontal: 12,
 		borderColor: '#598931',
 		borderWidth: 1.5,
@@ -170,9 +170,9 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		paddingVertical: 5,
-		paddingHorizontal: 14,
+		paddingHorizontal: 12,
 		backgroundColor: '#598931',
-		borderRadius: 15
+		borderRadius: 10,
 	},
 	saveText: {
 		color: '#FFF',
