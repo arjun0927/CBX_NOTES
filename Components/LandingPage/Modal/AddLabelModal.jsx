@@ -12,7 +12,7 @@ const AddLabelModal = ({ setAddLabelModalVisible, addLabelModalVisible }) => {
 	const [addNewLabelModal, setAddNewLabelModal] = useState(false)
 	const labels = ["Management", "Design", "Sanika", "Ishaan", "Shayma", "Accounts", "Development", "Programmer", "HR > Sakshi", "Manager"];
 
-	console.log('from modal screen', addLabelModalVisible);
+	// console.log('from modal screen', addLabelModalVisible);
 
 
 	return (

@@ -27,15 +27,15 @@ function deltaToHtml(delta) {
 
 const ReactNativeHtml = ({ item }) => {
     const { width } = useWindowDimensions();
-    console.log("Item Value: ", item);
+    // console.log("Item Value: ", item);
 
     const content = item ? String(item) : "No content available";
     const delta = htmlToDelta(content);
 
-    console.log("Delta Format: ", JSON.stringify(delta, null, 2));
+    // console.log("Delta Format: ", JSON.stringify(delta, null, 2));
 
     const text = deltaToHtml(delta);
-    const source = { html: `<div>${text}</div>` };  // ✅ `div` टैग से पूरा content दिखेगा
+    const source = { html: `<div>${text}</div>` };
 
     return (
         <RenderHTML 
@@ -77,7 +77,7 @@ function htmlToDelta(htmlString) {
                     break;
                 case 'font': 
                     if (node.attribs?.color) {
-                        attributes.color = node.attribs.color; // ✅ Font टैग से color extract करना
+                        attributes.color = node.attribs.color; 
                     }
                     break;
                 case 'blockquote': attributes.blockquote = true; break;

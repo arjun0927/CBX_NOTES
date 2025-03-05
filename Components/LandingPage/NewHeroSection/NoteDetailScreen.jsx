@@ -25,6 +25,8 @@ import ReactNativeHtml from "../../Features/jsFunctions/ReactNativeHtml";
 const NoteDetailScreen = ({ route }) => {
   const [threeDotModalVisible, setThreeDotModalVisible] = useState(false);
   const [addFieldsVisible, setAddFieldsVisible] = useState(false);
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const bottomSheetRef = useRef(null);
   const [text, setText] = useState('');
   const { getSingleNote, singleNoteData } = useGlobalContext();
 
@@ -33,17 +35,19 @@ const NoteDetailScreen = ({ route }) => {
   const item = route?.params?.item;
   const navigation = useNavigation();
 
-  const bottomSheetRef = useRef(null)
+
+  
 
   const handleOpenBottomSheet = () => {
-    console.log("Button Pressed", bottomSheetRef.current);
-    if (bottomSheetRef.current) {
-      bottomSheetRef.current.expand();
+    if (isBottomSheetOpen) {
+      bottomSheetRef.current?.close();
+      setIsBottomSheetOpen(false);
     } else {
-      console.log("bottomSheetRef is null, AddFields might not be mounted yet");
+      bottomSheetRef.current?.expand();
+      setIsBottomSheetOpen(true);
     }
   };
-
+  
 
 
   const getSingleNoteData = async () => {
@@ -60,9 +64,13 @@ const NoteDetailScreen = ({ route }) => {
 
   useEffect(() => {
     getSingleNoteData();
-    if(singleNoteData){
-      console.log('singleNoteData',singleNoteData)
+    if (singleNoteData) {
+      console.log('singleNoteData', singleNoteData);
     }
+  
+    // Ensure the bottom sheet is closed by default
+    bottomSheetRef.current?.close();
+    setIsBottomSheetOpen(false);
   }, []);
 
   return (
@@ -119,9 +127,10 @@ const NoteDetailScreen = ({ route }) => {
       />
 
       <View style={styles.bottomToolbar}>
-        <TouchableOpacity onPress={() => setAddFieldsVisible(!addFieldsVisible)}>
+        <TouchableOpacity onPress={handleOpenBottomSheet}>
           <Plus />
         </TouchableOpacity>
+
         <TouchableOpacity>
           <Undo />
         </TouchableOpacity>
@@ -141,10 +150,7 @@ const NoteDetailScreen = ({ route }) => {
           <ThreeDots />
         </TouchableOpacity>
       </View>
-      <AddFields
-        setAddFieldsVisible={setAddFieldsVisible}
-        addFieldsVisible={addFieldsVisible}
-      />
+      <AddFields bottomSheetRef={bottomSheetRef} isBottomSheetOpen={isBottomSheetOpen} setIsBottomSheetOpen={setIsBottomSheetOpen} />
       <ThreeDotModal setThreeDotModalVisible={setThreeDotModalVisible} threeDotModalVisible={threeDotModalVisible} />
     </View>
   );

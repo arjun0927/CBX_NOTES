@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   View,
   Image,
@@ -18,6 +18,8 @@ import UndoIcon from "../../../SvgIcons/UndoIcon";
 import RedoIcon from "../../../SvgIcons/RedoIcon";
 import PaletIcon from "../../../SvgIcons/PaletIcon";
 import ThreedotIcon from "../../../SvgIcons/ThreedotIcon";
+import TextEditor from "./TextEditor.jsx";
+import QuillEditor from "react-native-cn-quill";
 
 const CreateNote = ({ navigation }) => {
   const [noteText, setNoteText] = useState("");
@@ -27,6 +29,9 @@ const CreateNote = ({ navigation }) => {
   //   require("../../SampleImage/Brain.jpg"),
   //   require("../../SampleImage/Param.jpg"),
   // ];
+
+  
+    const editorRef = useRef(null); 
 
   const [note, setNote] = useState({
     title: "",
@@ -236,7 +241,7 @@ const CreateNote = ({ navigation }) => {
       </View>
 
       {/* Middle Content (Text Editor) */}
-      <View style={styles.middleContainer}>
+      {/* <View style={styles.middleContainer}>
         <TextInput
           style={styles.titleInput}
           placeholder="Title"
@@ -254,10 +259,10 @@ const CreateNote = ({ navigation }) => {
           value={noteText}
           onChangeText={(text) => setNoteText(text)}
         />
-      </View>
+      </View> */}
 
       {/* Bottom Navigation */}
-      <View style={styles.bottom_navContainer}>
+      {/* <View style={styles.bottom_navContainer}>
         <View style={styles.bottom_leftNav}>
           <TouchableOpacity>
             <PlusIcon width={24} height={24} color={"#606160"} />
@@ -281,7 +286,13 @@ const CreateNote = ({ navigation }) => {
             <ThreedotIcon />
           </TouchableOpacity>
         </View>
-      </View>
+      </View> */}
+      <TextEditor />
+      {/* <QuillEditor
+        style={styles.editor}
+        ref={editorRef}
+        // initialHtml="<h1>Quill Editor for react-native</h1>"
+      /> */}
     </SafeAreaView>
   );
 };

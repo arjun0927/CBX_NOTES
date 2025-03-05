@@ -14,6 +14,7 @@ import Update from "../Components/LandingPage/NewHeroSection/Update";
 import Instruction from "../Components/LandingPage/NewHeroSection/Instruction";
 import Tasks from "../Components/LandingPage/NewHeroSection/Tasks";
 import CreateNote from "../Components/LandingPage/NewFeatureSection/CreateNote";
+import TextEditor from "../Components/LandingPage/NewFeatureSection/TextEditor";
 
 const Stack = createNativeStackNavigator();
 

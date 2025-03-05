@@ -68,19 +68,6 @@ const Navbar = () => {
         setNotificationModalVisible={setNotificationModalVisible}
       />
       {
-        activeSection === 'starred' && (
-          <View style={styles.navContainer}>
-            <Text style={styles.navText}>Starred</Text>
-            <View style={styles.rightNav}>
-              <View style={styles.searchContainer}>
-                <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
-              </View>
-              <List_view />
-            </View>
-          </View>
-        )
-      }
-      {
         activeSection === 'archived' && (
           <View style={styles.navContainer}>
             <Text style={styles.navText}>Archived</Text>
