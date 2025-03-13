@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, FlatList } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { rS, rVS } from "../../Utils/Responsive";
 import DownArrow from "../../../SvgIcons/DownArrow";
@@ -12,9 +12,10 @@ import { useGlobalContext } from "../../Context/Context";
 import axios from "axios";
 import { getItem } from "../../Utils/Storage";
 
+const { width } = Dimensions.get('window');
 
 const NotesCard = ({ item }) => {
-	const { header, apiLink } = useGlobalContext();
+	const { header, apiLink, listView } = useGlobalContext();
 	const [pinned, setPinned] = useState(false);
 	const [userProfileInfo, setUserProfileInfo] = useState(null);
 	const [starred, setStarred] = useState(false);
@@ -87,8 +88,6 @@ const NotesCard = ({ item }) => {
 			return updatedNote;
 		});
 
-		// console.log('body', { userID: userProfileInfo?._id, preference: updatedPreference });
-
 		try {
 			await axios.patch(`${apiLink}/api/updateUserPreference/${item._id}`,
 				{ userID: userProfileInfo?._id, preference: updatedPreference },
@@ -101,11 +100,10 @@ const NotesCard = ({ item }) => {
 	};
 
 	const pinning = async () => {
-		// const isPinned = !data.pinned;
 		const preferenceExists = data?.userPreferences?.find(
 			(e) => e?.userID == userProfileInfo?._id)
 		const isPinned = !preferenceExists?.pinned
-		// return
+
 		let updatedNote
 		let updatedPreference
 		setData((prev) => {
@@ -124,32 +122,6 @@ const NotesCard = ({ item }) => {
 				updatedNote.userPreferences.push(updatedPreference)
 			}
 
-			// setData((prevNotes) => {
-			// 	// Filter out the updated note from both arrays
-			// 	let pinnedNotes = prevNotes.filter(
-			// 		(n) => n.userPinned && n._id !== updatedNote._id
-			// 	);
-			// 	let unpinnedNotes = prevNotes.filter(
-			// 		(n) => !n.userPinned && n._id !== updatedNote._id
-			// 	);
-
-			// 	if (isPinned) {
-			// 		// If pinning, add to pinned notes
-			// 		pinnedNotes = [updatedNote, ...pinnedNotes];
-			// 	} else {
-			// 		// If unpinning, add to unpinned notes
-			// 		unpinnedNotes.push(updatedNote);
-			// 		// Sort unpinned notes by time
-			// 		unpinnedNotes = unpinnedNotes.sort(
-			// 			(a, b) =>
-			// 				new Date(b?.lastEdited?.time) - new Date(a?.lastEdited?.time)
-			// 		);
-			// 	}
-
-			// 	// Combine pinned and sorted unpinned notes
-			// 	return [...pinnedNotes, ...unpinnedNotes];
-			// });
-
 			return updatedNote;
 		});
 
@@ -163,36 +135,56 @@ const NotesCard = ({ item }) => {
 			});
 	};
 
-	return (
-		<View style={styles.card}>
-			<View>
-				<View style={{ flexDirection: 'row', gap: 6, justifyContent: 'flex-end', alignItems: 'center' }}>
-					<TouchableOpacity onPress={starring}>
-						{starred ? <FilledStar /> : <Star />}
-					</TouchableOpacity>
-					<TouchableOpacity onPress={pinning}>
-						{pinned ? <MaterialIcons name={'push-pin'} />
-						: <Pin />}
-					</TouchableOpacity>
-				</View>
-				<View style={styles.separator} />
-			</View>
+	// Determine card styles based on listView
+	const cardStyle = listView
+		? [styles.listCard]
+		: styles.card;
 
-			<TouchableOpacity
-				activeOpacity={0.8}
-				onPress={() => navigation.navigate("NoteDetailScreen", { item })}
-			>
-				<Text style={styles.title}>{data?.title}</Text>
-				<FlatList
-					data={data.details}
-					keyExtractor={(detail) => detail.key}
-					renderItem={({ item: detailItem }) => (
-						<View>
-							<Text style={styles.description}>{detailItem.value}</Text>
-						</View>
-					)}
-				/>
-			</TouchableOpacity>
+	const contentStyle = listView
+		? styles.listContent
+		: {};
+
+	const gradientStyle = listView
+		? [styles.gradient, styles.listGradient]
+		: styles.gradient;
+
+	const bottomComponentStyle = listView
+		? [styles.bottomComponent, styles.listBottomComponent]
+		: styles.bottomComponent;
+	return (
+		<View style={cardStyle}>
+			<View style={styles.mainContentContainer}>
+				<View style={[styles.contentWrapper, contentStyle]}>
+					<View style={[styles.headerRow, listView && styles.listHeaderRow]}>
+						<TouchableOpacity onPress={starring}>
+							{starred ? <FilledStar /> : <Star />}
+						</TouchableOpacity>
+						<TouchableOpacity onPress={pinning}>
+							{pinned ? <MaterialIcons name={'push-pin'} size={12} /> : <Pin />}
+						</TouchableOpacity>
+					</View>
+					<View style={styles.separator} />
+				</View>
+
+				<TouchableOpacity
+					activeOpacity={0.8}
+					style={[styles.contentContainer, listView && styles.listContentContainer]}
+					onPress={() => navigation.navigate("NoteDetailScreen", { item })}
+				>
+					<Text style={[styles.title, listView && styles.listTitle]}>{data?.title}</Text>
+					<FlatList
+						data={data.details}
+						keyExtractor={(detail) => detail.key}
+						renderItem={({ item: detailItem }) => (
+							<View>
+								<Text style={[styles.description, listView && styles.listDescription]}>
+									{detailItem.value}
+								</Text>
+							</View>
+						)}
+					/>
+				</TouchableOpacity>
+			</View>
 
 			<LinearGradient
 				colors={[
@@ -202,11 +194,11 @@ const NotesCard = ({ item }) => {
 					"rgba(116, 115, 115, 0.84)",
 					"#4A4A4A",
 				]}
-				style={styles.gradient}
+				style={gradientStyle}
 			/>
 
-			<View style={styles.bottomComponent}>
-				<View>
+			<View style={bottomComponentStyle}>
+				<View style={styles.bottomInfo}>
 					<Text style={styles.bottomText}>Last Edited</Text>
 					<Text style={styles.dateText}>{formattedDate}</Text>
 					<View style={{ flexDirection: 'row', gap: 10 }}>
@@ -225,25 +217,73 @@ const NotesCard = ({ item }) => {
 };
 
 const styles = StyleSheet.create({
+	mainContentContainer: {
+		flex: 1,
+		width: '100%',
+		paddingBottom: 40,
+	},
+	contentWrapper: {
+		width: '100%',
+	},
+	listContent: {
+		width: '100%',
+	},
+	contentContainer: {
+		flex: 1,
+		width: '100%',
+	},
+	listContentContainer: {
+		flex: 1,
+		width: '100%',
+	},
 	card: {
 		backgroundColor: "#fff",
 		padding: 10,
-		width: rS(160),
+		width: width / 2.2,
 		height: rVS(197),
 		borderRadius: 10,
 		overflow: "hidden",
 		position: "relative",
+	},
+	listCard: {
+		backgroundColor: "#fff",
+		padding: 10,
+		borderRadius: 10,
+		overflow: "hidden",
+		position: "relative",
+		width: '100%',
+		height: rVS(197),
+		flexDirection: 'row',
+	},
+	headerRow: {
+		flexDirection: 'row',
+		gap: 6,
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		width: '100%',
+	},
+	listHeaderRow: {
+		justifyContent: 'flex-end',
+		marginBottom: 5,
+		width: '100%',
 	},
 	title: {
 		fontSize: 12,
 		fontFamily: 'Poppins-SemiBold',
 		color: "#464646",
 	},
+	listTitle: {
+		fontSize: 14,
+		marginBottom: 5,
+	},
 	description: {
 		fontSize: 9,
 		color: "#555",
 		marginTop: 5,
 		fontFamily: 'Poppins-Medium',
+	},
+	listDescription: {
+		fontSize: 11,
 	},
 	gradient: {
 		position: "absolute",
@@ -254,6 +294,10 @@ const styles = StyleSheet.create({
 		borderBottomLeftRadius: 10,
 		borderBottomRightRadius: 10,
 	},
+	listGradient: {
+		// width: '100%',
+		height: "30%",
+	},
 	bottomComponent: {
 		position: "absolute",
 		bottom: 5,
@@ -262,6 +306,13 @@ const styles = StyleSheet.create({
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: "center",
+	},
+	listBottomComponent: {
+		width: '100%',
+		paddingHorizontal: 15,
+	},
+	bottomInfo: {
+		flex: 1,
 	},
 	bottomText: {
 		fontSize: 8,

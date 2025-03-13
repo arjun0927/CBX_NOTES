@@ -19,10 +19,18 @@ import RedoIcon from "../../../SvgIcons/RedoIcon";
 import PaletIcon from "../../../SvgIcons/PaletIcon";
 import ThreedotIcon from "../../../SvgIcons/ThreedotIcon";
 import TextEditor from "./TextEditor.jsx";
-import QuillEditor from "react-native-cn-quill";
+import Aa from "../../../SvgIcons/Aa.jsx";
 
 const CreateNote = ({ navigation }) => {
   const [noteText, setNoteText] = useState("");
+
+  const editorRef = useRef(null);
+
+  const handleAaIconPress = () => {
+    if (editorRef.current) {
+      editorRef.current.toggleToolbar();
+    }
+  };
 
   // const images = [
   //   require("../../SampleImage/Aman.jpg"),
@@ -30,8 +38,6 @@ const CreateNote = ({ navigation }) => {
   //   require("../../SampleImage/Param.jpg"),
   // ];
 
-  
-    const editorRef = useRef(null); 
 
   const [note, setNote] = useState({
     title: "",
@@ -262,7 +268,8 @@ const CreateNote = ({ navigation }) => {
       </View> */}
 
       {/* Bottom Navigation */}
-      {/* <View style={styles.bottom_navContainer}>
+      <TextEditor ref={editorRef} />
+      <View style={styles.bottom_navContainer}>
         <View style={styles.bottom_leftNav}>
           <TouchableOpacity>
             <PlusIcon width={24} height={24} color={"#606160"} />
@@ -276,6 +283,9 @@ const CreateNote = ({ navigation }) => {
           <TouchableOpacity>
             <PaletIcon />
           </TouchableOpacity>
+          <TouchableOpacity onPress={handleAaIconPress}>
+            <Aa />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.bottom_rightNav}>
@@ -286,13 +296,7 @@ const CreateNote = ({ navigation }) => {
             <ThreedotIcon />
           </TouchableOpacity>
         </View>
-      </View> */}
-      <TextEditor />
-      {/* <QuillEditor
-        style={styles.editor}
-        ref={editorRef}
-        // initialHtml="<h1>Quill Editor for react-native</h1>"
-      /> */}
+      </View>
     </SafeAreaView>
   );
 };

@@ -8,15 +8,6 @@ import { rMS, rS, rVS } from '../../Utils/Responsive';
 const Instruction = () => {
 	return (
 		<SafeAreaView style={styles.container}>
-			<View style={styles.navContainer}>
-				<Text style={styles.navText}>Instruction</Text>
-				<View style={styles.rightNav}>
-					<View style={styles.searchContainer}>
-						<AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
-					</View>
-					<List_view />
-				</View>
-			</View>
 
 		</SafeAreaView>
 	)

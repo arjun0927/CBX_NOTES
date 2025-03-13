@@ -23,6 +23,8 @@ export const GlobalProvider = ({ children }) => {
   const [allNotesData, setAllNotesData] = useState([]);
   const [singleNoteData, setSingleNoteData] = useState([]);
   const [starredData, setStarredData] = useState(undefined);
+  const [listView, setListView] = useState(false)
+  
 
   const header = {
     headers: {
@@ -130,7 +132,7 @@ export const GlobalProvider = ({ children }) => {
 
       if (response?.data?.token) {
         // console.log('userProfile',response?.data?.body)
-        await setItem('userProfileInfo',response?.data?.body);
+        await setItem('userProfileInfo', response?.data?.body);
         await setItem('token', response?.data?.token);
         navigation.navigate('HomeScreen');
       }
@@ -173,7 +175,7 @@ export const GlobalProvider = ({ children }) => {
       // console.log('userInfo', data);
       if (data) {
         setItem('token', data?.token);
-        setItem('userProfileInfo',data?.body);
+        setItem('userProfileInfo', data?.body);
       }
     } catch (error) {
       throw error;
@@ -182,13 +184,13 @@ export const GlobalProvider = ({ children }) => {
 
   const getStarredNotesData = async () => {
     try {
-      const { data } = await api.get('/api/getNotes/starred/v2' , {
+      const { data } = await api.get('/api/getNotes/starred/v2', {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       })
-      if(data){
+      if (data) {
         setStarredData(data)
       }
     } catch (error) {
@@ -216,7 +218,9 @@ export const GlobalProvider = ({ children }) => {
     apiLink,
     getStarredNotesData,
     starredData,
-    setStarredData
+    setStarredData,
+    listView,
+    setListView,
   };
 
   return (

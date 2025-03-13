@@ -10,16 +10,16 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import Notification from '../Modal/Notification';
 import { getItem } from '../../Utils/Storage';
 import UserProfileModal from '../Modal/UserProfileModal';
+import List_View2 from '../../../SvgIcons/List_View2';
 
 const Navbar = () => {
 
   const { activeSection, setActiveSection } = useGlobalContext();
   const [isNotificationModalVisible, setNotificationModalVisible] = useState(false)
-  const [userProfileModal, setUserProfileModal] = useState(false)
+  const [userProfileModal, setUserProfileModal] = useState(false);
+  const {listView,setListView} = useGlobalContext();
   const userInfo = getItem('userProfileInfo');
   const userImage = userInfo?.picture || null;
-
-  // console.log('User Image URL:', userImage);
 
   return (
     <>
@@ -33,9 +33,16 @@ const Navbar = () => {
           </View>
 
           <View style={styles.rightNav}>
-            <TouchableOpacity>
-              <List_view />
+            <TouchableOpacity onPress={()=> setListView(!listView)}>
+              {
+                listView ? (
+                  <List_View2 />
+                ) : (
+                  <List_view />
+                )
+              }
             </TouchableOpacity>
+
             <TouchableOpacity onPress={() => setNotificationModalVisible(!isNotificationModalVisible)}>
               <Bell />
             </TouchableOpacity>
@@ -58,7 +65,15 @@ const Navbar = () => {
             <View style={styles.searchContainer}>
               <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
             </View>
-            <List_view />
+            <TouchableOpacity onPress={()=> setListView(!listView)}>
+              {
+                listView ? (
+                  <List_View2 />
+                ) : (
+                  <List_view />
+                )
+              }
+            </TouchableOpacity>
           </View>
         </View>
       )}
@@ -75,7 +90,15 @@ const Navbar = () => {
               <View style={styles.searchContainer}>
                 <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
               </View>
-              <List_view />
+              <TouchableOpacity onPress={()=> setListView(!listView)}>
+              {
+                listView ? (
+                  <List_View2 />
+                ) : (
+                  <List_view />
+                )
+              }
+            </TouchableOpacity>
             </View>
           </View>
         )
@@ -96,7 +119,15 @@ const Navbar = () => {
               <View style={styles.searchContainer}>
                 <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
               </View>
-              <List_view />
+              <TouchableOpacity onPress={()=> setListView(!listView)}>
+              {
+                listView ? (
+                  <List_View2 />
+                ) : (
+                  <List_view />
+                )
+              }
+            </TouchableOpacity>
             </View>
           </View>
         )

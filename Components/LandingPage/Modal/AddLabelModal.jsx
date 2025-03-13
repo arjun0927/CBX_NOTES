@@ -75,7 +75,7 @@ export default AddLabelModal;
 const styles = StyleSheet.create({
 	modalOverlay: {
 		flex: 1,
-		backgroundColor: "rgba(84, 84, 84, 0.40)",
+		backgroundColor: "rgba(84, 84, 84, 0.70)",
 		justifyContent: "center",
 		alignItems: "center",
 	},

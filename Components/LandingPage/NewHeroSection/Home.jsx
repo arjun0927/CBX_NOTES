@@ -21,12 +21,32 @@ import Instruction from "./Instruction";
 import Update from "./Update";
 import Tasks from "./Tasks";
 import { useGlobalContext } from "../../Context/Context";
+import { getItem } from "../../Utils/Storage";
 
 const Home = ({ navigation }) => {
   const [menuVisible, setMenuVisible] = useState(false);
-  const { activeSection, setActiveSection } = useGlobalContext();
+  const [loading, setLoading] = useState(true);
+  const { getAllNotes, allNotesData, activeSection, setActiveSection } = useGlobalContext();
   const slideAnim = useSharedValue(-250);
   const fadeAnim = useSharedValue(0);
+
+  const getNoteData = async () => {
+    try {
+      const token = await getItem('token');
+      await getAllNotes(token);
+    } catch (error) {
+      console.error('Error fetching notes:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getNoteData();
+    if(allNotesData){
+      console.log('notes',allNotesData);
+    }
+  }, [getAllNotes]);
 
 
   const fadeStyle = useAnimatedStyle(() => ({
@@ -67,7 +87,7 @@ const Home = ({ navigation }) => {
 
       <View style={{ flexDirection: 'row', alignItems: 'center', }}>
         <TouchableOpacity onPress={() => setMenuVisible(true)}>
-          <View style={{ marginLeft: rMS(10) , marginBottom:3 }}>
+          <View style={{ marginLeft: rMS(10), marginBottom: 3 }}>
             <BurgerIcon />
           </View>
         </TouchableOpacity>
@@ -75,7 +95,7 @@ const Home = ({ navigation }) => {
       </View>
       <View style={styles.container}>
         {activeSection === "Notes" &&
-          <MainNotesCard />
+          <MainNotesCard allNotesData={allNotesData} loading={loading} setLoading={setLoading} />
         }
         {activeSection === "Deleted" && <DeletedNotes />}
         {activeSection === "Instructions" && <Instruction />}
@@ -97,7 +117,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingHorizontal: rMS(10),
+    // paddingHorizontal: rMS(5),
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
