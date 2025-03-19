@@ -89,9 +89,14 @@ const NotesCard = ({ item }) => {
 		});
 
 		try {
+			const token = await getItem('token');
 			await axios.patch(`${apiLink}/api/updateUserPreference/${item._id}`,
 				{ userID: userProfileInfo?._id, preference: updatedPreference },
-				header
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
 			);
 			setStarred(!starred);
 		} catch (err) {
@@ -125,7 +130,15 @@ const NotesCard = ({ item }) => {
 			return updatedNote;
 		});
 
-		await axios.patch(`${apiLink}/api/updateUserPreference/${item._id}`, { userID: userProfileInfo?._id, preference: updatedPreference }, header)
+		const token = await getItem('token');
+
+		await axios.patch(`${apiLink}/api/updateUserPreference/${item._id}`, { userID: userProfileInfo?._id, preference: updatedPreference }, 
+			{
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			}
+		)
 			.then((res) => {
 				console.log('Pinned response', res);
 				setPinned(!pinned)

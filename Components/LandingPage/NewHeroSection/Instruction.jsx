@@ -8,7 +8,6 @@ import { rMS, rS, rVS } from '../../Utils/Responsive';
 const Instruction = () => {
 	return (
 		<SafeAreaView style={styles.container}>
-
 		</SafeAreaView>
 	)
 }

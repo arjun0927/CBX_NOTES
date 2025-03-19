@@ -24,13 +24,14 @@ export const GlobalProvider = ({ children }) => {
   const [singleNoteData, setSingleNoteData] = useState([]);
   const [starredData, setStarredData] = useState(undefined);
   const [listView, setListView] = useState(false)
+  const [update, setUpdates] = useState({});
   
 
-  const header = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
   };
+  
 
   const showToast = ({ type, message }) => {
     Toast.show({
@@ -198,10 +199,21 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
+  const getUpdates = async() => {
+      try {
+        const {data} = await api.get('/api/getAllFeatures');
+        if(data){
+          setUpdates(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
 
 
   const value = {
-    header,
+    headers,
     showToast,
     UserLogout,
     activeSection,
@@ -221,6 +233,9 @@ export const GlobalProvider = ({ children }) => {
     setStarredData,
     listView,
     setListView,
+    getUpdates,
+    update,
+    setUpdates,
   };
 
   return (

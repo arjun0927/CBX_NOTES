@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useImperativeHandle } from 'react';
-import { View, StyleSheet, SafeAreaView, TouchableOpacity, Text, ScrollView, Animated } from 'react-native';
+import { View, StyleSheet, SafeAreaView, TouchableOpacity, Text, ScrollView, Animated, FlatList } from 'react-native';
 import { WebView } from 'react-native-webview';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { TextInput } from 'react-native';
 
-const TextEditor = ({ props, ref }) => {
+const TextEditor = ({ toolbarVisible, setToolbarVisible, ref }) => {
   const [content, setContent] = useState('');
   const [editorReady, setEditorReady] = useState(false);
   const [selectedFont, setSelectedFont] = useState('arial');
@@ -14,25 +14,28 @@ const TextEditor = ({ props, ref }) => {
   const [showSizeMenu, setShowSizeMenu] = useState(false);
   const [showColorMenu, setShowColorMenu] = useState(false);
   const [showLinkInput, setShowLinkInput] = useState(false);
+  const [listType, setListType] = useState(null);
   const [linkUrl, setLinkUrl] = useState('');
-  const [listType, setListType] = useState(null); // Track current list type
+  const [linkText, setLinkText] = useState('');
+  
 
-  const [toolbarVisible, setToolbarVisible] = useState(false);
   // Add animation value
-  const toolbarAnimation = useRef(new Animated.Value(0)).current;
+  const toolbarAnimation = useRef(new Animated.Value(toolbarVisible ? 1 : 0)).current;
   const webViewRef = useRef(null);
+
+  // Update animation when toolbarVisible changes
+  useEffect(() => {
+    Animated.timing(toolbarAnimation, {
+      toValue: toolbarVisible ? 1 : 0,
+      duration: 300,
+      useNativeDriver: false
+    }).start();
+  }, [toolbarVisible, toolbarAnimation]);
 
   useImperativeHandle(ref, () => ({
     toggleToolbar: () => {
       const newVisibility = !toolbarVisible;
       setToolbarVisible(newVisibility);
-
-      // Animate the toolbar
-      Animated.timing(toolbarAnimation, {
-        toValue: newVisibility ? 1 : 0,
-        duration: 300,
-        useNativeDriver: false
-      }).start();
     }
   }));
 
@@ -116,6 +119,13 @@ const TextEditor = ({ props, ref }) => {
     }
     .ql-editor .ql-size-5 {
       font-size: 32px;
+    }
+    
+    /* Make links stand out */
+    .ql-editor a {
+      color: #0066cc;
+      text-decoration: underline;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -214,41 +224,74 @@ const TextEditor = ({ props, ref }) => {
           }
           break;
         case 'toggleList':
-  const currentListType = quill.getFormat(range).list;
-  console.log('Current list type:', currentListType);
-  
-  if (!currentListType) {
-    quill.format('list', 'bullet');
-    console.log('Setting list to bullet');
-  } else if (currentListType === 'bullet') {
-    quill.format('list', 'ordered');
-    console.log('Setting list to ordered');
-  } else {
-    quill.format('list', false);
-    console.log('Removing list formatting');
-  }
-  
-  // Force refresh of format
-  setTimeout(() => {
-    window.ReactNativeWebView.postMessage(JSON.stringify({
-      type: 'format',
-      data: quill.getFormat()
-    }));
-  }, 50);
-  break;
-        case 'link':
-          if (value) {
-            // If there's text selected, apply link to selection
-            if (range.length > 0) {
-              quill.format('link', value);
-            } else {
-              // If no text is selected, insert the URL as a clickable link
-              quill.insertText(range.index, value, {
-                'link': value
-              });
-            }
+          const currentListType = quill.getFormat(range).list;
+          console.log('Current list type:', currentListType);
+          
+          if (!currentListType) {
+            quill.format('list', 'bullet');
+            console.log('Setting list to bullet');
+          } else if (currentListType === 'bullet') {
+            quill.format('list', 'ordered');
+            console.log('Setting list to ordered');
           } else {
-            quill.format('link', false);
+            quill.format('list', false);
+            console.log('Removing list formatting');
+          }
+          
+          // Force refresh of format
+          setTimeout(() => {
+            window.ReactNativeWebView.postMessage(JSON.stringify({
+              type: 'format',
+              data: quill.getFormat()
+            }));
+          }, 50);
+          break;
+        case 'link':
+          try {
+            if (value) {
+              let linkConfig;
+              try {
+                // Try to parse JSON if it's passed as a JSON string
+                linkConfig = JSON.parse(value);
+              } catch(e) {
+                // If it's not JSON, use the value as URL directly (backwards compatibility)
+                linkConfig = { url: value };
+              }
+              
+              // If we have link text and a selection
+              if (linkConfig.text && range.length === 0) {
+                // Insert the link text with the link format
+                quill.insertText(range.index, linkConfig.text, {
+                  'link': linkConfig.url
+                });
+              } 
+              // If there's text selected, apply link to selection
+              else if (range.length > 0) {
+                quill.format('link', linkConfig.url);
+              } 
+              // If no text is selected and no link text provided, insert the URL as link
+              else {
+                quill.insertText(range.index, linkConfig.url || value, {
+                  'link': linkConfig.url || value
+                });
+              }
+            } else {
+              quill.format('link', false);
+            }
+          } catch(e) {
+            console.error('Error handling link command', e);
+            // Fallback to the old behavior
+            if (value) {
+              if (range.length > 0) {
+                quill.format('link', value);
+              } else {
+                quill.insertText(range.index, value, {
+                  'link': value
+                });
+              }
+            } else {
+              quill.format('link', false);
+            }
           }
           break;
       }
@@ -279,6 +322,27 @@ const TextEditor = ({ props, ref }) => {
         }
       } catch (e) {
         console.error('Error processing command', e);
+      }
+    });
+    
+    // Add event listener for link clicks
+    document.addEventListener('click', function(e) {
+      let element = e.target;
+      
+      // Check if it's a link or a parent is a link
+      while (element && element !== document.body) {
+        if (element.tagName === 'A' && element.href) {
+          e.preventDefault();
+          
+          // Send the URL to React Native
+          window.ReactNativeWebView.postMessage(JSON.stringify({
+            type: 'linkClicked',
+            url: element.href
+          }));
+          
+          return;
+        }
+        element = element.parentNode;
       }
     });
     
@@ -430,13 +494,17 @@ const TextEditor = ({ props, ref }) => {
       if (!/^https?:\/\//i.test(finalUrl)) {
         finalUrl = 'https://' + finalUrl;
       }
-      executeCommand('link', finalUrl);
+      executeCommand('link', JSON.stringify({
+        url: finalUrl,
+        text: linkText.trim() || finalUrl // Use linkText if provided, otherwise use URL
+      }));
     } else {
       // Remove link if URL is empty
       executeCommand('link', false);
     }
     setShowLinkInput(false);
     setLinkUrl('');
+    setLinkText(''); // Reset link text as well
     focusEditor(); // Focus the editor after adding link
   };
 
@@ -450,6 +518,12 @@ const TextEditor = ({ props, ref }) => {
       return "format-list-bulleted";
     }
   };
+
+  // Calculate toolbar height based on animation value
+  const toolbarHeight = toolbarAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 56] // Adjust based on your toolbar's height
+  });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -467,7 +541,14 @@ const TextEditor = ({ props, ref }) => {
       </View>
 
       {editorReady && (
-        <View style={styles.toolbar}>
+        <Animated.View style={[
+          styles.toolbar,
+          {
+            height: toolbarHeight,
+            // overflow: 'hidden',
+            opacity: toolbarAnimation
+          }
+        ]}>
           {/* Font Family */}
           <View>
             <TouchableOpacity
@@ -565,31 +646,36 @@ const TextEditor = ({ props, ref }) => {
               }}
             >
               <Icon name="format-color-text" size={24} color="#444" />
-              {/* <View style={[styles.selectedColorIndicator, { backgroundColor: formatState.color || '#000000' }]} /> */}
             </TouchableOpacity>
 
             {showColorMenu && (
-              <View style={styles.colorPalette}>
-                <ScrollView>
-                  <View style={styles.colorGrid}>
-                    {colorOptions.map((color) => (
+              <View style={[styles.colorPalette]}>
+                <View style={styles.colorPaletteContainer}>
+                  <FlatList
+                    data={colorOptions}
+                    numColumns={4}
+                    keyExtractor={(item) => item.value}
+                    scrollEnabled={true}
+                    nestedScrollEnabled={true}
+                    showsVerticalScrollIndicator={true}
+                    contentContainerStyle={styles.colorPaletteContent}
+                    renderItem={({ item }) => (
                       <TouchableOpacity
-                        key={color.value}
                         style={[
                           styles.colorItem,
-                          { backgroundColor: color.value },
-                          formatState.color === color.value && styles.selectedColorItem
+                          { backgroundColor: item.value },
+                          formatState.color === item.value && styles.selectedColorItem
                         ]}
                         onPress={() => {
-                          executeCommand('color', color.value);
-                          setSelectedColor(color.value);
+                          executeCommand('color', item.value);
+                          setSelectedColor(item.value);
                           setShowColorMenu(false);
                           focusEditor();
                         }}
                       />
-                    ))}
-                  </View>
-                </ScrollView>
+                    )}
+                  />
+                </View>
               </View>
             )}
           </View>
@@ -646,7 +732,7 @@ const TextEditor = ({ props, ref }) => {
           >
             <Icon name="link" size={24} color="#444" />
           </TouchableOpacity>
-        </View>
+        </Animated.View>
       )}
 
       {/* Link Input Dialog */}
@@ -664,11 +750,9 @@ const TextEditor = ({ props, ref }) => {
           <TextInput
             style={styles.linkInput}
             placeholder="Link Text"
-            value={linkUrl}
-            onChangeText={setLinkUrl}
-            autoCapitalize="none"
-            keyboardType="url"
-            autoFocus={true}
+            value={linkText}
+            onChangeText={setLinkText}
+            autoCapitalize="sentences"
           />
           <View style={styles.linkButtons}>
             <TouchableOpacity
@@ -682,6 +766,7 @@ const TextEditor = ({ props, ref }) => {
               onPress={() => {
                 setShowLinkInput(false);
                 setLinkUrl('');
+                setLinkText('');
                 focusEditor();
               }}
             >
@@ -707,7 +792,6 @@ const styles = StyleSheet.create({
   },
   toolbar: {
     flexDirection: 'row',
-    // backgroundColor: '#f5f5f5',
     borderTopWidth: 0.5,
     borderColor: '#ddd',
     padding: 8,
@@ -716,7 +800,6 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   toolButton: {
-    // padding: 5,
     borderRadius: 4,
     marginHorizontal: 2,
   },
@@ -733,7 +816,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     width: 110,
     maxHeight: 200,
-    zIndex: 1000,
+    zIndex: 100000,
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -748,7 +831,8 @@ const styles = StyleSheet.create({
   activeItem: {
     backgroundColor: '#e6f2ff',
   },
-  // New styles for the color palette
+  // Update these styles in your StyleSheet
+
   colorPalette: {
     position: 'absolute',
     bottom: 50,
@@ -757,9 +841,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 8,
-    // padding: 8,
     width: 200,
-    maxHeight: 200,
+    height: 200,
     zIndex: 1000,
     elevation: 5,
     shadowColor: '#000',
@@ -767,7 +850,14 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
-  colorGrid: {
+  colorPaletteContainer: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  colorPaletteContent: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
@@ -783,15 +873,6 @@ const styles = StyleSheet.create({
   selectedColorItem: {
     borderWidth: 2,
     borderColor: '#007AFF',
-  },
-  selectedColorIndicator: {
-    position: 'absolute',
-    bottom: 0,
-    left: '50%',
-    marginLeft: -6,
-    width: 12,
-    height: 3,
-    borderRadius: 2,
   },
   linkInputContainer: {
     position: 'absolute',
@@ -822,14 +903,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgb(152, 127, 168)',
     borderRadius: 8,
     padding: 8,
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
     marginLeft: 10,
   },
   linkButtonText: {
-    fontSize:14,
+    fontSize: 14,
     color: 'white',
-    // fontWeight: 'bold',
-    fontFamily:'Poppins-Medium'
+    fontFamily: 'Poppins-Medium'
   },
   cancelButton: {
     backgroundColor: '#f5f5f5',
@@ -838,8 +918,8 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     color: '#444',
-    fontSize:14,
-    fontFamily:'Poppins-Medium',
+    fontSize: 14,
+    fontFamily: 'Poppins-Medium',
   }
 });
 

@@ -1,36 +1,63 @@
-import { Image, Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
+import { Image, Modal, Pressable, TextInput, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { launchImageLibrary } from 'react-native-image-picker'; // Import Image Picker
 import { rMS } from '../../Utils/Responsive';
 import Feather from 'react-native-vector-icons/Feather';
 import LogoutIcon from '../../../SvgIcons/Logouticon';
-import { getItem } from '../../Utils/Storage';
+import { getItem, setItem } from '../../Utils/Storage';
 import User_icon from '../../../SvgIcons/User_icon';
 import Edit from '../../../SvgIcons/Edit';
 import { useNavigation } from '@react-navigation/native';
 import { useGlobalContext } from '../../Context/Context';
 import Logout from './Logout';
+import axios from 'axios';
 
 const UserProfileModal = ({ setUserProfileModal, userProfileModal }) => {
-	const [isLogoutModalVisible, setLogoutModalVisible] = useState(false)
-	const userInfo = getItem('userProfileInfo');
-	const [userImage, setUserImage] = useState(userInfo?.picture || null);
-	const { UserLogout, showToast } = useGlobalContext()
+	const [isLogoutModalVisible, setLogoutModalVisible] = useState(false);
+	const [userInfo, setUserInfo] = useState(null); // State to store user info
+	const [userImage, setUserImage] = useState(null);
+	const [name, setName] = useState('');
+	const [visibleNameField, setVisibleNameField] = useState(false);
+	const { UserLogout, showToast } = useGlobalContext();
 
-	// console.log('userInfo',userInfo)
+	// Fetch user info on modal open
+	useEffect(() => {
+		const fetchUserInfo = async () => {
+			const storedUserInfo = await getItem('userProfileInfo');
+			setUserInfo(storedUserInfo);
+			setUserImage(storedUserInfo?.picture || null);
+			setName(storedUserInfo?.name || '');
+		};
+		fetchUserInfo();
+	}, [userProfileModal]); 
 
-	const navigation = useNavigation();
-
-	const handleLogoutConfirm = async () => {
-		const message = await UserLogout();
-		// console.log(message)
-		showToast({
-			type: 'SUCCESS',
-			message: message,
-		})
-		setUserProfileModal(false);
-		navigation.replace('SignUp');
+	const editName = async () => {
+		try {
+			const _id = userInfo._id;
+			const token = await getItem('token'); 
+	
+			const response = await axios.put(
+				`https://notes.ceoitbox.com/api/users/${_id}`,
+				{ name: name },
+				{
+					headers: {
+						Authorization: `Bearer ${token}`, 
+					},
+				}
+			);
+			await setItem('userProfileInfo', response.data);
+			setUserInfo(response.data); // Update state
+			setVisibleNameField(false); // Hide input field
+		} catch (error) {
+			console.error('Error updating name:', error.response?.data || error.message);
+		}
 	};
+
+	function closeModal(){
+		setUserProfileModal(false);
+		setVisibleNameField(false);
+	}
+
 
 	// Function to open the gallery
 	const openImagePicker = () => {
@@ -46,17 +73,17 @@ const UserProfileModal = ({ setUserProfileModal, userProfileModal }) => {
 				console.log('Image Picker Error: ', response.errorMessage);
 			} else {
 				const source = { uri: response.assets[0].uri };
-				setUserImage(source.uri); // Update the user image
+				setUserImage(source.uri);
 			}
 		});
 	};
 
 	return (
 		<Modal transparent={true} visible={userProfileModal} animationType="fade">
-			<Pressable style={styles.modalOverlay} onPress={() => setUserProfileModal(false)}>
+			<Pressable style={styles.modalOverlay} onPress={() => closeModal()}>
 				<Pressable style={styles.modalContainer} onPress={(e) => e.stopPropagation()}>
 					<View style={styles.titleContainer}>
-						<TouchableOpacity onPress={() => setUserProfileModal(false)}>
+						<TouchableOpacity onPress={() => closeModal()}>
 							<Feather name={'arrow-left'} size={24} color={'#5F6368'} />
 						</TouchableOpacity>
 						<TouchableOpacity onPress={() => setLogoutModalVisible(true)}>
@@ -77,9 +104,50 @@ const UserProfileModal = ({ setUserProfileModal, userProfileModal }) => {
 						<Text style={styles.name}>{userInfo?.name}</Text>
 						<Text style={styles.email}>{userInfo?.email}</Text>
 					</View>
-					<TouchableOpacity style={styles.btnContainer}>
-						<Text style={styles.btnText}>Edit Profile</Text>
-					</TouchableOpacity>
+					{visibleNameField ? (
+						<View style={{ alignItems: 'center', flexDirection: 'row', justifyContent: 'center', gap: 10, }}>
+							<TextInput
+								placeholder='Enter Name'
+								value={name}
+								onChangeText={setName}
+								style={{
+									height: 35,
+									width: '70%',
+									backgroundColor: 'rgb(236, 227, 241)',
+									borderRadius: 6,
+									paddingHorizontal: 10,
+									// fontSize:rMS(12)
+								}}
+							/>
+							<TouchableOpacity
+								style={{
+									backgroundColor: 'rgb(152, 127, 168)',
+									height: 35,
+									paddingHorizontal: 12,
+									justifyContent: 'center',
+									alignItems: 'center',
+									borderRadius: 5
+								}}
+								onPress={() => {
+									editName();
+									setVisibleNameField(false); 
+								}}
+							>
+								<Text style={{ color: '#FFF', fontSize: rMS(14), fontFamily: 'Poppins-Medium' }}>
+									Save
+								</Text>
+							</TouchableOpacity>
+
+						</View>
+					) : (
+						<TouchableOpacity
+							style={styles.btnContainer}
+							onPress={() => setVisibleNameField(true)}
+						>
+							<Text style={styles.btnText}>Edit Profile</Text>
+						</TouchableOpacity>
+					)}
+
 				</Pressable>
 			</Pressable>
 			<Logout

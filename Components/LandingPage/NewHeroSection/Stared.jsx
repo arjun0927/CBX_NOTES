@@ -25,7 +25,7 @@ const Stared = () => {
 
 	useEffect(() => {
 		if (starredData) {
-			console.log('starred notes data', starredData);
+			// console.log('starred notes data', starredData);
 		}
 	}, [starredData]);
 

@@ -44,7 +44,7 @@ const Home = ({ navigation }) => {
   useEffect(() => {
     getNoteData();
     if(allNotesData){
-      console.log('notes',allNotesData);
+      // console.log('notes',allNotesData);
     }
   }, [getAllNotes]);
 

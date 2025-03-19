@@ -22,14 +22,12 @@ import TextEditor from "./TextEditor.jsx";
 import Aa from "../../../SvgIcons/Aa.jsx";
 
 const CreateNote = ({ navigation }) => {
-  const [noteText, setNoteText] = useState("");
+  const [toolbarVisible,setToolbarVisible] = useState(false)
 
   const editorRef = useRef(null);
 
   const handleAaIconPress = () => {
-    if (editorRef.current) {
-      editorRef.current.toggleToolbar();
-    }
+    setToolbarVisible(!toolbarVisible);
   };
 
   // const images = [
@@ -268,7 +266,7 @@ const CreateNote = ({ navigation }) => {
       </View> */}
 
       {/* Bottom Navigation */}
-      <TextEditor ref={editorRef} />
+      <TextEditor ref={editorRef} setToolbarVisible={setToolbarVisible} toolbarVisible={toolbarVisible} />
       <View style={styles.bottom_navContainer}>
         <View style={styles.bottom_leftNav}>
           <TouchableOpacity>

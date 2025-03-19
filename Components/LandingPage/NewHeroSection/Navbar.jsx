@@ -179,7 +179,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: rMS(15),
-    paddingVertical: 20,
+    paddingTop:rMS(15),
+    paddingVertical:10,
   },
   leftNav: {
     flexDirection: 'row',
