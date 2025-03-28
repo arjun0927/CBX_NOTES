@@ -24,14 +24,17 @@ export const GlobalProvider = ({ children }) => {
   const [singleNoteData, setSingleNoteData] = useState([]);
   const [starredData, setStarredData] = useState(undefined);
   const [listView, setListView] = useState(false)
-  const [update, setUpdates] = useState({});
-  
+  const [update, setUpdate] = useState({});
+  const [title, setTitle] = useState('');
+  const [details, setDetails] = useState(null);
+  const [updateSearchQuery, setUpdateSearchQuery] = useState('');
+
 
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   };
-  
+
 
   const showToast = ({ type, message }) => {
     Toast.show({
@@ -199,16 +202,16 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
-  const getUpdates = async() => {
-      try {
-        const {data} = await api.get('/api/getAllFeatures');
-        if(data){
-          setUpdates(data);
-        }
-      } catch (error) {
-        console.log(error);
+  const getUpdates = async () => {
+    try {
+      const { data } = await api.get('/api/getAllFeatures');
+      if (data) {
+        setUpdate(data.features);
       }
+    } catch (error) {
+      console.log(error);
     }
+  }
 
 
 
@@ -235,7 +238,13 @@ export const GlobalProvider = ({ children }) => {
     setListView,
     getUpdates,
     update,
-    setUpdates,
+    setUpdate,
+    updateSearchQuery,
+    setUpdateSearchQuery,
+    details,
+    setDetails,
+    title,
+    setTitle,
   };
 
   return (

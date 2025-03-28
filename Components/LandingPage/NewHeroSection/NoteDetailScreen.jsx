@@ -30,13 +30,12 @@ const NoteDetailScreen = ({ route }) => {
   const [text, setText] = useState('');
   const { getSingleNote, singleNoteData } = useGlobalContext();
 
+  // console.log('details',singleNoteData)
+
   const { width } = Dimensions.get("window");
 
   const item = route?.params?.item;
   const navigation = useNavigation();
-
-
-  
 
   const handleOpenBottomSheet = () => {
     if (isBottomSheetOpen) {

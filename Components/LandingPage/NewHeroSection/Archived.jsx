@@ -2,26 +2,15 @@ import React, { useCallback, useMemo, useRef } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import WebView from 'react-native-webview';
 
 const Archived = () => {
-  // ref
-  const bottomSheetRef = useRef(null);
-
-  // callbacks
-  const handleSheetChanges = useCallback((index) => {
-    console.log('handleSheetChanges', index);
-  }, []);
-
-  const snapPoints = useMemo(()=> ['25%','50%','75%'],[])
-
-  // renders
+  
   return (
     <GestureHandlerRootView style={styles.container}>
-      <BottomSheet snapPoints={snapPoints} ref={bottomSheetRef} onChange={handleSheetChanges}>
-        <BottomSheetView style={styles.contentContainer}>
-          <Text>Awesome 🎉</Text>
-        </BottomSheetView>
-      </BottomSheet>
+      
+      <WebView source={{ uri: 'https://notes.ceoitbox.com/client/view/task/b0e1a9dc88378085b3b78b44' }} style={{ flex: 1 }} />
+
     </GestureHandlerRootView>
   );
 };
@@ -29,7 +18,7 @@ const Archived = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'grey',
+    // backgroundColor: 'grey',
   },
   contentContainer: {
     flex: 1,

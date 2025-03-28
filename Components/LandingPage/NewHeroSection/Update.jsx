@@ -8,18 +8,34 @@ import Feather from 'react-native-vector-icons/Feather';
 const { width } = Dimensions.get('window');
 
 const Update = () => {
-    const [features, setFeatures] = useState([]);
-    const { getUpdates, update } = useGlobalContext();
+    const { getUpdates, update, updateSearchQuery } = useGlobalContext();
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [filteredUpdates, setFilteredUpdates] = useState([]);
 
     useEffect(() => {
         getUpdates();
     }, []);
 
     useEffect(() => {
-        setFeatures(update.features);
-    }, [update]);
+        if (Array.isArray(update)) {
+            setFilteredUpdates(
+                update.filter(item => {
+                    const dateString = new Date(item?.createdAt).toDateString().toLowerCase();
+                    return (
+                        item?.featureName?.toLowerCase().includes(updateSearchQuery?.toLowerCase()) ||
+                        dateString.includes(updateSearchQuery?.toLowerCase())
+                    );
+                })
+            );
+        }
+    }, [update, updateSearchQuery]);
+
+
+
+    useEffect(() => {
+        getUpdates();
+    }, []);
 
     const openImageModal = (imgUrl) => {
         setSelectedImage(imgUrl);
@@ -51,7 +67,7 @@ const Update = () => {
     return (
         <SafeAreaView style={styles.container}>
             <FlatList
-                data={features}
+                data={filteredUpdates}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderItem}
                 contentContainerStyle={styles.listContainer}

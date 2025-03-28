@@ -1,0 +1,222 @@
+[
+    {
+        "key": "54ff8ec48fb589a8e603851d",
+        "value": "this is for testing <u>purpose</u> \n",
+        "type": "text",
+        "nested": null,
+        "time": "2025-03-22T09:12:48.666Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true,
+        "originalIndex": 0
+    },
+    {
+        "key": "dc4b24d944b8ef04000c2780",
+        "value": "check box fields",
+        "type": "checkbox",
+        "checked": false,
+        "time": "2025-03-22T09:13:41.342Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true,
+        "originalIndex": 1,
+        "isParent": true,
+        "isReference": false
+    },
+    {
+        "key": "2780f56ce6acfffb8005390b",
+        "value": "https://res.cloudinary.com/dodljshqs/image/upload/v1738401207/ocow6zrqdar3qmcx8ngk.png",
+        "type": "img",
+        "checked": false,
+        "nested": null,
+        "height": 100,
+        "width": 150,
+        "originalIndex": 2
+    },
+    {
+        "key": "2bdc4b24d944b8ef04000c27",
+        "value": "nested checklist",
+        "type": "checkbox",
+        "checked": false,
+        "time": "2025-02-01T09:12:29.463Z",
+        "editor": "singharjun.software@gmail.com",
+        "nested": true,
+        "expanded": true,
+        "originalIndex": 3
+    },
+    {
+        "key": "366f2b2bdc4b24d944b8ef04",
+        "value": "nested text fields",
+        "type": "text",
+        "time": "2025-02-01T09:12:10.004Z",
+        "editor": "singharjun.software@gmail.com",
+        "nested": true,
+        "expanded": true,
+        "originalIndex": 4
+    },
+    {
+        "key": "fffb8005390b9630515884e5",
+        "value": "List fields ",
+        "type": "list",
+        "checked": false,
+        "nested": null,
+        "listType": "numbered",
+        "time": "2025-02-01T09:11:04.841Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true,
+        "count": "1",
+        "originalIndex": 5
+    },
+    {
+        "key": "c389ca3d7bfab5255688f3c4",
+        "value": "List fields another\n",
+        "type": "list",
+        "checked": false,
+        "nested": null,
+        "listType": "numbered",
+        "time": "2025-02-01T09:14:35.358Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true,
+        "count": "2",
+        "originalIndex": 6
+    },
+    {
+        "key": "1d08b948415eb855a6259117",
+        "value": "<div style=\"text-align: left;\"><span style=\"font-family: Roboto, Helvetica, Arial, sans-serif; font-size: 1rem; letter-spacing: 0.00938em;\">nested list</span></div>",
+        "type": "list",
+        "listType": "numbered",
+        "time": "2025-03-10T08:12:38.068Z",
+        "editor": "singharjun.software@gmail.com",
+        "nested": true,
+        "expanded": true,
+        "count": "2.1",
+        "originalIndex": 7
+    },
+    {
+        "key": "79c4b853ef831487230e47b1",
+        "value": "hello this is checked text ",
+        "type": "checkbox",
+        "checked": false,
+        "time": "2025-03-10T08:13:40.605Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true,
+        "isParent": true,
+        "isReference": false
+    },
+    {
+        "key": "01e612e4ea4ea8b0ae9bcd7e",
+        "value": "fhdasdj",
+        "type": "checkbox",
+        "checked": false,
+        "time": "2025-03-21T10:53:39.726Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true
+    },
+    {
+        "key": "5255688f3c43477bab647fb8",
+        "value": "jfkjdkadf",
+        "type": "checkbox",
+        "checked": false,
+        "time": "2025-03-22T09:34:30.939Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true,
+        "isParent": true,
+        "isReference": false
+    }
+]
+
+[
+    {
+        "key": "eb9a6fe5-93e8-4588-af26-43494b06c12b",
+        "value": "hello",
+        "type": "text",
+        "nested": null,
+        "time": "2025-03-25T11:47:25.622Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true,
+        "originalIndex": 0
+    },
+    {
+        "key": "e5e69fd6-fc91-467b-bb6d-4e373dcdf20e",
+        "value": "<strong>jdfkskld</strong>",
+        "type": "bold",
+        "nested": null,
+        "time": "2025-03-25T11:47:25.623Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true,
+        "originalIndex": 1
+    },
+    {
+        "key": "d7fca413-a3da-412f-b86d-0f2881cd415e",
+        "value": "<strong><em><u>jfdksafsdf</u></em></strong>",
+        "type": "bold|italic|underline",
+        "nested": null,
+        "time": "2025-03-25T11:47:25.623Z",
+        "editor": "singharjun.software@gmail.com",
+        "expanded": true,
+        "originalIndex": 2
+    }
+]
+
+
+
+{
+    "title": "<b>title for save note</b>",
+    "details": [
+        {
+            "key": "f1a7c3283ee03bcf92e64c29",
+            "value": "how to save note in backend ",
+            "type": "text",
+            "nested": null,
+            "time": "2025-03-27T07:06:01.550Z",
+            "editor": "singharjun.software@gmail.com",
+            "expanded": true,
+            "originalIndex": 1
+        }
+    ],
+    "time": "2025-03-27T07:06:34.243Z",
+    "versions": [],
+    "userID": "672dab52098a4ab0d4369a07", // login wali 
+    "email": "singharjun.software@gmail.com",
+    // default 
+    "accessTo": [],
+    "label": [],
+    "password": "",
+    "type": "",
+    "audioLink": "",
+    "colors": {
+        "bg": "rgb(255,255,255)",
+        "text": "rgb(0,0,0)"
+    },
+    "typeChanged": false,
+    "getEmailUpdates": false,
+    "tasks": {},
+    "masked": false,  // eye btn related eye off and eye true
+    "pinned": false,
+    "starred": false,
+    "archived": false,
+    "trashed": false,
+    "deleteDate": null,
+    "lastEdited": {
+        "_id": "672dab52098a4ab0d4369a07",
+        "email": "singharjun.software@gmail.com",
+        "time": "2025-03-27T07:06:34.243Z",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocIPg3YnhwZtnv5pUZ1ZZ1jWJopGoKCLhXOMQS9xIY2EPz-iXB8=s96-c",
+        "seen": false // default
+    },
+    "normalReminders": [],
+    "locationReminders": [],
+    "_id": "860f01fece6e78da4f6ad2e1",
+    "creator": {
+        "email": "singharjun.software@gmail.com",
+        "name": "Arjun singh",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocIPg3YnhwZtnv5pUZ1ZZ1jWJopGoKCLhXOMQS9xIY2EPz-iXB8=s96-c"
+    },
+    "userPreferences": [
+        {
+            "userID": "672dab52098a4ab0d4369a07",
+            "email": "singharjun.software@gmail.com",
+            "starred": false,
+            "pinned": false
+        }
+    ],
+    "urls": false
+}

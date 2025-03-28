@@ -1,353 +1,169 @@
+// 2. EditorToolbar Component
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Modal, FlatList, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Animated } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { FontSelector } from './FontSelector';
+import { SizeSelector } from './FontSelector';
+import { ColorSelector } from './Color';
+import FormatButtons from './FormatButtons';
 
-// You would need to import your actual icons here
-// This is a placeholder - replace with your actual icon library
-// For example: import { Icon } from 'your-icon-library';
+const EditorToolbar = ({ 
+  toolbarHeight, 
+  toolbarAnimation, 
+  formatState, 
+  executeCommand, 
+  focusEditor,
+  setShowLinkInput 
+}) => {
+  const [showFontMenu, setShowFontMenu] = useState(false);
+  const [showSizeMenu, setShowSizeMenu] = useState(false);
+  const [showColorMenu, setShowColorMenu] = useState(false);
 
-const EditorToolbar = ({ onPressFormat }) => {
-  const [showFontModal, setShowFontModal] = useState(false);
-  const [showSizeModal, setShowSizeModal] = useState(false);
-  const [showColorModal, setShowColorModal] = useState(false);
-  const [showLinkModal, setShowLinkModal] = useState(false);
-  
-  const fonts = [
-    { label: 'Arial', value: 'arial' },
-    { label: 'Times', value: 'times' },
-    { label: 'Courier', value: 'courier' },
-    { label: 'Georgia', value: 'georgia' },
-    { label: 'Verdana', value: 'verdana' }
-  ];
-  
-  const sizes = [
-    { label: '1', value: '1' },
-    { label: '2', value: '2' },
-    { label: '3', value: '3' },
-    { label: '4', value: '4' },
-    { label: '5', value: '5' }
-  ];
-  
-  const colors = [
-    { label: 'Black', value: '#000000' },
-    { label: 'Red', value: '#FF0000' },
-    { label: 'Green', value: '#00FF00' },
-    { label: 'Blue', value: '#0000FF' },
-    { label: 'Yellow', value: '#FFFF00' },
-    { label: 'Purple', value: '#800080' },
-    { label: 'Orange', value: '#FFA500' },
-    { label: 'Gray', value: '#808080' }
-  ];
-  
+  const getListIcon = () => {
+    if (formatState.list === 'bullet') {
+      return "format-list-bulleted";
+    } else if (formatState.list === 'ordered') {
+      return "format-list-numbered";
+    } else {
+      return "format-list-bulleted";
+    }
+  };
+
+  const closeAllMenus = () => {
+    setShowFontMenu(false);
+    setShowSizeMenu(false);
+    setShowColorMenu(false);
+  };
+
   return (
-    <View style={styles.toolbarContainer}>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {/* Bold */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => onPressFormat('bold')}
+    <Animated.View style={[
+      styles.toolbar,
+      {
+        height: toolbarHeight,
+        opacity: toolbarAnimation
+      }
+    ]}>
+      {/* Font Family */}
+      <View>
+        <TouchableOpacity
+          style={styles.toolButton}
+          onPress={() => {
+            setShowFontMenu(!showFontMenu);
+            setShowSizeMenu(false);
+            setShowColorMenu(false);
+            setShowLinkInput(false);
+          }}
         >
-          <Text style={styles.toolbarButtonText}>B</Text>
+          <Icon name="font-download" size={24} color="#444" />
         </TouchableOpacity>
-        
-        {/* Italic */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => onPressFormat('italic')}
+
+        {showFontMenu && (
+          <FontSelector
+            currentFont={formatState.font}
+            onSelectFont={(font) => {
+              executeCommand('font', font);
+              setShowFontMenu(false);
+              focusEditor();
+            }}
+          />
+        )}
+      </View>
+
+      {/* Font Size */}
+      <View>
+        <TouchableOpacity
+          style={styles.toolButton}
+          onPress={() => {
+            setShowSizeMenu(!showSizeMenu);
+            setShowFontMenu(false);
+            setShowColorMenu(false);
+            setShowLinkInput(false);
+          }}
         >
-          <Text style={styles.toolbarButtonText}>I</Text>
+          <Icon name="format-size" size={24} color="#444" />
         </TouchableOpacity>
-        
-        {/* Underline */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => onPressFormat('underline')}
+
+        {showSizeMenu && (
+          <SizeSelector
+            currentSize={formatState.size}
+            onSelectSize={(size) => {
+              executeCommand('size', size);
+              setShowSizeMenu(false);
+              focusEditor();
+            }}
+          />
+        )}
+      </View>
+
+      {/* Text Color */}
+      <View>
+        <TouchableOpacity
+          style={[styles.toolButton, { position: 'relative' }]}
+          onPress={() => {
+            setShowColorMenu(!showColorMenu);
+            setShowFontMenu(false);
+            setShowSizeMenu(false);
+            setShowLinkInput(false);
+          }}
         >
-          <Text style={styles.toolbarButtonText}>U</Text>
+          <Icon name="format-color-text" size={24} color="#444" />
         </TouchableOpacity>
-        
-        {/* Strikethrough */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => onPressFormat('strike')}
-        >
-          <Text style={styles.toolbarButtonText}>S</Text>
-        </TouchableOpacity>
-        
-        {/* Font Family */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => setShowFontModal(true)}
-        >
-          <Text style={styles.toolbarButtonText}>A</Text>
-        </TouchableOpacity>
-        
-        {/* Font Size */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => setShowSizeModal(true)}
-        >
-          <Text style={styles.toolbarButtonText}>TT</Text>
-        </TouchableOpacity>
-        
-        {/* Text Color */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => setShowColorModal(true)}
-        >
-          <Text style={styles.toolbarButtonText}>🎨</Text>
-        </TouchableOpacity>
-        
-        {/* Bullet List */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => onPressFormat('list', 'bullet')}
-        >
-          <Text style={styles.toolbarButtonText}>•</Text>
-        </TouchableOpacity>
-        
-        {/* Number List */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => onPressFormat('list', 'ordered')}
-        >
-          <Text style={styles.toolbarButtonText}>1.</Text>
-        </TouchableOpacity>
-        
-        {/* Link */}
-        <TouchableOpacity 
-          style={styles.toolbarButton} 
-          onPress={() => setShowLinkModal(true)}
-        >
-          <Text style={styles.toolbarButtonText}>🔗</Text>
-        </TouchableOpacity>
-      </ScrollView>
-      
-      {/* Font Family Modal */}
-      <Modal
-        visible={showFontModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowFontModal(false)}
+
+        {showColorMenu && (
+          <ColorSelector
+            currentColor={formatState.color}
+            onSelectColor={(color) => {
+              executeCommand('color', color);
+              setShowColorMenu(false);
+              focusEditor();
+            }}
+          />
+        )}
+      </View>
+
+      {/* Text Formatting Buttons */}
+      <FormatButtons 
+        formatState={formatState} 
+        executeCommand={executeCommand} 
+      />
+
+      {/* Toggle List (Bullet/Number) */}
+      <TouchableOpacity
+        style={[styles.toolButton, formatState.list && styles.activeButton]}
+        onPress={() => executeCommand('toggleList')}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Font</Text>
-            <FlatList
-              data={fonts}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.modalItem}
-                  onPress={() => {
-                    onPressFormat('font', item.value);
-                    setShowFontModal(false);
-                  }}
-                >
-                  <Text style={[styles.modalItemText, { fontFamily: item.label }]}>
-                    {item.label}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            />
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={() => setShowFontModal(false)}
-            >
-              <Text style={styles.modalCloseButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-      
-      {/* Font Size Modal */}
-      <Modal
-        visible={showSizeModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowSizeModal(false)}
+        <Icon name={getListIcon()} size={24} color="#444" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.toolButton}
+        onPress={() => {
+          closeAllMenus();
+          setShowLinkInput(true);
+        }}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Size</Text>
-            <FlatList
-              data={sizes}
-              keyExtractor={(item) => item.value}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.modalItem}
-                  onPress={() => {
-                    onPressFormat('size', item.value);
-                    setShowSizeModal(false);
-                  }}
-                >
-                  <Text style={styles.modalItemText}>
-                    Size {item.label}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            />
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={() => setShowSizeModal(false)}
-            >
-              <Text style={styles.modalCloseButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-      
-      {/* Color Modal */}
-      <Modal
-        visible={showColorModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowColorModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Select Color</Text>
-            <FlatList
-              data={colors}
-              keyExtractor={(item) => item.value}
-              numColumns={4}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={[styles.colorItem, { backgroundColor: item.value }]}
-                  onPress={() => {
-                    onPressFormat('color', item.value);
-                    setShowColorModal(false);
-                  }}
-                />
-              )}
-            />
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={() => setShowColorModal(false)}
-            >
-              <Text style={styles.modalCloseButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-      
-      {/* Link Modal */}
-      <Modal
-        visible={showLinkModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowLinkModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Insert Link</Text>
-            {/* This would typically have a TextInput for the URL */}
-            {/* For simplicity, we just have buttons for demo purposes */}
-            <TouchableOpacity
-              style={styles.modalButton}
-              onPress={() => {
-                // Simplified - normally would grab URL from TextInput
-                onPressFormat('link', 'https://example.com');
-                setShowLinkModal(false);
-              }}
-            >
-              <Text style={styles.modalButtonText}>Insert Link</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.modalCloseButton}
-              onPress={() => setShowLinkModal(false)}
-            >
-              <Text style={styles.modalCloseButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-    </View>
+        <Icon name="link" size={24} color="#444" />
+      </TouchableOpacity>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  toolbarContainer: {
+  toolbar: {
     flexDirection: 'row',
-    backgroundColor: '#f1f1f1',
-    borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    paddingVertical: 8,
-    paddingHorizontal: 5,
-  },
-  toolbarButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
+    borderTopWidth: 0.5,
+    borderColor: '#ddd',
+    padding: 8,
+    justifyContent: 'space-around',
     alignItems: 'center',
-    marginHorizontal: 2,
+    flexWrap: 'wrap',
+  },
+  toolButton: {
     borderRadius: 4,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#ddd',
+    marginHorizontal: 2,
   },
-  toolbarButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  activeButton: {
+    // backgroundColor: '#e6f2ff',
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-    maxHeight: '70%',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  modalItem: {
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  modalItemText: {
-    fontSize: 16,
-  },
-  colorItem: {
-    width: 50,
-    height: 50,
-    margin: 10,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  modalButton: {
-    backgroundColor: '#007bff',
-    borderRadius: 5,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    marginVertical: 10,
-  },
-  modalButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    textAlign: 'center',
-  },
-  modalCloseButton: {
-    backgroundColor: '#ddd',
-    borderRadius: 5,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    marginTop: 10,
-  },
-  modalCloseButtonText: {
-    fontSize: 16,
-    textAlign: 'center',
-  }
 });
 
 export default EditorToolbar;

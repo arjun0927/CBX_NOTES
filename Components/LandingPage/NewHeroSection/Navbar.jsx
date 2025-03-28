@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, TextInput, Text, View, Image, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { StyleSheet, TextInput, Text, View, Image, TouchableOpacity, Animated, Easing, Dimensions, } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
 import List_view from '../../../SvgIcons/List_view';
 import Bell from '../../../SvgIcons/Bell';
@@ -12,14 +12,45 @@ import { getItem } from '../../Utils/Storage';
 import UserProfileModal from '../Modal/UserProfileModal';
 import List_View2 from '../../../SvgIcons/List_View2';
 
-const Navbar = () => {
+const { width } = Dimensions.get('window');
 
-  const { activeSection, setActiveSection } = useGlobalContext();
+const Navbar = () => {
   const [isNotificationModalVisible, setNotificationModalVisible] = useState(false)
   const [userProfileModal, setUserProfileModal] = useState(false);
-  const {listView,setListView} = useGlobalContext();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const animation = useRef(new Animated.Value(0)).current;
+  const { listView, setListView , activeSection , updateSearchQuery ,setUpdateSearchQuery  } = useGlobalContext();
   const userInfo = getItem('userProfileInfo');
   const userImage = userInfo?.picture || null;
+
+  const toggleSearchBar = () => {
+    setIsExpanded((prev) => {
+      const newExpandedState = !prev;
+
+      Animated.timing(animation, {
+        toValue: newExpandedState ? 1 : 0,
+        duration: 300,
+        easing: Easing.inOut(Easing.ease),
+        useNativeDriver: false,
+      }).start();
+
+      return newExpandedState;
+    });
+  };
+  const animatedInputWidth = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, width * 0.35],
+  });
+
+  const animatedBackgroundColor = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['white', 'white'],
+  });
+
+  const animatedElevation = animation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 2],
+  });
 
   return (
     <>
@@ -33,7 +64,7 @@ const Navbar = () => {
           </View>
 
           <View style={styles.rightNav}>
-            <TouchableOpacity onPress={()=> setListView(!listView)}>
+            <TouchableOpacity onPress={() => setListView(!listView)}>
               {
                 listView ? (
                   <List_View2 />
@@ -46,18 +77,17 @@ const Navbar = () => {
             <TouchableOpacity onPress={() => setNotificationModalVisible(!isNotificationModalVisible)}>
               <Bell />
             </TouchableOpacity>
-            <TouchableOpacity onPress={()=>setUserProfileModal(true)}>
+            <TouchableOpacity onPress={() => setUserProfileModal(true)}>
               {userImage ? (
                 <Image source={{ uri: userImage }} style={styles.userImage} />
               ) : (
-                <User_icon/>
+                <User_icon />
               )}
             </TouchableOpacity>
           </View>
         </View>
       )}
 
-      {/* ✅ Baaki sections ko as it is rakha hai */}
       {activeSection === 'starred' && (
         <View style={styles.navContainer}>
           <Text style={styles.navText}>Starred</Text>
@@ -65,7 +95,7 @@ const Navbar = () => {
             <View style={styles.searchContainer}>
               <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
             </View>
-            <TouchableOpacity onPress={()=> setListView(!listView)}>
+            <TouchableOpacity onPress={() => setListView(!listView)}>
               {
                 listView ? (
                   <List_View2 />
@@ -90,15 +120,15 @@ const Navbar = () => {
               <View style={styles.searchContainer}>
                 <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
               </View>
-              <TouchableOpacity onPress={()=> setListView(!listView)}>
-              {
-                listView ? (
-                  <List_View2 />
-                ) : (
-                  <List_view />
-                )
-              }
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => setListView(!listView)}>
+                {
+                  listView ? (
+                    <List_View2 />
+                  ) : (
+                    <List_view />
+                  )
+                }
+              </TouchableOpacity>
             </View>
           </View>
         )
@@ -119,15 +149,15 @@ const Navbar = () => {
               <View style={styles.searchContainer}>
                 <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
               </View>
-              <TouchableOpacity onPress={()=> setListView(!listView)}>
-              {
-                listView ? (
-                  <List_View2 />
-                ) : (
-                  <List_view />
-                )
-              }
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => setListView(!listView)}>
+                {
+                  listView ? (
+                    <List_View2 />
+                  ) : (
+                    <List_view />
+                  )
+                }
+              </TouchableOpacity>
             </View>
           </View>
         )
@@ -145,9 +175,40 @@ const Navbar = () => {
           <View style={styles.navContainer}>
             <Text style={styles.navText}>Update</Text>
             <View style={styles.rightNav}>
-              <View style={styles.searchContainer}>
-                <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
-              </View>
+              {/* <View style={styles.searchContainer}>
+
+
+              </View> */}
+              <Animated.View
+                style={[
+                  styles.mainContainer,
+                  {
+                    backgroundColor: animatedBackgroundColor,
+                    elevation: isExpanded ? 0 : 0,
+                  },
+                ]}
+              >
+                <TouchableOpacity
+                  style={styles.searchIconContainer}
+                  onPress={toggleSearchBar}
+                >
+                  <AntDesign name={'search1'} color={'#C2C2C2'} size={15} />
+                </TouchableOpacity>
+                <Animated.View
+                  style={[styles.animatedInputContainer, { width: animatedInputWidth }]}
+                >
+                  <TextInput
+                    placeholder="Search"
+                    placeholderTextColor="#A9A9A9"
+                    style={styles.textInput}
+                    value={updateSearchQuery}
+                    onChangeText={setUpdateSearchQuery}
+                    autoFocus={isExpanded} 
+
+                  />
+
+                </Animated.View>
+              </Animated.View>
             </View>
           </View>
         )
@@ -160,7 +221,7 @@ const Navbar = () => {
         />
       }
       {
-        <UserProfileModal 
+        <UserProfileModal
           userProfileModal={userProfileModal}
           setUserProfileModal={setUserProfileModal}
         />
@@ -179,8 +240,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: rMS(15),
-    paddingTop:rMS(15),
-    paddingVertical:10,
+    paddingTop: rMS(15),
+    paddingVertical: 10,
   },
   leftNav: {
     flexDirection: 'row',
@@ -225,7 +286,33 @@ const styles = StyleSheet.create({
   },
   userImage: {
     width: 24,
-    height: 24,  
-    borderRadius: 12, 
+    height: 24,
+    borderRadius: 12,
+  },
+  mainContainer: {
+    height: 40,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 18,
+    paddingHorizontal: 12,
+    overflow: 'hidden',
+    elevation: 4,
+  },
+  textInput: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    height: '100%',
+    fontSize: 16,
+    paddingHorizontal: 10,
+  },
+  searchIconContainer: {
+    // width: 35,
+    // height: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  animatedInputContainer: {
+    height: '100%',
+    overflow: 'hidden',
   },
 });

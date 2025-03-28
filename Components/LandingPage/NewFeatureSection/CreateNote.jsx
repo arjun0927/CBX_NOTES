@@ -243,29 +243,6 @@ const CreateNote = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Middle Content (Text Editor) */}
-      {/* <View style={styles.middleContainer}>
-        <TextInput
-          style={styles.titleInput}
-          placeholder="Title"
-          placeholderTextColor="#A0A0A0"
-          multiline
-          value={noteText}
-          onChangeText={(text) => setNoteText(text)}
-        />
-
-        <TextInput
-          style={styles.textInput}
-          placeholder="Write Something..."
-          placeholderTextColor="#A0A0A0"
-          multiline
-          value={noteText}
-          onChangeText={(text) => setNoteText(text)}
-        />
-      </View> */}
-
-      {/* Bottom Navigation */}
       <TextEditor ref={editorRef} setToolbarVisible={setToolbarVisible} toolbarVisible={toolbarVisible} />
       <View style={styles.bottom_navContainer}>
         <View style={styles.bottom_leftNav}>

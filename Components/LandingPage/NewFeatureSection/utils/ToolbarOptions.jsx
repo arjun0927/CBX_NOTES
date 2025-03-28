@@ -1,521 +1,910 @@
-export const toolbarOptions = [
-	{ id: 'text-format', icon: 'Aa', label: 'Text Format' },
-	{ id: 'font', icon: 'F', label: 'Font' },
-	{ id: 'size', icon: 'Size', label: 'Size' },
-	{ id: 'list', icon: '≡', label: 'Lists' },
-	{ id: 'color', icon: '🎨', label: 'Color' },
-	{ id: 'special', icon: '✓', label: 'Special' },
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, TouchableOpacity, SafeAreaView, Text } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import TextEditor from './TextEditor';
+import CodeEditor from './CodeEditor';
+import ImageEditor from './ImageEditor';
+import TableEditor from './TableEditor';
+import DrawingEditor from './DrawingEditor';
+
+// Main component that manages multiple editors
+const MultiEditorContainer = () => {
+  // State to track which editor is currently active
+  const [activeEditor, setActiveEditor] = useState('text');
+  // State to control toolbar visibility for text editor
+  const [textToolbarVisible, setTextToolbarVisible] = useState(true);
+  
+  // References to editor components
+  const textEditorRef = useRef(null);
+
+  // Function to render the appropriate editor based on selection
+  const renderEditor = () => {
+    switch (activeEditor) {
+      case 'text':
+        return (
+          <TextEditor 
+            toolbarVisible={textToolbarVisible}
+            setToolbarVisible={setTextToolbarVisible}
+            ref={textEditorRef}
+          />
+        );
+      case 'code':
+        return <CodeEditor />;
+      case 'image':
+        return <ImageEditor />;
+      case 'table':
+        return <TableEditor />;
+      case 'drawing':
+        return <DrawingEditor />;
+      default:
+        return <TextEditor />;
+    }
+  };
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Main Editor Area */}
+      <View style={styles.editorContainer}>
+        {renderEditor()}
+      </View>
+      
+      {/* Main Toolbar */}
+      <View style={styles.toolbar}>
+        {/* Text Editor Icon */}
+        <TouchableOpacity
+          style={[styles.toolbarIcon, activeEditor === 'text' && styles.activeIcon]}
+          onPress={() => setActiveEditor('text')}
+        >
+          <Icon name="text-fields" size={24} color={activeEditor === 'text' ? "#6200ee" : "#555"} />
+          <Text style={[styles.iconLabel, activeEditor === 'text' && styles.activeLabel]}>Text</Text>
+        </TouchableOpacity>
+        
+        {/* Code Editor Icon */}
+        <TouchableOpacity
+          style={[styles.toolbarIcon, activeEditor === 'code' && styles.activeIcon]}
+          onPress={() => setActiveEditor('code')}
+        >
+          <Icon name="code" size={24} color={activeEditor === 'code' ? "#6200ee" : "#555"} />
+          <Text style={[styles.iconLabel, activeEditor === 'code' && styles.activeLabel]}>Code</Text>
+        </TouchableOpacity>
+        
+        {/* Image Editor Icon */}
+        <TouchableOpacity
+          style={[styles.toolbarIcon, activeEditor === 'image' && styles.activeIcon]}
+          onPress={() => setActiveEditor('image')}
+        >
+          <Icon name="image" size={24} color={activeEditor === 'image' ? "#6200ee" : "#555"} />
+          <Text style={[styles.iconLabel, activeEditor === 'image' && styles.activeLabel]}>Image</Text>
+        </TouchableOpacity>
+        
+        {/* Table Editor Icon */}
+        <TouchableOpacity
+          style={[styles.toolbarIcon, activeEditor === 'table' && styles.activeIcon]}
+          onPress={() => setActiveEditor('table')}
+        >
+          <Icon name="grid-on" size={24} color={activeEditor === 'table' ? "#6200ee" : "#555"} />
+          <Text style={[styles.iconLabel, activeEditor === 'table' && styles.activeLabel]}>Table</Text>
+        </TouchableOpacity>
+        
+        {/* Drawing Editor Icon */}
+        <TouchableOpacity
+          style={[styles.toolbarIcon, activeEditor === 'drawing' && styles.activeIcon]}
+          onPress={() => setActiveEditor('drawing')}
+        >
+          <Icon name="brush" size={24} color={activeEditor === 'drawing' ? "#6200ee" : "#555"} />
+          <Text style={[styles.iconLabel, activeEditor === 'drawing' && styles.activeLabel]}>Draw</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
+  );
+};
+
+// Define CodeEditor component (stub)
+const CodeEditor = () => {
+  return (
+    <View style={styles.editorPlaceholder}>
+      <Text>Code Editor Component</Text>
+      <Text style={styles.placeholderText}>This would contain a code editor with syntax highlighting</Text>
+    </View>
+  );
+};
+
+// Define ImageEditor component (stub)
+const ImageEditor = () => {
+  return (
+    <View style={styles.editorPlaceholder}>
+      <Text>Image Editor Component</Text>
+      <Text style={styles.placeholderText}>This would contain image upload, cropping and filters</Text>
+    </View>
+  );
+};
+
+// Define TableEditor component (stub)
+const TableEditor = () => {
+  return (
+    <View style={styles.editorPlaceholder}>
+      <Text>Table Editor Component</Text>
+      <Text style={styles.placeholderText}>This would contain table creation and formatting tools</Text>
+    </View>
+  );
+};
+
+// Define DrawingEditor component (stub)
+const DrawingEditor = () => {
+  return (
+    <View style={styles.editorPlaceholder}>
+      <Text>Drawing Editor Component</Text>
+      <Text style={styles.placeholderText}>This would contain a canvas for drawing with various tools</Text>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  editorContainer: {
+    flex: 1,
+  },
+  toolbar: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    backgroundColor: 'white',
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  toolbarIcon: {
+    alignItems: 'center',
+    padding: 8,
+    borderRadius: 8,
+  },
+  activeIcon: {
+    backgroundColor: '#f0e6ff',
+  },
+  iconLabel: {
+    fontSize: 12,
+    marginTop: 2,
+    color: '#555',
+  },
+  activeLabel: {
+    color: '#6200ee',
+    fontWeight: 'bold',
+  },
+  editorPlaceholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    margin: 16,
+    borderRadius: 8,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  placeholderText: {
+    marginTop: 8,
+    textAlign: 'center',
+    color: '#666',
+  },
+});
+
+export default MultiEditorContainer;
+
+// DrawingEditor.js component
+import React, { useState, useRef } from 'react';
+import { View, StyleSheet, PanResponder, Animated, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const DrawingEditor = () => {
+  const [paths, setPaths] = useState([]);
+  const [currentPath, setCurrentPath] = useState([]);
+  const [color, setColor] = useState('#000000');
+  const [strokeWidth, setStrokeWidth] = useState(3);
+  const [drawingMode, setDrawingMode] = useState('pencil'); // pencil, eraser, shapes etc.
+
+  // Create PanResponder for drawing
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: (event, gestureState) => {
+        const { locationX, locationY } = event.nativeEvent;
+        setCurrentPath([{ x: locationX, y: locationY, color, strokeWidth, drawingMode }]);
+      },
+      onPanResponderMove: (event, gestureState) => {
+        const { locationX, locationY } = event.nativeEvent;
+        setCurrentPath(prevPath => [
+          ...prevPath,
+          { x: locationX, y: locationY, color, strokeWidth, drawingMode }
+        ]);
+      },
+      onPanResponderRelease: () => {
+        setPaths(prevPaths => [...prevPaths, currentPath]);
+        setCurrentPath([]);
+      },
+    })
+  ).current;
+
+  const clearCanvas = () => {
+    setPaths([]);
+    setCurrentPath([]);
+  };
+
+  // Function to render all paths
+  const renderPaths = () => {
+    return paths.map((path, pathIndex) => (
+      <View key={`path-${pathIndex}`}>
+        {path.map((point, pointIndex) => {
+          if (pointIndex === 0) return null;
+          
+          const prevPoint = path[pointIndex - 1];
+          return (
+            <View
+              key={`line-${pathIndex}-${pointIndex}`}
+              style={{
+                position: 'absolute',
+                left: prevPoint.x,
+                top: prevPoint.y,
+                width: point.x - prevPoint.x,
+                height: point.strokeWidth,
+                backgroundColor: point.color,
+                transform: [
+                  { translateX: 0 },
+                  { translateY: -point.strokeWidth / 2 },
+                  { rotate: `${Math.atan2(point.y - prevPoint.y, point.x - prevPoint.x)}rad` },
+                  { translateX: 0 },
+                  { translateY: 0 },
+                ],
+                borderRadius: point.strokeWidth / 2,
+              }}
+            />
+          );
+        })}
+      </View>
+    ));
+  };
+
+  // Function to render current path
+  const renderCurrentPath = () => {
+    return currentPath.map((point, pointIndex) => {
+      if (pointIndex === 0) return null;
+      
+      const prevPoint = currentPath[pointIndex - 1];
+      return (
+        <View
+          key={`current-line-${pointIndex}`}
+          style={{
+            position: 'absolute',
+            left: prevPoint.x,
+            top: prevPoint.y,
+            width: point.x - prevPoint.x,
+            height: point.strokeWidth,
+            backgroundColor: point.color,
+            transform: [
+              { translateX: 0 },
+              { translateY: -point.strokeWidth / 2 },
+              { rotate: `${Math.atan2(point.y - prevPoint.y, point.x - prevPoint.x)}rad` },
+              { translateX: 0 },
+              { translateY: 0 },
+            ],
+            borderRadius: point.strokeWidth / 2,
+          }}
+        />
+      );
+    });
+  };
+
+  const colorOptions = [
+    '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00'
+  ];
+
+  return (
+    <View style={styles.container}>
+      {/* Drawing Canvas */}
+      <View style={styles.canvas} {...panResponder.panHandlers}>
+        {renderPaths()}
+        {renderCurrentPath()}
+      </View>
+      
+      {/* Drawing Tools */}
+      <View style={styles.toolbar}>
+        <View style={styles.toolsRow}>
+          {/* Drawing Modes */}
+          <TouchableOpacity
+            style={[styles.toolButton, drawingMode === 'pencil' && styles.activeToolButton]}
+            onPress={() => setDrawingMode('pencil')}
+          >
+            <Icon name="create" size={24} color="#444" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[styles.toolButton, drawingMode === 'eraser' && styles.activeToolButton]}
+            onPress={() => {
+              setDrawingMode('eraser');
+              setColor('#FFFFFF');
+            }}
+          >
+            <Icon name="format-color-reset" size={24} color="#444" />
+          </TouchableOpacity>
+          
+          {/* Clear Canvas */}
+          <TouchableOpacity
+            style={styles.toolButton}
+            onPress={clearCanvas}
+          >
+            <Icon name="delete" size={24} color="#444" />
+          </TouchableOpacity>
+        </View>
+        
+        {/* Color Selection */}
+        <View style={styles.colorRow}>
+          {colorOptions.map((clr) => (
+            <TouchableOpacity
+              key={clr}
+              style={[
+                styles.colorButton,
+                { backgroundColor: clr },
+                color === clr && styles.activeColorButton
+              ]}
+              onPress={() => setColor(clr)}
+            />
+          ))}
+        </View>
+        
+        {/* Stroke Width */}
+        <View style={styles.strokeRow}>
+          {[1, 3, 5, 8].map((width) => (
+            <TouchableOpacity
+              key={width}
+              style={[
+                styles.strokeButton,
+                strokeWidth === width && styles.activeStrokeButton
+              ]}
+              onPress={() => setStrokeWidth(width)}
+            >
+              <View style={{
+                height: width,
+                width: 20,
+                backgroundColor: '#444',
+                borderRadius: width / 2
+              }} />
+            </TouchableOpacity>
+          ))}
+        </View>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  canvas: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  toolbar: {
+    padding: 10,
+    backgroundColor: '#f0f0f0',
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  toolsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  colorRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 10,
+  },
+  strokeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  toolButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.5,
+    elevation: 2,
+  },
+  activeToolButton: {
+    backgroundColor: '#e6f2ff',
+    borderWidth: 2,
+    borderColor: '#007AFF',
+  },
+  colorButton: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  activeColorButton: {
+    borderWidth: 2,
+    borderColor: '#007AFF',
+    transform: [{ scale: 1.2 }],
+  },
+  strokeButton: {
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+  },
+  activeStrokeButton: {
+    backgroundColor: '#e6f2ff',
+    borderRadius: 15,
+  },
+});
+
+// TableEditor.js component 
+import React, { useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Text, TextInput, ScrollView } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const TableEditor = () => {
+  const [rows, setRows] = useState(3);
+  const [columns, setColumns] = useState(3);
+  const [cellData, setCellData] = useState({});
+  
+  // Generate empty cell data
+  const initializeTable = (r, c) => {
+    const data = {};
+    for (let i = 0; i < r; i++) {
+      for (let j = 0; j < c; j++) {
+        data[`${i}-${j}`] = '';
+      }
+    }
+    return data;
+  };
+  
+  // Initialize table on first render
+  useState(() => {
+    setCellData(initializeTable(rows, columns));
+  }, []);
+  
+  // Update a cell's content
+  const updateCell = (rowIndex, colIndex, value) => {
+    setCellData(prev => ({
+      ...prev,
+      [`${rowIndex}-${colIndex}`]: value
+    }));
+  };
+  
+  // Add new row
+  const addRow = () => {
+    const newRows = rows + 1;
+    const newData = { ...cellData };
+    
+    for (let j = 0; j < columns; j++) {
+      newData[`${rows}-${j}`] = '';
+    }
+    
+    setRows(newRows);
+    setCellData(newData);
+  };
+  
+  // Add new column
+  const addColumn = () => {
+    const newColumns = columns + 1;
+    const newData = { ...cellData };
+    
+    for (let i = 0; i < rows; i++) {
+      newData[`${i}-${columns}`] = '';
+    }
+    
+    setColumns(newColumns);
+    setCellData(newData);
+  };
+  
+  // Remove last row
+  const removeRow = () => {
+    if (rows <= 1) return;
+    
+    const newRows = rows - 1;
+    const newData = { ...cellData };
+    
+    for (let j = 0; j < columns; j++) {
+      delete newData[`${newRows}-${j}`];
+    }
+    
+    setRows(newRows);
+    setCellData(newData);
+  };
+  
+  // Remove last column
+  const removeColumn = () => {
+    if (columns <= 1) return;
+    
+    const newColumns = columns - 1;
+    const newData = { ...cellData };
+    
+    for (let i = 0; i < rows; i++) {
+      delete newData[`${i}-${newColumns}`];
+    }
+    
+    setColumns(newColumns);
+    setCellData(newData);
+  };
+  
+  return (
+    <View style={styles.container}>
+      {/* Table Controls */}
+      <View style={styles.controlsContainer}>
+        <View style={styles.controls}>
+          <TouchableOpacity style={styles.controlButton} onPress={addRow}>
+            <Icon name="add" size={18} />
+            <Text>Add Row</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.controlButton} onPress={addColumn}>
+            <Icon name="add" size={18} />
+            <Text>Add Column</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.controlButton, rows <= 1 && styles.disabledButton]} 
+            onPress={removeRow}
+            disabled={rows <= 1}
+          >
+            <Icon name="remove" size={18} />
+            <Text>Remove Row</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.controlButton, columns <= 1 && styles.disabledButton]} 
+            onPress={removeColumn}
+            disabled={columns <= 1}
+          >
+            <Icon name="remove" size={18} />
+            <Text>Remove Column</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      
+      {/* Table */}
+      <ScrollView style={styles.tableScrollView}>
+        <ScrollView horizontal>
+          <View style={styles.tableContainer}>
+            {Array(rows).fill().map((_, rowIndex) => (
+              <View key={`row-${rowIndex}`} style={styles.tableRow}>
+                {Array(columns).fill().map((_, colIndex) => (
+                  <View key={`cell-${rowIndex}-${colIndex}`} style={styles.tableCell}>
+                    <TextInput
+                      style={styles.cellInput}
+                      value={cellData[`${rowIndex}-${colIndex}`] || ''}
+                      onChangeText={(text) => updateCell(rowIndex, colIndex, text)}
+                      placeholder={`R${rowIndex}C${colIndex}`}
+                    />
+                  </View>
+                ))}
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </ScrollView>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+  },
+  controlsContainer: {
+    padding: 10,
+    backgroundColor: '#f8f8f8',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  controls: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+  },
+  controlButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    padding: 8,
+    borderRadius: 4,
+    marginVertical: 4,
+    marginHorizontal: 2,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  tableScrollView: {
+    flex: 1,
+  },
+  tableContainer: {
+    padding: 10,
+  },
+  tableRow: {
+    flexDirection: 'row',
+  },
+  tableCell: {
+    width: 120,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    justifyContent: 'center',
+    padding: 4,
+  },
+  cellInput: {
+    flex: 1,
+    fontSize: 14,
+  },
+});
+
+// CodeEditor.js component
+import React, { useState } from 'react';
+import { View, StyleSheet, TextInput, TouchableOpacity, Text, ScrollView } from 'react-native';
+
+const CodeEditor = () => {
+  const [code, setCode] = useState('// Write your code here\n\nfunction example() {\n  console.log("Hello, world!");\n}');
+  const [language, setLanguage] = useState('javascript');
+  
+  const languages = [
+    'javascript', 'python', 'java', 'html', 'css'
   ];
   
-  // 6. Editor HTML Content (constants/EditorHtmlContent.js)
-  // Parent Editor HTML Content
-  export const parentEditorHtml = `
-  <!DOCTYPE html>
-  <html>
-  <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-	<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-	<style>
-	  /* Editor styles */
-	  body {
-		margin: 0;
-		padding: 0;
-		height: 100%;
-		overflow: hidden;
-	  }
-	  
-	  #editor-container {
-		height: 100vh;
-		display: flex;
-		flex-direction: column;
-	  }
-	  
-	  #editor {
-		flex: 1;
-		overflow-y: auto;
-		min-height: 200px;
-		font-size: 16px;
-	  }
-	  
-	  /* Hide the default toolbar */
-	  .ql-toolbar.ql-snow {
-		display: none;
-	  }
-	  
-	  /* Make sure content is visible */
-	  .ql-container.ql-snow {
-		border: none;
-		height: 100%;
-	  }
-	  
-	  .ql-editor {
-		padding: 12px;
-		min-height: 200px;
-	  }
-	  
-	  /* Define numeric font size classes */
-	  .ql-editor .ql-size-1 {
-		font-size: 10px;
-	  }
-	  .ql-editor .ql-size-2 {
-		font-size: 14px;
-	  }
-	  .ql-editor .ql-size-3 {
-		font-size: 18px;
-	  }
-	  .ql-editor .ql-size-4 {
-		font-size: 24px;
-	  }
-	  .ql-editor .ql-size-5 {
-		font-size: 32px;
-	  }
-	  
-	  /* Define font family classes */
-	  .ql-editor .ql-font-arial {
-		font-family: 'Arial', sans-serif;
-	  }
-	  
-	  .ql-editor .ql-font-times {
-		font-family: 'Times New Roman', Times, serif;
-	  }
-	  
-	  .ql-editor .ql-font-courier {
-		font-family: 'Courier New', Courier, monospace;
-	  }
-	  
-	  .ql-editor .ql-font-georgia {
-		font-family: 'Georgia', serif;
-	  }
-	  
-	  .ql-editor .ql-font-verdana {
-		font-family: 'Verdana', sans-serif;
-	  }
-	  
-	  /* Updated Checkbox styles - more touch-friendly */
-	  .ql-editor .ql-ui-checkbox {
-		margin-right: 8px;
-		cursor: pointer;
-		font-size: 24px; /* Larger size */
-		padding: 5px; /* Add padding for larger touch target */
-		display: inline-block;
-	  }
-	  
-	  .checkbox-item {
-		padding: 5px 0; /* Add vertical padding for the entire item */
-	  }
-	  
-	  /* Custom list indent styles */
-	  .ql-editor ul, .ql-editor ol {
-		padding-left: 1.5em;
-	  }
-	  
-	  .ql-editor li > ul, .ql-editor li > ol {
-		margin-bottom: 0;
-		padding-left: 1.5em;
-	  }
-	  
-	  /* Nested field styles */
-	  .nested-field {
-		border: 1px solid #ddd;
-		border-radius: 4px;
-		padding: 8px;
-		margin: 8px 0;
-		background-color: #f9f9f9;
-	  }
-	</style>
-  </head>
-  <body>
-	<div id="editor-container">
-	  <div id="editor"></div>
-	</div>
-	
-	<script>
-	  // Register custom blot for checkbox list
-	  const Block = Quill.import('blots/block');
-	  
-	  // Size format
-	  const Size = Quill.import('formats/size');
-	  Size.whitelist = ['1', '2', '3', '4', '5'];
-	  Quill.register(Size, true);
-	  
-	  // Add font format support
-	  const Font = Quill.import('formats/font');
-	  Font.whitelist = ['arial', 'times', 'courier', 'georgia', 'verdana'];
-	  Quill.register(Font, true);
-	  
-	  // Checkbox implementation
-	  class CheckboxItem extends Block {
-		static create(value) {
-		  const node = super.create();
-		  node.setAttribute('data-checked', value ? 'true' : 'false');
-		  
-		  // Create the checkbox UI
-		  const checkbox = document.createElement('span');
-		  checkbox.classList.add('ql-ui-checkbox');
-		  checkbox.innerHTML = value ? '☑' : '☐';
-		  
-		  node.appendChild(checkbox);
-		  return node;
-		}
-		
-		static formats(node) {
-		  return node.getAttribute('data-checked') === 'true';
-		}
-	  }
-	  
-	  CheckboxItem.blotName = 'checkbox';
-	  CheckboxItem.tagName = 'DIV';
-	  CheckboxItem.className = 'checkbox-item';
-	  
-	  // Nested field implementation
-	  class NestedField extends Block {
-		static create(value) {
-		  const node = super.create();
-		  node.classList.add('nested-field');
-		  return node;
-		}
-	  }
-	  
-	  NestedField.blotName = 'nestedfield';
-	  NestedField.tagName = 'DIV';
-	  
-	  // Register the custom formats
-	  Quill.register(CheckboxItem);
-	  Quill.register(NestedField);
-	  
-	  // Initialize Quill editor with minimal toolbar (we'll use our custom toolbar)
-	  var quill = new Quill('#editor', {
-		theme: 'snow',
-		modules: {
-		  toolbar: false  // Disable default toolbar
-		},
-		placeholder: 'Write something here.'
-	  });
-	  
-	  // UPDATED: Handler for both click and touch events on checkboxes
-	  const editorElement = document.querySelector('#editor');
+  return (
+    <View style={styles.container}>
+      {/* Language Selection */}
+      <View style={styles.languageBar}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {languages.map(lang => (
+            <TouchableOpacity
+              key={lang}
+              style={[
+                styles.languageButton,
+                language === lang && styles.selectedLanguage
+              ]}
+              onPress={() => setLanguage(lang)}
+            >
+              <Text 
+                style={[
+                  styles.languageText,
+                  language === lang && styles.selectedLanguageText
+                ]}
+              >
+                {lang.charAt(0).toUpperCase() + lang.slice(1)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+      
+      {/* Code Editor */}
+      <ScrollView style={styles.codeContainer}>
+        <TextInput
+          style={styles.codeInput}
+          value={code}
+          onChangeText={setCode}
+          multiline={true}
+          autoCapitalize="none"
+          autoCorrect={false}
+          spellCheck={false}
+          keyboardType="default"
+        />
+      </ScrollView>
+      
+      {/* Button Bar */}
+      <View style={styles.buttonBar}>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Run</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Format</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Copy</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#1e1e1e',
+  },
+  languageBar: {
+    backgroundColor: '#2d2d2d',
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  languageButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  selectedLanguage: {
+    backgroundColor: '#0e639c',
+  },
+  languageText: {
+    color: '#cccccc',
+    fontSize: 14,
+  },
+  selectedLanguageText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  codeContainer: {
+    flex: 1,
+    padding: 10,
+  },
+  codeInput: {
+    color: '#d4d4d4',
+    fontFamily: 'Courier',
+    fontSize: 14,
+    padding: 0,
+  },
+  buttonBar: {
+    flexDirection: 'row',
+    backgroundColor: '#2d2d2d',
+    padding: 10,
+    justifyContent: 'space-around',
+  },
+  button: {
+    backgroundColor: '#0e639c',
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 4,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+});
+
+// ImageEditor.js component
+import React, { useState } from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, Text, ScrollView, Slider } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const ImageEditor = () => {
+  const [image, setImage] = useState(null);
+  const [brightness, setBrightness] = useState(100);
+  const [contrast, setContrast] = useState(100);
+  const [saturation, setSaturation] = useState(100);
+  const [activeTab, setActiveTab] = useState('adjust');
   
-	  // Handle both click and touchend events
-	  ['click', 'touchend'].forEach(eventType => {
-		editorElement.addEventListener(eventType, function(e) {
-		  // Find the checkbox - either the target or a parent with the class
-		  const checkbox = e.target.classList.contains('ql-ui-checkbox') 
-			? e.target 
-			: e.target.closest('.ql-ui-checkbox');
-			
-		  if (checkbox) {
-			const checkboxItem = checkbox.closest('.checkbox-item');
-			if (checkboxItem) {
-			  const isChecked = checkboxItem.getAttribute('data-checked') === 'true';
-			  checkboxItem.setAttribute('data-checked', !isChecked ? 'true' : 'false');
-			  checkbox.innerHTML = !isChecked ? '☑' : '☐';
-			}
-			e.preventDefault();
-			e.stopPropagation();
-		  }
-		});
-	  });
-	  
-	  // Enhanced keyboard handling for indentation
-	  quill.keyboard.addBinding({ key: 'Tab' }, (range) => {
-		quill.format('indent', '+1');
-		return false;
-	  });
-	  
-	  quill.keyboard.addBinding({ key: 'Tab', shiftKey: true }, (range) => {
-		quill.format('indent', '-1');
-		return false;
-	  });
-	  
-	  // Function to get editor content and send to React Native
-	  function getEditorContent() {
-		window.ReactNativeWebView.postMessage(JSON.stringify({
-		  type: 'content',
-		  content: quill.root.innerHTML,
-		  selection: quill.getSelection()
-		}));
-	  }
-	  
-	  // Function to handle commands from React Native
-	  function handleCommand(command, value) {
-		const selection = quill.getSelection(true);
-		
-		if (selection) {
-		  switch(command) {
-			case 'bold':
-			  quill.format('bold', !quill.getFormat().bold);
-			  break;
-			case 'underline':
-			  quill.format('underline', !quill.getFormat().underline);
-			  break;
-			case 'strike':
-			  quill.format('strike', !quill.getFormat().strike);
-			  break;
-			case 'font':
-			  quill.format('font', value);
-			  break;
-			case 'size':
-			  quill.format('size', value);
-			  break;
-			case 'color':
-			  quill.format('color', value);
-			  break;
-			case 'list':
-			  quill.format('list', value);
-			  break;
-			case 'checkbox':
-			  quill.insertText(selection.index, '\\n');
-			  quill.clipboard.dangerouslyPasteHTML(
-				selection.index + 1, 
-				'<div class="checkbox-item" data-checked="false"><span class="ql-ui-checkbox">☐</span> </div>'
-			  );
-			  quill.setSelection(selection.index + 2, 0);
-			  break;
-			case 'nestedfield':
-			  quill.clipboard.dangerouslyPasteHTML(
-				selection.index,
-				'<div class="nested-field"><p>Nested content here</p></div>'
-			  );
-			  break;
-		  }
-		}
-		
-		// Send updated content back to React Native
-		getEditorContent();
-	  }
-	  
-	  // Expose the method to handle commands from React Native
-	  window.handleEditorCommand = function(commandData) {
-		try {
-		  const data = JSON.parse(commandData);
-		  handleCommand(data.command, data.value);
-		} catch (e) {
-		  console.error("Error processing command:", e);
-		}
-	  };
-	  
-	  // Send content when editor changes
-	  quill.on('text-change', function() {
-		getEditorContent();
-	  });
-	  
-	  quill.on('selection-change', function(range) {
-		if (range) {
-		  const format = quill.getFormat();
-		  window.ReactNativeWebView.postMessage(JSON.stringify({
-			type: 'format',
-			format: format
-		  }));
-		}
-	  });
-	  
-	  // Focus the editor to make sure it's active
-	  quill.focus();
-	  
-	  // Let React Native know the editor is ready
-	  window.ReactNativeWebView.postMessage(JSON.stringify({
-		type: 'ready',
-		message: 'Editor initialized'
-	  }));
-	</script>
-  </body>
-  </html>
-  `;
+  const tabs = [
+    { id: 'adjust', icon: 'tune', label: 'Adjust' },
+    { id: 'filters', icon: 'filter', label: 'Filters' },
+    { id: 'crop', icon: 'crop', label: 'Crop' },
+    { id: 'text', icon: 'text-fields', label: 'Text' },
+  ];
   
-  // Tool Editor HTML content generator function
-  export const getToolEditorHtml = (toolType) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
-	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-	<style>
-	  body {
-		margin: 0;
-		padding: 8px;
-		height: 100%;
-		font-family: Arial, sans-serif;
-	  }
-	  
-	  .tool-container {
-		display: flex;
-		flex-direction: column;
-		height: 100%;
-	  }
-	  
-	  .tool-options {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px;
-	  }
-	  
-	  .option-btn {
-		padding: 10px;
-		margin: 5px;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		text-align: center;
-		cursor: pointer;
-	  }
-	  
-	  .option-btn:hover, .option-btn.active {
-		background-color: #f0f0f0;
-	  }
-	  
-	  .color-option {
-		width: 30px;
-		height: 30px;
-		border-radius: 50%;
-		border: 1px solid #ddd;
-	  }
-	  
-	  .size-option {
-		padding: 10px;
-		width: 40px;
-	  }
-	  
-	  .font-option {
-		min-width: 80px;
-		font-weight: bold;
-	  }
-	  
-	  /* Font samples */
-	  .font-arial {
-		font-family: 'Arial', sans-serif;
-	  }
-	  
-	  .font-times {
-		font-family: 'Times New Roman', Times, serif;
-	  }
-	  
-	  .font-courier {
-		font-family: 'Courier New', Courier, monospace;
-	  }
-	  
-	  .font-georgia {
-		font-family: 'Georgia', serif;
-	  }
-	  
-	  .font-verdana {
-		font-family: 'Verdana', sans-serif;
-	  }
-	  
-	  /* Size samples */
-	  .size-1 { font-size: 10px; }
-	  .size-2 { font-size: 14px; }
-	  .size-3 { font-size: 18px; }
-	  .size-4 { font-size: 24px; }
-	  .size-5 { font-size: 32px; }
-	  
-	  /* Color samples */
-	  .apply-button {
-		padding: 12px;
-		background-color: #4CAF50;
-		color: white;
-		border: none;
-		border-radius: 4px;
-		margin-top: 10px;
-		cursor: pointer;
-		font-size: 16px;
-	  }
-	</style>
-  </head>
-  <body>
-	<div class="tool-container">
-	  <div class="tool-options" id="options-container">
-		<!-- Options will be dynamically added based on the tool type -->
-	  </div>
-	</div>
+  const filters = [
+    'Normal', 'Grayscale', 'Sepia', 'Vintage', 'Warm', 'Cool', 'Dramatic'
+  ];
   
-	<script>
-	  // Function to apply selected option to parent editor
-	  function applyOption(command, value) {
-		window.ReactNativeWebView.postMessage(JSON.stringify({
-		  type: 'command',
-		  command: command,
-		  value: value
-		}));
-	  }
-	  
-	  // Function to initialize tool options based on tool type
-	  function initializeToolOptions(toolType) {
-		const container = document.getElementById('options-container');
-		
-		switch(toolType) {
-		  case 'text-format':
-			container.innerHTML = \`
-			  <div class="option-btn" onclick="applyOption('bold')">Bold</div>
-			  <div class="option-btn" onclick="applyOption('underline')">Underline</div>
-			  <div class="option-btn" onclick="applyOption('strike')">Strike</div>
-			\`;
-			break;
-			
-		  case 'font':
-			container.innerHTML = \`
-			  <div class="option-btn font-option font-arial" onclick="applyOption('font', 'arial')">Arial</div>
-			  <div class="option-btn font-option font-times" onclick="applyOption('font', 'times')">Times</div>
-			  <div class="option-btn font-option font-courier" onclick="applyOption('font', 'courier')">Courier</div>
-			  <div class="option-btn font-option font-georgia" onclick="applyOption('font', 'georgia')">Georgia</div>
-			  <div class="option-btn font-option font-verdana" onclick="applyOption('font', 'verdana')">Verdana</div>
-			\`;
-			break;
-			
-		  case 'size':
-			container.innerHTML = \`
-			  <div class="option-btn size-option size-1" onclick="applyOption('size', '1')">1</div>
-			  <div class="option-btn size-option size-2" onclick="applyOption('size', '2')">2</div>
-			  <div class="option-btn size-option size-3" onclick="applyOption('size', '3')">3</div>
-			  <div class="option-btn size-option size-4" onclick="applyOption('size', '4')">4</div>
-			  <div class="option-btn size-option size-5" onclick="applyOption('size', '5')">5</div>
-			\`;
-			break;
-			
-		  case 'list':
-			container.innerHTML = \`
-			  <div class="option-btn" onclick="applyOption('list', 'ordered')">Numbered List</div>
-			  <div class="option-btn" onclick="applyOption('list', 'bullet')">Bullet List</div>
-			  <div class="option-btn" onclick="applyOption('list', false)">Clear List</div>
-			\`;
-			break;
-			
-		  case 'color':
-			container.innerHTML = \`
-			  <div class="option-btn color-option" style="background-color: #000000;" onclick="applyOption('color', '#000000')"></div>
-			  <div class="option-btn color-option" style="background-color: #e60000;" onclick="applyOption('color', '#e60000')"></div>
-			  <div class="option-btn color-option" style="background-color: #2ca02c;" onclick="applyOption('color', '#2ca02c')"></div>
-			  <div class="option-btn color-option" style="background-color: #1f77b4;" onclick="applyOption('color', '#1f77b4')"></div>
-			  <div class="option-btn color-option" style="background-color: #9467bd;" onclick="applyOption('color', '#9467bd')"></div>
-			  <div class="option-btn color-option" style="background-color: #ff7f0e;" onclick="applyOption('color', '#ff7f0e')"></div>
-			\`;
-			break;
-			
-		  case 'special':
-			container.innerHTML = \`
-			  <div class="option-btn" onclick="applyOption('checkbox')">Add Checkbox</div>
-			  <div class="option-btn" onclick="applyOption('nestedfield')">Add Nested Field</div>
-			\`;
-			break;
-		}
-		
-		// Let React Native know the tool editor is ready
-		window.ReactNativeWebView.postMessage(JSON.stringify({
-		  type: 'tool-ready',
-		  toolType: toolType
-		}));
-	  }
-	  
-	  // Initialize tool options based on the tool type from URL
-	  function getToolTypeFromUrl() {
-		const urlParams = new URLSearchParams(window.location.search);
-		return urlParams.get('toolType') || 'text-format';
-	  }
-	  
-	  // Initialize on load
-	  document.addEventListener('DOMContentLoaded', function() {
-		const toolType = getToolTypeFromUrl();
-		initializeToolOptions(toolType);
-	  });
-	</script>
-  </body>
-  </html>
-  `;
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'adjust':
+        return (
+          <View style={styles.tabContent}>
+            <View style={styles.sliderContainer}>
+              <Text style={styles.sliderLabel}>Brightness: {brightness}%</Text>
+              <Slider
+                style={styles.slider}
+                minimumValue={0}
+                maximumValue={200}
+                value={brightness}
+                onValueChange={setBrightness}
+                minimumTrackTintColor="#007AFF"
+                maximumTrackTintColor="#d3d3d3"
+                step={1}
+              />
+            </View>
+            
+            <View style={styles.sliderContainer}>
+              <Text style={styles.sliderLabel}>Contrast: {contrast}%</Text>
+              <Slider
+                style={styles.slider}
+                minimumValue={0}
+                maximumValue={200}
+                value={contrast}
+                onValueChange={setContrast}
+                minimumTrackTintColor="#007AFF"
+                maximumTrackTintColor="#d3d3d3"
+                step={1}
+              />
+            </View>
+            
+            <View style={styles.sliderContainer}>
+              <Text style={styles.sliderLabel}>Saturation: {saturation}%</Text>
+              <Slider
+                style={styles.slider}
+                minimumValue={0}
+                maximumValue={200}
+                value={saturation}
+                onValueChange={setSaturation}
+                minimumTrackTintColor="#007AFF"
+                maximumTrackTintColor="#d3d3d3"
+                step={1}
+              />
+            </View>
+          </View>
+        );
+        
+      case 'filters':
+        return (
+          <View style={styles.tabContent}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {filters.map((filter) => (
+                <TouchableOpacity key={filter} style={styles.filterItem}>
+                  <View style={styles.filterPreview}>
+                    {/* Preview would show image with filter applied */}
+                  </View>
+                  <Text style={styles.filterName}>{filter}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        );
+        
+      case 'crop':
+        return (
+          <View style={styles.tabContent}>
+            <View style={styles.cropControls}>
+              <TouchableOpacity style={styles.cropButton}>
+                <Icon name="crop-free" size={24} color="#007AFF" />
+                <Text style={styles.cropButtonText}>Free</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.cropButton}>
+                <Icon name="crop-square" size={24} color="#007AFF" />
+                <Text style={styles.cropButtonText}>1:1</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.cropButton}>
+                <Icon name="crop-7-5" size={24} color="#007AFF" />
+                <Text style={styles.cropButtonText}>4:3</Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity style={styles.cropButton}>
+                <Icon name="crop-16-9" size={24} color="#007AFF" />
+                <Text style={styles.cropButtonText}>16:9</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        );
+        
+      case 'text':
+        return (
+          <View style={styles.tabContent}>
+            <TouchableOpacity style={styles.addTextButton}>
+              <Icon name="add" size={24} color="#ffffff" />
+              <Text style={styles.addTextButtonText}>Add Text</Text>
+            </TouchableOpacity>
+            
+            <View style={styles.textControls}>
+              <TouchableOpacity style={styles.textControlButton}>
+                <Icon name="format-bold" size
