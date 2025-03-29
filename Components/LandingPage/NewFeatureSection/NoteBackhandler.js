@@ -1,38 +1,40 @@
-import { useEffect } from 'react';
-import { BackHandler, Alert } from 'react-native';
+import { useEffect, useCallback } from 'react';
+import { BackHandler } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import ApiSaveNoteData from './utils/ApiSaveNoteData';
+import { useGlobalContext } from '../../Context/Context';
 
 const NoteBackhandler = () => {
-	const navigation = useNavigation(); 
-	const {saveNote} = ApiSaveNoteData()
+  const navigation = useNavigation();
+  const { title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar } = useGlobalContext();
 
-	useEffect(() => {
-		const handleBackPress = async () => {
-			try {
-				saveNote()
-				navigation.goBack();
-				
-				return true;
-			} catch (error) {
-				console.error('API Call Failed:', error);
-				return false;
-			}
-		};
+  // Use the handleBackPress with updated dependencies
+  const handleBackPress = useCallback(async () => {
+    try {
+      
+      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar);
+      
+      navigation.goBack();
+      return true;
+    } catch (error) {
+      console.error('API Call Failed:', error);
+      return false;
+    }
+  }, [title, details, setTitle, setDetails, navigation, createNoteStar, setCreateNoteStar ]); 
 
-		// 🔹 Back Button Listener Add
-		const backHandler = BackHandler.addEventListener(
-			'hardwareBackPress',
-			handleBackPress
-		);
+  // Register/unregister back button handler when handleBackPress changes
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBackPress
+    );
 
-		// 🔹 Cleanup function
-		return () => {
-			backHandler.remove();
-		};
-	}, []);
+    return () => {
+      backHandler.remove();
+    };
+  }, [handleBackPress]); 
 
-	return null; // 🔹 Kyunki ye sirf event handle karega, UI render nahi karega
+  return null;
 };
 
 export default NoteBackhandler;

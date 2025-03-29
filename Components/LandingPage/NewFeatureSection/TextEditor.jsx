@@ -10,7 +10,6 @@ import { uid } from "uid";
 import NoteBackhandler from './NoteBackhandler';
 import { useGlobalContext } from '../../Context/Context';
 
-
 const TextEditor = ({ toolbarVisible, setToolbarVisible, ref }) => {
   const [content, setContent] = useState('');
   const [editorReady, setEditorReady] = useState(false);
@@ -202,13 +201,13 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref }) => {
     }
   };
 
-  useEffect(()=>{
-    console.log('title => ',title)
-  },[title])
+  // useEffect(()=>{
+  //   console.log('title => ',title)
+  // },[title])
 
-  useEffect(()=>{
-    console.log('details => ',details)
-  },[details])
+  // useEffect(()=>{
+  //   console.log('details => ',details)
+  // },[details])
 
 
   const executeCommand = (command, value = null) => {

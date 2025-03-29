@@ -28,6 +28,7 @@ export const GlobalProvider = ({ children }) => {
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState(null);
   const [updateSearchQuery, setUpdateSearchQuery] = useState('');
+  const [createNoteStar, setCreateNoteStar] = useState(false)
 
 
   const headers = {
@@ -245,6 +246,8 @@ export const GlobalProvider = ({ children }) => {
     setDetails,
     title,
     setTitle,
+    createNoteStar,
+    setCreateNoteStar
   };
 
   return (

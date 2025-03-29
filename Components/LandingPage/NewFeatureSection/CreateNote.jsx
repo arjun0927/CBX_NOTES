@@ -20,14 +20,27 @@ import PaletIcon from "../../../SvgIcons/PaletIcon";
 import ThreedotIcon from "../../../SvgIcons/ThreedotIcon";
 import TextEditor from "./TextEditor.jsx";
 import Aa from "../../../SvgIcons/Aa.jsx";
+import FilledStar from "../../../SvgIcons/FilledStar.jsx";
+import { useGlobalContext } from "../../Context/Context.jsx";
+import ApiSaveNoteData from "./utils/ApiSaveNoteData.js";
 
 const CreateNote = ({ navigation }) => {
-  const [toolbarVisible,setToolbarVisible] = useState(false)
+  const [toolbarVisible, setToolbarVisible] = useState(false)
+  const {createNoteStar, setCreateNoteStar , title, details, setTitle, setDetails} = useGlobalContext();
 
   const editorRef = useRef(null);
 
   const handleAaIconPress = () => {
     setToolbarVisible(!toolbarVisible);
+  };
+
+  const saveAndBack = async () => {
+    try {
+      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar);
+      navigation.goBack();
+    } catch (error) {
+      console.error('API Call Failed:', error);
+    }
   };
 
   // const images = [
@@ -203,14 +216,20 @@ const CreateNote = ({ navigation }) => {
       {/* Top Navigation */}
       <View style={styles.navContainer}>
         <View style={styles.leftNav}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={ saveAndBack}>
             <BackIcon />
           </TouchableOpacity>
         </View>
 
         <View style={styles.rightNav}>
-          <TouchableOpacity>
-            <Staricon />
+          <TouchableOpacity onPress={() => setCreateNoteStar(!createNoteStar)}>
+            {
+              createNoteStar ? (
+                <FilledStar width={25} height={24} />
+              ) : (
+                <Staricon />
+              )
+            }
           </TouchableOpacity>
 
           <TouchableOpacity>
