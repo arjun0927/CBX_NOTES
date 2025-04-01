@@ -6,6 +6,7 @@ import { FontSelector } from './FontSelector';
 import { SizeSelector } from './FontSelector';
 import { ColorSelector } from './Color';
 import FormatButtons from './FormatButtons';
+import { useGlobalContext } from '../../Context/Context';
 
 const EditorToolbar = ({ 
   toolbarHeight, 
@@ -18,6 +19,8 @@ const EditorToolbar = ({
   const [showFontMenu, setShowFontMenu] = useState(false);
   const [showSizeMenu, setShowSizeMenu] = useState(false);
   const [showColorMenu, setShowColorMenu] = useState(false);
+
+  const { backgroundColor } = useGlobalContext()
 
   const getListIcon = () => {
     if (formatState.list === 'bullet') {
@@ -41,7 +44,8 @@ const EditorToolbar = ({
       {
         height: toolbarHeight,
         opacity: toolbarAnimation
-      }
+      },
+      {backgroundColor:backgroundColor}
     ]}>
       {/* Font Family */}
       <View>

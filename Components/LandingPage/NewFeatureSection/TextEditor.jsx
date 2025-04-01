@@ -10,7 +10,7 @@ import { uid } from "uid";
 import NoteBackhandler from './NoteBackhandler';
 import { useGlobalContext } from '../../Context/Context';
 
-const TextEditor = ({ toolbarVisible, setToolbarVisible, ref }) => {
+const TextEditor = ({ toolbarVisible, setToolbarVisible, ref, backgroundColor }) => {
   const [content, setContent] = useState('');
   const [editorReady, setEditorReady] = useState(false);
   const [showLinkInput, setShowLinkInput] = useState(false);
@@ -27,10 +27,12 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref }) => {
     size: '3',
     color: '#000000',
   });
-  const {title, setTitle , details, setDetails} = useGlobalContext();
+  const { title, setTitle, details, setDetails, createNoteMask } = useGlobalContext();
+
+  const initialHtmlContent = htmlContent(false);
 
   // backhandler
-  NoteBackhandler() ; 
+  NoteBackhandler();
 
 
   const toolbarAnimation = useRef(new Animated.Value(toolbarVisible ? 1 : 0)).current;
@@ -44,73 +46,71 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref }) => {
 
 
   const parseQuillContent = (data) => {
-  if (typeof data !== "string" || data.trim() === "") {
-    console.warn("parseQuillContent received invalid data:", data);
-    return [];
-  }
+    if (typeof data !== "string" || data.trim() === "") {
+      console.warn("parseQuillContent received invalid data:", data);
+      return [];
+    }
 
-  const paragraphs = [];
-  const listRegex = /<(ul|ol)>(.*?)<\/(ul|ol)>/gs;
-  const paragraphRegex = /<p[^>]*>(.*?)<\/p>/gs;
-  
-  let matches = [];
+    const paragraphs = [];
+    const listRegex = /<(ul|ol)>(.*?)<\/(ul|ol)>/gs;
+    const paragraphRegex = /<p[^>]*>(.*?)<\/p>/gs;
 
-  // Find all lists and paragraphs with their indices
-  let match;
-  while ((match = listRegex.exec(data)) !== null) {
-    matches.push({
-      type: "list",
-      listType: match[1] === "ul" ? "bullet" : "numbered",
-      content: match[2],
-      index: match.index,
-    });
-  }
-  
-  while ((match = paragraphRegex.exec(data)) !== null) {
-    matches.push({
-      type: "paragraph",
-      content: match[1].trim(),
-      index: match.index,
-    });
-  }
+    let matches = [];
 
-  // Sort matches based on their original index in data
-  matches.sort((a, b) => a.index - b.index);
+    // Find all lists and paragraphs with their indices
+    let match;
+    while ((match = listRegex.exec(data)) !== null) {
+      matches.push({
+        type: "list",
+        listType: match[1] === "ul" ? "bullet" : "numbered",
+        content: match[2],
+        index: match.index,
+      });
+    }
 
-  // Process matches while maintaining order
-  matches.forEach((item) => {
-    if (item.type === "list") {
-      const listItems = item.content.match(/<li>(.*?)<\/li>/gs) || [];
-      listItems.forEach((listItem) => {
+    while ((match = paragraphRegex.exec(data)) !== null) {
+      matches.push({
+        type: "paragraph",
+        content: match[1].trim(),
+        index: match.index,
+      });
+    }
+
+    // Sort matches based on their original index in data
+    matches.sort((a, b) => a.index - b.index);
+
+    // Process matches while maintaining order
+    matches.forEach((item) => {
+      if (item.type === "list") {
+        const listItems = item.content.match(/<li>(.*?)<\/li>/gs) || [];
+        listItems.forEach((listItem) => {
+          paragraphs.push({
+            key: uid(25),
+            value: listItem.replace(/<\/?li>/g, "").trim(),
+            type: "list",
+            listType: item.listType,
+            nested: null,
+            time: new Date().toISOString(),
+            editor: profileEmail,
+            expanded: true,
+            originalIndex: paragraphs.length,
+          });
+        });
+      } else if (item.type === "paragraph") {
         paragraphs.push({
           key: uid(25),
-          value: listItem.replace(/<\/?li>/g, "").trim(),
-          type: "list",
-          listType: item.listType,
+          value: item.content,
+          type: determineContentType(item.content),
           nested: null,
           time: new Date().toISOString(),
           editor: profileEmail,
           expanded: true,
           originalIndex: paragraphs.length,
         });
-      });
-    } else if (item.type === "paragraph") {
-      paragraphs.push({
-        key: uid(25),
-        value: item.content,
-        type: determineContentType(item.content),
-        nested: null,
-        time: new Date().toISOString(),
-        editor: profileEmail,
-        expanded: true,
-        originalIndex: paragraphs.length,
-      });
-    }
-  });
-
-  // return paragraphs;
-  setDetails(paragraphs);
-};
+      }
+    });
+    setDetails(paragraphs);
+  };
 
 
   const determineContentType = (content) => {
@@ -152,31 +152,30 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref }) => {
 
       // console.log('body data ',data.data.body);
 
-      const body = data?.data?.body ;
+      const body = data?.data?.body;
 
       const contentData = typeof body === "string" ? body : JSON.stringify(body);
 
       // console.log('content data', contentData)
-      const formattingKeys = ['underline', 'strike', 'italic', 'bold', 'list','size','color','font'];
+      const formattingKeys = ['underline', 'strike', 'italic', 'bold', 'list', 'size', 'color', 'font'];
 
       if (typeof data?.data?.title === 'string' && data?.data?.title.length > 0) {
         setTitle(data?.data?.title);
       }
-      
+
       const isValidContent = (content) => {
         if (!content || Object.keys(content).length === 0 || content === '<p><br></p>') {
-          return false; 
+          return false;
         }
 
         const contentKeys = Object.keys(content);
 
-        // agar sirf formatting hi hai toh false
         const isOnlyFormatting = contentKeys.every(key => formattingKeys.includes(key));
 
         return !isOnlyFormatting;
 
       };
-        const bool = isValidContent(body);
+      const bool = isValidContent(body);
 
       if (bool) {
         parseQuillContent(contentData);
@@ -271,14 +270,34 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref }) => {
     outputRange: [0, 56]
   });
 
+  useEffect(() => {
+    if (webViewRef.current && editorReady) {
+      const script = `
+        document.getElementById("editor").style.filter = "${createNoteMask ? 'blur(3px)' : 'none'}";
+      `;
+      webViewRef.current.injectJavaScript(script);
+    }
+  }, [createNoteMask, editorReady]);
+
+  useEffect(() => {
+    if (webViewRef.current && editorReady) {
+      const script = `
+        document.getElementById("editor-container").style.backgroundColor = "${backgroundColor}";
+        document.getElementById("title-input").style.backgroundColor = "${backgroundColor}";
+      `;
+      webViewRef.current.injectJavaScript(script);
+    }
+  }, [backgroundColor]);
+  
+
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.editorContainer}>
-        <WebView
+      <WebView
           ref={webViewRef}
           originWhitelist={['*']}
-          source={{ html: htmlContent }}
+          source={{ html: initialHtmlContent }} // Use static HTML
           onMessage={handleMessage}
           javaScriptEnabled={true}
           style={styles.webview}

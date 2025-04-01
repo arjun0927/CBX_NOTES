@@ -1,4 +1,5 @@
-export const htmlContent = `
+
+export const htmlContent = (createNoteMask) => { return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -132,6 +133,20 @@ export const htmlContent = `
     <div id="title-divider"></div>
     <div id="editor"></div>
   </div>
+//   <script>
+//   window.addEventListener('createNoteMaskUpdated', function() {
+//     // console.log("Received createNoteMask:", window.createNoteMask);
+//     if (window.createNoteMask) {
+//       document.getElementById("editor-container").style.filter = "blur(3px)";
+//     } else {
+//       document.getElementById("editor-container").style.filter = "none";
+//     }
+//   });
+
+//   // Call the event manually in case it's already set on load
+//   window.dispatchEvent(new Event('createNoteMaskUpdated'));
+// </script>
+
   
   <script>
     // Size format
@@ -397,4 +412,4 @@ export const htmlContent = `
   </script>
 </body>
 </html>
-  `;
+  `}

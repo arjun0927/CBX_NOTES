@@ -29,6 +29,8 @@ export const GlobalProvider = ({ children }) => {
   const [details, setDetails] = useState(null);
   const [updateSearchQuery, setUpdateSearchQuery] = useState('');
   const [createNoteStar, setCreateNoteStar] = useState(false)
+  const [createNoteMask, setCreateNoteMask] = useState(false)
+  const [backgroundColor, setBackgroundColor] = useState('#FFF')
 
 
   const headers = {
@@ -247,7 +249,11 @@ export const GlobalProvider = ({ children }) => {
     title,
     setTitle,
     createNoteStar,
-    setCreateNoteStar
+    setCreateNoteStar,
+    createNoteMask,
+    setCreateNoteMask,
+    setBackgroundColor,
+    backgroundColor
   };
 
   return (

@@ -2,7 +2,7 @@ import { uid } from "uid";
 import { getItem } from "../../../Utils/Storage";
 import axios from "axios";
 
-const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , createNoteStar, setCreateNoteStar) => {
+const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor ) => {
 	const userInfo = getItem('userProfileInfo');
 	const note = {
 		"title": title,
@@ -17,13 +17,13 @@ const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , create
 		"type": "",
 		"audioLink": "",
 		"colors": {
-			"bg": "rgb(255,255,255)",
+			"bg": backgroundColor,
 			"text": "rgb(0,0,0)"
 		},
 		"typeChanged": false,
 		"getEmailUpdates": false,
 		"tasks": {},
-		"masked": false,
+		"masked": createNoteMask,
 		"pinned": false,
 		"starred": createNoteStar,
 		"archived": false,
@@ -56,7 +56,8 @@ const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , create
 	};
 
 	if (title === '' && details === null) {
-		console.log('Empty note, not saving');
+		// console.log('Empty note, not saving');
+		setBackgroundColor('#FFF');
 		return Promise.resolve();
 	  }
 	try {
@@ -73,6 +74,8 @@ const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , create
 		  setTitleFn('');
 		  setDetailsFn(null);
 		  setCreateNoteStar(false);
+		  setCreateNoteMask(false);
+		  setBackgroundColor('#FFF');
 		}
 	  } catch (error) {
 		console.log(error);

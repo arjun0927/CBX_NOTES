@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Image,
@@ -8,7 +8,6 @@ import {
   SafeAreaView,
   TouchableOpacity
 } from "react-native";
-import { rMS } from "../../Utils/Responsive";
 import BackIcon from "../../../SvgIcons/BackIcon";
 import Staricon from "../../../SvgIcons/Staricon";
 import Tasksicon from "../../../SvgIcons/Tasksicon";
@@ -23,10 +22,13 @@ import Aa from "../../../SvgIcons/Aa.jsx";
 import FilledStar from "../../../SvgIcons/FilledStar.jsx";
 import { useGlobalContext } from "../../Context/Context.jsx";
 import ApiSaveNoteData from "./utils/ApiSaveNoteData.js";
+import Feather from 'react-native-vector-icons/Feather'
+import SelectEditorBackground from "./SelectEditorBackground.jsx";
 
 const CreateNote = ({ navigation }) => {
   const [toolbarVisible, setToolbarVisible] = useState(false)
-  const {createNoteStar, setCreateNoteStar , title, details, setTitle, setDetails} = useGlobalContext();
+  const [editorBackground, setEditorBackground] = useState(false);
+  const { createNoteStar, setCreateNoteStar, title, details, setTitle, setDetails, setCreateNoteMask, createNoteMask, backgroundColor, setBackgroundColor } = useGlobalContext();
 
   const editorRef = useRef(null);
 
@@ -36,187 +38,25 @@ const CreateNote = ({ navigation }) => {
 
   const saveAndBack = async () => {
     try {
-      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar);
+      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor);
       navigation.goBack();
     } catch (error) {
       console.error('API Call Failed:', error);
     }
   };
 
-  // const images = [
-  //   require("../../SampleImage/Aman.jpg"),
-  //   require("../../SampleImage/Brain.jpg"),
-  //   require("../../SampleImage/Param.jpg"),
-  // ];
+  const handleMask = () => {
+    setCreateNoteMask(!createNoteMask);
+  }
 
-
-  const [note, setNote] = useState({
-    title: "",
-    "details": [
-      {
-        "key": "711b4643ebf204cc5fa38869",
-        "value": "<b><font color=\"#23f514\">Hosted URL to access</font></b>",
-        "type": "checkbox",
-        "checked": false,
-        "time": "2024-10-19T07:27:55.551Z",
-        "editor": "ishanyadav13290@gmail.com",
-        "expanded": true,
-        "nested": false
-      },
-      {
-        "key": "9ff625f011a6fcc845d180e0",
-        "value": "<a target=\"_blank\" onmousedown=\"this.contentEditable=false\" style=\"cursor:pointer\" href=\"https://notes-test-pqsz.onrender.com\">https://notes-test-pqsz.onrender.com</a>",
-        "type": "checkbox",
-        "checked": false,
-        "time": "2024-10-22T11:41:19.803Z",
-        "editor": "ishanyadav13290@gmail.com",
-        "expanded": true,
-        "nested": true
-      },
-      {
-        "key": "7a34da4ac2904de09f66153d",
-        "value": "<font color=\"#4df53a\"><b>URL to Deploy Automatically</b></font>",
-        "type": "checkbox",
-        "checked": false,
-        "time": "2024-10-19T07:26:02.561Z",
-        "editor": "ishanyadav13290@gmail.com",
-        "expanded": true,
-        "nested": false
-      },
-      {
-        "key": "e44a95cfe6d3c52292897401",
-        "value": "<a target=\"_blank\" onmousedown=\"this.contentEditable=false\" style=\"cursor:pointer\" href=\"https://api.render.com/deploy/srv-cs9lhm88fa8c73cc7q00?key=0Sig7EwLPK8\" contenteditable=\"false\">https://api.render.com/deploy/srv-cs9lhm88fa8c73cc7q00?key=0Sig7EwLPK8</a> ",
-        "type": "checkbox",
-        "checked": false,
-        "time": "2024-11-30T08:41:56.196Z",
-        "editor": "ishanyadav13290@gmail.com",
-        "expanded": true,
-        "nested": true
-      }
-    ],
-    time: "",
-    versions: [],
-    userID: '',
-    email: 'rohit@ceoitbox.in',
-    "accessTo": [
-      {
-        "type": "editor",
-        "email": "ishan.yadav@ceoitbox.in",
-        "expiration": "2029-12-10T14:51:43.707Z",
-        "picture": "https://lh3.googleusercontent.com/a/ACg8ocLjuwO9UExq7XYz1VrJxmXvE2I86eqQdWMrdSKySf6PLkz23g=s96-c",
-        "emailSent": true,
-        "read": true,
-        "creator": {
-          "email": "ishanyadav13290@gmail.com",
-          "picture": "https://lh3.googleusercontent.com/a/ACg8ocJonIJ3GAcLiCwqMoYMGLvdcF2PxVWyvR8E9cVVbe5p31phxb6D3A=s96-c",
-          "name": "Ishan Yadav"
-        },
-        "time": "2024-12-10T14:51:43.707Z",
-        "_id": "6758558ab3bb05db0ef584d7"
-      },
-      {
-        "type": "editor",
-        "email": "ishan.yadav@ceoitbox.in",
-        "expiration": "2029-12-10T14:51:43.707Z",
-        "picture": "https://lh3.googleusercontent.com/a/ACg8ocLjuwO9UExq7XYz1VrJxmXvE2I86eqQdWMrdSKySf6PLkz23g=s96-c",
-        "emailSent": true,
-        "read": true,
-        "creator": {
-          "email": "ishanyadav13290@gmail.com",
-          "picture": "https://lh3.googleusercontent.com/a/ACg8ocJonIJ3GAcLiCwqMoYMGLvdcF2PxVWyvR8E9cVVbe5p31phxb6D3A=s96-c",
-          "name": "Ishan Yadav"
-        },
-        "time": "2024-12-10T14:51:43.707Z",
-        "_id": "6758558ab3bb05db0ef584d7"
-      },
-      {
-        "type": "editor",
-        "email": "ishan.yadav@ceoitbox.in",
-        "expiration": "2029-12-10T14:51:43.707Z",
-        "picture": "https://lh3.googleusercontent.com/a/ACg8ocLjuwO9UExq7XYz1VrJxmXvE2I86eqQdWMrdSKySf6PLkz23g=s96-c",
-        "emailSent": true,
-        "read": true,
-        "creator": {
-          "email": "ishanyadav13290@gmail.com",
-          "picture": "https://lh3.googleusercontent.com/a/ACg8ocJonIJ3GAcLiCwqMoYMGLvdcF2PxVWyvR8E9cVVbe5p31phxb6D3A=s96-c",
-          "name": "Ishan Yadav"
-        },
-        "time": "2024-12-10T14:51:43.707Z",
-        "_id": "6758558ab3bb05db0ef584d7"
-      }
-    ],
-    label: [],
-    password: "",
-    type: "",
-    audioLink: "",
-    "colors": {
-      "bg": "rgb(255,255,255)",
-      "text": "rgb(0,0,0)"
-    },
-    typeChanged: false,
-    getEmailUpdates: false,
-    "tasks": {
-      "assignee": [
-        {
-          "email": "ishanyadav030502@gmail.com",
-          "picture": "https://lh3.googleusercontent.com/a/ACg8ocLVQQzYH1UC9RX069rbHl-Gg3xrU9_yK6aoDl2t6zYff-4OiA=s96-c",
-          "emailSent": true,
-          "reminderSent": false,
-          "time": "2025-02-13T15:30:00.349Z"
-        }
-      ],
-      "creator": {
-        "email": "ishan.yadav@ceoitbox.in",
-        "picture": "https://lh3.googleusercontent.com/a/ACg8ocJIPvkIB79CqTKPs2WpDIDCjhpxLCzwsPDrn_qu_T3Gw6Cwu9s=s96-c",
-        "name": "Ishan Yadav"
-      },
-      "status": "pending",
-      "dueDate": {
-        "$date": "2025-02-27T18:30:00.000Z"
-      },
-      "createdAt": {
-        "$date": "2025-02-13T15:30:08.899Z"
-      },
-      "updatedOn": {
-        "$date": "2025-02-13T15:30:08.899Z"
-      },
-      "_id": {
-        "$oid": "67add522b23d9db5d91f0551"
-      }
-    },
-    masked: false,
-    userPinned: false,
-    userStarred: false,
-    archived: false,
-    trashed: false,
-    deleteDate: null,
-    lastEdited: {},
-    normalReminders: [],
-    locationReminders: [],
-    "userPreferences": [
-      {
-        "userID": "66740eae37a1646ca1a5d91b",
-        "pinned": true,
-        "starred": true,
-        "email": "ishanyadav13290@gmail.com",
-        "_id": "6794afe00fb889cf053363d4"
-      },
-      {
-        "userID": "66dfec09a99cc328cbe1792f",
-        "pinned": true,
-        "starred": true,
-        "email": "ishan.yadav@ceoitbox.in",
-        "_id": "67a32dd35bc2ac1789bd8bb6"
-      }
-    ],
-  });
+  const note = ["https://lh3.googleusercontent.com/a/ACg8ocIPg3YnhwZtnv5pUZ1ZZ1jWJopGoKCLhXOMQS9xIY2EPz-iXB8=s96-c", "https://lh3.googleusercontent.com/a/ACg8ocIPg3YnhwZtnv5pUZ1ZZ1jWJopGoKCLhXOMQS9xIY2EPz-iXB8=s96-c", "https://lh3.googleusercontent.com/a/ACg8ocIPg3YnhwZtnv5pUZ1ZZ1jWJopGoKCLhXOMQS9xIY2EPz-iXB8=s96-c"];
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={[styles.safeArea,{backgroundColor:backgroundColor}]}>
       {/* Top Navigation */}
       <View style={styles.navContainer}>
         <View style={styles.leftNav}>
-          <TouchableOpacity onPress={ saveAndBack}>
+          <TouchableOpacity onPress={saveAndBack}>
             <BackIcon />
           </TouchableOpacity>
         </View>
@@ -236,33 +76,39 @@ const CreateNote = ({ navigation }) => {
             <Tasksicon />
           </TouchableOpacity>
 
-          <TouchableOpacity>
-            <ViewIcon />
+          <TouchableOpacity onPress={handleMask}>
+            {
+              createNoteMask ? (
+                <Feather name={'eye-off'} size={20} color={'#606160'} />
+              ) : (
+                <ViewIcon />
+              )
+            }
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.imageContainer}>
-            {note?.accessTo?.map((user, index) => (
+            {note?.map((user, index) => (
               <Image
                 key={index}
-                source={{ uri: user?.picture }}
+                source={{ uri: user }}
                 style={{
                   width: 25,
                   height: 25,
                   borderRadius: 50,
                   borderWidth: 2,
                   borderColor: "rgb(255, 255, 255)",
-                  position: "absolute", // Overlapping effect
-                  left: index * 15, // Adjust spacing between images
+                  position: "absolute",
+                  left: index * 12,
                 }}
               />
             ))}
-            <View style={[styles.person_count, { left: note?.accessTo?.length * 15 }]}>
+            <View style={[styles.person_count, { left: note?.length * 11 }]}>
               <Text style={styles.count_text}>+4</Text>
             </View>
           </TouchableOpacity>
         </View>
       </View>
-      <TextEditor ref={editorRef} setToolbarVisible={setToolbarVisible} toolbarVisible={toolbarVisible} />
+      <TextEditor ref={editorRef} setToolbarVisible={setToolbarVisible} toolbarVisible={toolbarVisible} backgroundColor={backgroundColor} />
       <View style={styles.bottom_navContainer}>
         <View style={styles.bottom_leftNav}>
           <TouchableOpacity>
@@ -274,9 +120,14 @@ const CreateNote = ({ navigation }) => {
           <TouchableOpacity>
             <RedoIcon />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setEditorBackground(!editorBackground)}>
             <PaletIcon />
           </TouchableOpacity>
+          {
+            editorBackground && <SelectEditorBackground editorBackground={editorBackground}
+              setEditorBackground={setEditorBackground}
+              onColorChange={setBackgroundColor} />
+          }
           <TouchableOpacity onPress={handleAaIconPress}>
             <Aa />
           </TouchableOpacity>
@@ -300,7 +151,7 @@ export default CreateNote;
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#FFF",
+    // backgroundColor: backgroundColor,
     // padding: 10,
   },
 
@@ -353,15 +204,14 @@ const styles = StyleSheet.create({
     position: "relative",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: 'red',
-    marginRight: 45,
+    marginRight: 30,
   },
 
   image: {
     width: 25,
     height: 25,
-    borderRadius: 50,
-    borderWidth: 2, // Border thickness
+    borderRadius: 12.5,
+    borderWidth: 2,
     borderColor: "rgb(255, 255, 255)", // Border color
   },
 
@@ -374,7 +224,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: 'rgb(189, 189, 189)',
     borderColor: 'white',
-    borderWidth: 2, // Border thickness
+    borderWidth: 2,
   },
 
   count_text: {

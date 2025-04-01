@@ -6,13 +6,13 @@ import { useGlobalContext } from '../../Context/Context';
 
 const NoteBackhandler = () => {
   const navigation = useNavigation();
-  const { title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar } = useGlobalContext();
+  const { title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor } = useGlobalContext();
 
   // Use the handleBackPress with updated dependencies
   const handleBackPress = useCallback(async () => {
     try {
       
-      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar);
+      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor);
       
       navigation.goBack();
       return true;
@@ -20,7 +20,7 @@ const NoteBackhandler = () => {
       console.error('API Call Failed:', error);
       return false;
     }
-  }, [title, details, setTitle, setDetails, navigation, createNoteStar, setCreateNoteStar ]); 
+  }, [title, details, setTitle, setDetails, navigation, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor ]); 
 
   // Register/unregister back button handler when handleBackPress changes
   useEffect(() => {
