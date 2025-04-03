@@ -31,6 +31,8 @@ export const GlobalProvider = ({ children }) => {
   const [createNoteStar, setCreateNoteStar] = useState(false)
   const [createNoteMask, setCreateNoteMask] = useState(false)
   const [backgroundColor, setBackgroundColor] = useState('#FFF')
+  const [ assigneeText , setAssigneeText ] = useState('');
+  const [ assigneeAllEmail , setAssigneeAllEmail ] = useState([]);
 
 
   const headers = {
@@ -216,8 +218,6 @@ export const GlobalProvider = ({ children }) => {
     }
   }
 
-
-
   const value = {
     headers,
     showToast,
@@ -253,7 +253,11 @@ export const GlobalProvider = ({ children }) => {
     createNoteMask,
     setCreateNoteMask,
     setBackgroundColor,
-    backgroundColor
+    backgroundColor,
+    assigneeText,
+    setAssigneeText,
+    assigneeAllEmail,
+    setAssigneeAllEmail,
   };
 
   return (

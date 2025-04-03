@@ -1,11 +1,6 @@
 import { Modal, Pressable, StyleSheet, Text, TouchableWithoutFeedback, View, Keyboard, FlatList, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { rMS } from '../../Utils/Responsive';
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import Lock from '../../../SvgIcons/Lock';
-import LockLabel from '../../../SvgIcons/LockLabel';
-import Share from '../../../SvgIcons/Share';
-import ColorLabel from '../../../SvgIcons/ColorLabel';
 import { TextInput } from 'react-native-gesture-handler';
 
 const AddNewLabel = ({ setAddNewLabelModal, addNewLabelModal }) => {

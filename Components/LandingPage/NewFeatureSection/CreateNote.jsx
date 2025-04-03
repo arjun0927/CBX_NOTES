@@ -24,10 +24,12 @@ import { useGlobalContext } from "../../Context/Context.jsx";
 import ApiSaveNoteData from "./utils/ApiSaveNoteData.js";
 import Feather from 'react-native-vector-icons/Feather'
 import SelectEditorBackground from "./SelectEditorBackground.jsx";
+import AssignTask from "../Modal/AssignTask.jsx";
 
 const CreateNote = ({ navigation }) => {
   const [toolbarVisible, setToolbarVisible] = useState(false)
   const [editorBackground, setEditorBackground] = useState(false);
+  const [assignTask, setAssignTask] = useState(false);
   const { createNoteStar, setCreateNoteStar, title, details, setTitle, setDetails, setCreateNoteMask, createNoteMask, backgroundColor, setBackgroundColor } = useGlobalContext();
 
   const editorRef = useRef(null);
@@ -72,9 +74,15 @@ const CreateNote = ({ navigation }) => {
             }
           </TouchableOpacity>
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=> setAssignTask(true)}>
             <Tasksicon />
           </TouchableOpacity>
+
+          {
+            assignTask && <AssignTask assignTask={assignTask}
+              setAssignTask={setAssignTask}
+            />
+          }
 
           <TouchableOpacity onPress={handleMask}>
             {
@@ -94,7 +102,7 @@ const CreateNote = ({ navigation }) => {
                 style={{
                   width: 25,
                   height: 25,
-                  borderRadius: 50,
+                  borderRadius: 12.5,
                   borderWidth: 2,
                   borderColor: "rgb(255, 255, 255)",
                   position: "absolute",
@@ -212,7 +220,7 @@ const styles = StyleSheet.create({
     height: 25,
     borderRadius: 12.5,
     borderWidth: 2,
-    borderColor: "rgb(255, 255, 255)", // Border color
+    borderColor: "rgb(255, 255, 255)",
   },
 
   person_count: {
