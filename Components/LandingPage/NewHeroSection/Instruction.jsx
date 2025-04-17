@@ -96,6 +96,8 @@ const styles = StyleSheet.create({
     height: width * 0.56,
     overflow: "hidden",
     position: "relative",
+    borderRadius: 10,
+    overflow: 'hidden',
   },
   seekBarOverlay: {
     position: "absolute",

@@ -7,22 +7,23 @@ import { useGlobalContext } from '../../Context/Context';
 import { getItem } from '../../Utils/Storage';
 import { ActivityIndicator } from 'react-native-paper';
 
-const AddTaskAsignee = ({ setAddAsignee, addAsignee , avtarLetter, setAvtarLetter }) => {
+const AddTaskAsignee = ({ setAddAsignee, addAsignee }) => {
 	const [email, setEmail] = useState('');
 	const { assigneeText, setAssigneeText, showToast } = useGlobalContext();
 	const [loader, setLoader] = useState(false);
 
-	const getInitial = email ? email.charAt(0).toUpperCase() : '?';
-
 	// console.log(getInitial);
 
 	const addHandler = async () => {
-		if (!email.endsWith('@gmail.com')) {
-			setAddAsignee(false)
+		const trimmedEmail = email.trim().toLowerCase();
+
+		// Check if the email ends with "@gmail.com" OR any ".in" domain
+		if (!(trimmedEmail.endsWith('@gmail.com') || trimmedEmail.endsWith('.in'))) {
+			setAddAsignee(false);
 			showToast({
-				type: 'Error' ,
-				message: 'Please put valid email'
-			})
+				type: 'Error',
+				message: 'Please enter a valid email (e.g., @gmail.com or any .in domain)'
+			});
 			return;
 		}
 		try {
@@ -34,15 +35,19 @@ const AddTaskAsignee = ({ setAddAsignee, addAsignee , avtarLetter, setAvtarLette
 					Authorization: `Bearer ${token}`,
 				},
 			});
-			console.log('email data', data);
+			// console.log('email data', data);
+			const picture = data;
 
-			if(JSON.stringify(data) === '{}'){
-				setAvtarLetter(getInitial);
+			const isEmpty = Object.keys(data).length === 0;
+
+			if (isEmpty) {
 				setAddAsignee(false);
+				setAssigneeText({ email, picture: '' })
+				setLoader(false)
 			}
-			
-			if (JSON.stringify(data) !== '{}') {
-				setAssigneeText(data);
+
+			if (JSON.stringify(picture) !== '{}') {
+				setAssigneeText({ email, picture });
 				setLoader(false);
 				setAddAsignee(false)
 			}

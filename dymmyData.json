@@ -156,6 +156,35 @@
     }
 ]
 
+{
+    "dueDate": "2025-04-24T18:37:00.000Z",
+    "assignee": [
+        {
+            "email": "singharjun.software@gmail.com",
+            "picture": "https://lh3.googleusercontent.com/a/ACg8ocIPg3YnhwZtnv5pUZ1ZZ1jWJopGoKCLhXOMQS9xIY2EPz-iXB8=s96-c",
+            "emailSent": false,
+            "reminderSent": false,
+            "time": "2025-04-05T11:22:42.286Z"
+        },
+        {
+            "email": "abcd@gmail.com",
+            "picture": {},
+            "emailSent": false,
+            "reminderSent": false,
+            "time": "2025-04-05T11:22:51.162Z"
+        }
+    ],
+    "priority": "medium",
+    "status": "pending",
+    "creator": {
+        "email": "singharjun.software@gmail.com",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocIPg3YnhwZtnv5pUZ1ZZ1jWJopGoKCLhXOMQS9xIY2EPz-iXB8=s96-c",
+        "name": "Arjun singh"
+    },
+    "createdAt": "2025-04-05T11:23:27.152Z",
+    "updatedOn": "2025-04-05T11:23:25.119Z"
+}
+
 
 
 {
@@ -205,6 +234,70 @@
     "normalReminders": [],
     "locationReminders": [],
     "_id": "860f01fece6e78da4f6ad2e1",
+    "creator": {
+        "email": "singharjun.software@gmail.com",
+        "name": "Arjun singh",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocIPg3YnhwZtnv5pUZ1ZZ1jWJopGoKCLhXOMQS9xIY2EPz-iXB8=s96-c"
+    },
+    "userPreferences": [
+        {
+            "userID": "672dab52098a4ab0d4369a07",
+            "email": "singharjun.software@gmail.com",
+            "starred": false,
+            "pinned": false
+        }
+    ],
+    "urls": false
+}
+
+
+
+{
+    "title": "new Title",
+    "details": [
+        {
+            "key": "9cf9fd0adf2dc74e12228329",
+            "value": "new note",
+            "type": "text",
+            "nested": null,
+            "time": "2025-04-05T10:48:41.342Z",
+            "editor": "singharjun.software@gmail.com",
+            "expanded": true,
+            "originalIndex": 1
+        }
+    ],
+    "time": "2025-04-05T10:48:46.101Z",
+    "versions": [],
+    "userID": "672dab52098a4ab0d4369a07",
+    "email": "singharjun.software@gmail.com",
+    "accessTo": [],
+    "label": [],
+    "password": "",
+    "type": "",
+    "audioLink": "",
+    "colors": {
+        "bg": "rgb(255,255,255)",
+        "text": "rgb(0,0,0)"
+    },
+    "typeChanged": false,
+    "getEmailUpdates": false,
+    "tasks": {},
+    "masked": false,
+    "pinned": false,
+    "starred": false,
+    "archived": false,
+    "trashed": false,
+    "deleteDate": null,
+    "lastEdited": {
+        "_id": "672dab52098a4ab0d4369a07",
+        "email": "singharjun.software@gmail.com",
+        "time": "2025-04-05T10:48:46.101Z",
+        "picture": "https://lh3.googleusercontent.com/a/ACg8ocIPg3YnhwZtnv5pUZ1ZZ1jWJopGoKCLhXOMQS9xIY2EPz-iXB8=s96-c",
+        "seen": false
+    },
+    "normalReminders": [],
+    "locationReminders": [],
+    "_id": "298857fd8e1fc0253fc9679b",
     "creator": {
         "email": "singharjun.software@gmail.com",
         "name": "Arjun singh",

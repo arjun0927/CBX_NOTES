@@ -2,7 +2,9 @@ import { uid } from "uid";
 import { getItem } from "../../../Utils/Storage";
 import axios from "axios";
 
-const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor ) => {
+const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, assignTaskData, setAssignTaskData ) => {
+
+	// console.log('assign Task data ', assignTaskData)
 	const userInfo = getItem('userProfileInfo');
 	const note = {
 		"title": title,
@@ -22,7 +24,7 @@ const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , create
 		},
 		"typeChanged": false,
 		"getEmailUpdates": false,
-		"tasks": {},
+		"tasks": { ...assignTaskData },
 		"masked": createNoteMask,
 		"pinned": false,
 		"starred": createNoteStar,
@@ -58,9 +60,11 @@ const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , create
 	if (title === '' && details === null) {
 		// console.log('Empty note, not saving');
 		setBackgroundColor('#FFF');
+		setAssignTaskData('')
 		return Promise.resolve();
 	  }
 	try {
+		console.log('note',note)
 		const token = await getItem('token');
 		const { data } = await axios.post('https://notes.ceoitbox.com/api/createNote', note, {
 		  headers: {
@@ -68,7 +72,7 @@ const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , create
 			'Content-Type': 'application/json',
 		  },
 		});
-		console.log('api response', data);
+		// console.log('api response', data);
 	
 		if (data) {
 		  setTitleFn('');
@@ -76,6 +80,7 @@ const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , create
 		  setCreateNoteStar(false);
 		  setCreateNoteMask(false);
 		  setBackgroundColor('#FFF');
+		  setAssignTaskData('');
 		}
 	  } catch (error) {
 		console.log(error);

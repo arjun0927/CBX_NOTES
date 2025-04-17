@@ -7,7 +7,9 @@ import DatePicker from '../../../SvgIcons/DatePicker';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import AddTaskAsignee from './AddTaskAsignee';
 import { useGlobalContext } from '../../Context/Context';
-import { Avatar } from 'react-native-paper';
+import { Avatar, Divider } from 'react-native-paper';
+import AssignTaskAllEmails from './AssignTaskAllEmails';
+import { uid } from 'uid';
 
 const AssignTask = ({ setAssignTask, assignTask }) => {
 	const userInfo = getItem('userProfileInfo');
@@ -16,12 +18,28 @@ const AssignTask = ({ setAssignTask, assignTask }) => {
 	const [email, setEmail] = useState([]);
 	const [selectedPriority, setSelectedPriority] = useState('Low');
 	const [addAsignee, setAddAsignee] = useState(false);
-	const [avtarLetter, setAvtarLetter] = useState('');
-	const { assigneeText, setAssigneeText } = useGlobalContext();
+	const [allEmailModal, setAllEmailModal] = useState(false);
+	const { assigneeText, setAssigneeText , assignTaskData, setAssignTaskData } = useGlobalContext();
 
+	const [dueTime, setDueTime] = useState(new Date());
 	const priorities = ['Low', 'Medium', 'High', 'Urgent'];
 
-	const openDatePicker = () => {
+	const openTimePicker = () => {
+		DateTimePickerAndroid.open({
+			value: dueTime,
+			mode: 'time',
+			is24Hour: false,
+			display: 'default',
+			onChange: (event, selectedTime) => {
+				if (selectedTime) {
+					setDueTime(selectedTime);
+				}
+			},
+		});
+	};
+
+
+	const openDateTimePicker = () => {
 		DateTimePickerAndroid.open({
 			value: dueDate,
 			mode: 'date',
@@ -29,20 +47,48 @@ const AssignTask = ({ setAssignTask, assignTask }) => {
 			onChange: (event, selectedDate) => {
 				if (selectedDate) {
 					setDueDate(selectedDate);
+					openTimePicker(); // open time picker after selecting date
 				}
 			},
 		});
 	};
 
+
+
+	const generateInitials = (email) => {
+		if (!email) return '?';
+		return email.charAt(0).toUpperCase()
+	};
+
+	const getColorForEmail = (email) => {
+		const hash = Array.from(email).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+		const colors = ['#FFB6C1', '#B0E0E6', '#FFD700', '#98FB98', '#DDA0DD', '#FA8072'];
+		return colors[hash % colors.length];
+	};
+
+
+
 	// console.log('email',email);
 
 	useEffect(() => {
-		if (assigneeText && !email.includes(assigneeText)) { 
-			setEmail((prevEmails) => [...prevEmails, assigneeText]);
+		if (assigneeText && !email.some((e) => e.email === assigneeText.email)) {
+			setEmail((prevEmails) => {
+				const lowerEmail = assigneeText.email.toLowerCase();
+				if (!prevEmails.some(e => e.email.toLowerCase() === lowerEmail)) {
+					return [...prevEmails, { ...assigneeText, email: lowerEmail }];
+				}
+				return prevEmails;
+			});
+
 		}
+
 		setAssigneeText('');
 	}, [assigneeText]);
-	
+
+	// useEffect(() => {
+	// 	console.log('email', email)
+	// }, [email])
+
 
 
 	const togglePriorityAccordion = () => {
@@ -69,6 +115,40 @@ const AssignTask = ({ setAssignTask, assignTask }) => {
 		}
 	};
 
+	const handleSaveTask = () => {
+		const taskData = {
+			assignee: email.map(e => ({
+				email: e.email,
+				picture: e.picture || {},
+				emailSent: false,
+				reminderSent: false,
+				time: new Date().toISOString()
+			})),
+			priority: selectedPriority.toLowerCase(),
+			creator: {
+				email: userInfo.email,
+				picture: userInfo.picture,
+				name: userInfo.name
+			},
+			status: 'pending',
+			dueDate: new Date(
+				dueDate.getFullYear(),
+				dueDate.getMonth(),
+				dueDate.getDate(),
+				dueTime.getHours(),
+				dueTime.getMinutes(),
+				0
+			).toISOString(),
+			createdAt:new Date().toISOString(),
+			updatedOn:new Date().toISOString()
+		};
+	
+		// console.log('Task Saved Data:', JSON.stringify(taskData, null, 2));
+		console.log('task data ',taskData)
+		setAssignTaskData(taskData);
+		setAssignTask(false);
+	};
+
 	return (
 		<Modal animationType="fade" visible={assignTask} transparent={true}>
 			<Pressable style={styles.modalOverlay} onPress={() => setAssignTask(false)}>
@@ -76,31 +156,49 @@ const AssignTask = ({ setAssignTask, assignTask }) => {
 					<View style={styles.assignTaskContainer}>
 						<Text style={styles.assignTaskText}>Assign Task</Text>
 					</View>
-					<View style={styles.seprator}></View>
+					<View style={styles.seprator}>
+						<Divider />
+					</View>
 
-					{/* Assignee */}
 					<View style={styles.midContainer}>
 						<Text style={styles.midContainerText}>Assignee</Text>
-						<View style={{ flexDirection: 'row', alignItems:'center' , gap:5 }}>
-							<View style={{ flexDirection: 'row',gap:2 , alignItems:'center'}}>
+						<View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+							<View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
 								{email.map((e, index) => (
-									<Image key={index} style={styles.image} source={{ uri: e }} />
+									e.picture !== '' ? (
+										<Image key={index} style={styles.image} source={{ uri: e.picture }} />
+									) : (
+										<Avatar.Text
+											key={index}
+											size={24}
+											label={generateInitials(e.email)}
+											style={{ backgroundColor: getColorForEmail(e.email) }}
+										/>
+									)
 								))}
-								{
-									avtarLetter !== '' ? (
-										<Avatar.Text size={24} label={avtarLetter} />
-									) : null
-								}
+
 							</View>
 
 							<TouchableOpacity onPress={() => setAddAsignee(true)}>
 								<AntDesign name={'plus'} size={20} color={'#000000'} />
 							</TouchableOpacity>
+
+							{
+								email.length > 0 ? (
+									<TouchableOpacity onPress={() => setAllEmailModal(true)}>
+										<Text style={{ fontFamily: 'Poppins-Medium', fontSize: 10, color: '#598931' }}>See all</Text>
+									</TouchableOpacity>
+								) : null
+							}
 						</View>
 					</View>
 
 					{
-						addAsignee && <AddTaskAsignee addAsignee={addAsignee} setAddAsignee={setAddAsignee} avtarLetter={avtarLetter} setAvtarLetter={setAvtarLetter} />
+						allEmailModal && <AssignTaskAllEmails allEmailModal={allEmailModal} setAllEmailModal={setAllEmailModal} email={email} setEmail={setEmail} />
+					}
+
+					{
+						addAsignee && <AddTaskAsignee addAsignee={addAsignee} setAddAsignee={setAddAsignee} />
 					}
 
 					{/* Created By */}
@@ -116,14 +214,27 @@ const AssignTask = ({ setAssignTask, assignTask }) => {
 					<View style={styles.midContainer}>
 						<Text style={styles.midContainerText}>Due Date</Text>
 						<View style={styles.dateContainer}>
-							<TouchableOpacity onPress={openDatePicker}>
+							{/* Date Picker */}
+							<TouchableOpacity onPress={openDateTimePicker}>
 								<DatePicker stroke={'#987FA8'} />
 							</TouchableOpacity>
 							<Text style={styles.dateText}>
 								{dueDate.toLocaleDateString('en-GB')}
 							</Text>
+
+							{/* Time Picker */}
+							<TouchableOpacity onPress={openTimePicker}>
+								<AntDesign name="clockcircleo" size={19} color="#987FA8" style={{ marginLeft: 10 }} />
+							</TouchableOpacity>
+							<Text style={styles.dateText}>
+								{dueTime.toLocaleTimeString('en-US', {
+									hour: '2-digit',
+									minute: '2-digit',
+								})}
+							</Text>
 						</View>
 					</View>
+
 
 					{/* Set Priority with Accordion */}
 					<View style={styles.midContainer}>
@@ -174,7 +285,7 @@ const AssignTask = ({ setAssignTask, assignTask }) => {
 						<TouchableOpacity style={styles.btn1} onPress={() => setAssignTask(false)}>
 							<Text style={styles.btn1Text}>CANCEL</Text>
 						</TouchableOpacity>
-						<TouchableOpacity style={styles.btn2} onPress={() => setAssignTask(false)}>
+						<TouchableOpacity style={styles.btn2} onPress={() => handleSaveTask()}>
 							<Text style={styles.btn2Text}>SAVE</Text>
 						</TouchableOpacity>
 					</View>
@@ -213,9 +324,6 @@ const styles = StyleSheet.create({
 		fontSize: rMS(21),
 	},
 	seprator: {
-		width: '100%',
-		height: 1.3,
-		backgroundColor: '#E9E9E9',
 		marginVertical: 10,
 	},
 	midContainer: {

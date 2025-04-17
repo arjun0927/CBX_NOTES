@@ -13,7 +13,7 @@ function Aa(props) {
     >
       <Path
         d="M21 14h-5M16 16v-3.5a2.5 2.5 0 015 0V16M4.5 13h6M3 16l4.5-9 4.5 9"
-        stroke="#CFCFCF"
+        stroke="#606160"
         strokeWidth={2}
         strokeLinecap="round"
         strokeLinejoin="round"

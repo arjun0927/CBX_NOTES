@@ -31,6 +31,8 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref, backgroundColor })
 
   const initialHtmlContent = htmlContent(false);
 
+  // console.log('details => ',details)
+
   // backhandler
   NoteBackhandler();
 
@@ -93,7 +95,7 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref, backgroundColor })
             time: new Date().toISOString(),
             editor: profileEmail,
             expanded: true,
-            originalIndex: paragraphs.length,
+            originalIndex: paragraphs.length + 1,
           });
         });
       } else if (item.type === "paragraph") {
@@ -105,7 +107,7 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref, backgroundColor })
           time: new Date().toISOString(),
           editor: profileEmail,
           expanded: true,
-          originalIndex: paragraphs.length,
+          originalIndex: paragraphs.length + 1,
         });
       }
     });
@@ -154,6 +156,8 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref, backgroundColor })
 
       const body = data?.data?.body;
 
+      // console.log('body', body)
+
       const contentData = typeof body === "string" ? body : JSON.stringify(body);
 
       // console.log('content data', contentData)
@@ -164,7 +168,9 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref, backgroundColor })
       }
 
       const isValidContent = (content) => {
+        // console.log('content', content)
         if (!content || Object.keys(content).length === 0 || content === '<p><br></p>') {
+          // console.log('content', content)
           return false;
         }
 
@@ -176,6 +182,7 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref, backgroundColor })
 
       };
       const bool = isValidContent(body);
+      console.log('bool', bool)
 
       if (bool) {
         parseQuillContent(contentData);
@@ -199,14 +206,6 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref, backgroundColor })
       console.error("Error parsing editor message", e);
     }
   };
-
-  // useEffect(()=>{
-  //   console.log('title => ',title)
-  // },[title])
-
-  // useEffect(()=>{
-  //   console.log('details => ',details)
-  // },[details])
 
 
   const executeCommand = (command, value = null) => {

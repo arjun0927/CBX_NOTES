@@ -33,6 +33,7 @@ export const GlobalProvider = ({ children }) => {
   const [backgroundColor, setBackgroundColor] = useState('#FFF')
   const [ assigneeText , setAssigneeText ] = useState('');
   const [ assigneeAllEmail , setAssigneeAllEmail ] = useState([]);
+  const [ assignTaskData , setAssignTaskData ] = useState('');
 
 
   const headers = {
@@ -258,6 +259,8 @@ export const GlobalProvider = ({ children }) => {
     setAssigneeText,
     assigneeAllEmail,
     setAssigneeAllEmail,
+    assignTaskData,
+    setAssignTaskData,
   };
 
   return (
