@@ -22,7 +22,7 @@ const AddTaskAsignee = ({ setAddAsignee, addAsignee }) => {
 			setAddAsignee(false);
 			showToast({
 				type: 'Error',
-				message: 'Please enter a valid email (e.g., @gmail.com or any .in domain)'
+				message: 'Please enter a valid email'
 			});
 			return;
 		}

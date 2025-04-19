@@ -33,6 +33,7 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { Avatar } from 'react-native-paper';
 import AssignTaskAllEmails from "../Modal/AssignTaskAllEmails.jsx";
 import AddTaskAsignee from "../Modal/AddTaskAsignee.jsx";
+import ThreeDotModal from "../Modal/ThreeDotModal.jsx";
 
 const CreateNote = ({ navigation }) => {
   const [toolbarVisible, setToolbarVisible] = useState(false);
@@ -47,66 +48,72 @@ const CreateNote = ({ navigation }) => {
   const [showTaskContainer, setShowTaskContainer] = useState(true);
   const [addAsignee, setAddAsignee] = useState(false);
   const [allEmailModal, setAllEmailModal] = useState(false);
-  
+  const [threeDotModalVisible, setThreeDotModalVisible] = useState(false);
+
   const statuses = ['Pending', 'Progress', 'Completed'];
   const priorities = ['Low', 'Medium', 'High', 'Urgent'];
-  
-  const { 
-    createNoteStar, 
-    setCreateNoteStar, 
-    title, 
-    details, 
-    setTitle, 
-    setDetails, 
-    setCreateNoteMask, 
-    createNoteMask, 
-    backgroundColor, 
-    setBackgroundColor, 
-    assignTaskData, 
+
+  const {
+    createNoteStar,
+    setCreateNoteStar,
+    title,
+    details,
+    setTitle,
+    setDetails,
+    setCreateNoteMask,
+    createNoteMask,
+    backgroundColor,
+    setBackgroundColor,
+    assignTaskData,
     setAssignTaskData,
     assigneeText,
-    setAssigneeText
+    setAssigneeText,
+    addCollaboratorData,
+    setAddCollaboratorData
   } = useGlobalContext();
 
   const editorRef = useRef(null);
 
   // Get assignees from context
-  const assignees = assignTaskData?.assignee || [];
-  
-  // Effect to update status and priority when assignTaskData changes
-  useEffect(() => {
-  if (assignTaskData) {
-    // Update status and priority based on assignTaskData
-    if (assignTaskData.status) {
-      const statusMap = {
-        'pending': 'Pending',
-        'progress': 'Progress',
-        'completed': 'Completed'
-      };
-      setSelectedStatus(statusMap[assignTaskData.status] || 'Pending');
-    }
-    
-    if (assignTaskData.priority) {
-      const priorityMap = {
-        'low': 'Low',
-        'medium': 'Medium',
-        'high': 'High',
-        'urgent': 'Urgent'
-      };
-      setSelectedPriority(priorityMap[assignTaskData.priority] || 'Low');
-    }
-    
-    // Update date and time if available
-    if (assignTaskData.dueDate) {
-      const dueDateObj = new Date(assignTaskData.dueDate);
-      setDueDate(dueDateObj);
-      setDueTime(dueDateObj);
-    }
+  // console.log('email', JSON.stringify(assignTaskData))
 
-    // Show the task container if there's task data
-    setShowTaskContainer(true);
-  }
-}, [assignTaskData]);
+  const assignees = assignTaskData?.assignee || [];
+
+  // console.log('assignees', assignees)
+
+  useEffect(() => {
+    if (assignTaskData) {
+      // Update status and priority based on assignTaskData
+      if (assignTaskData.status) {
+        const statusMap = {
+          'pending': 'Pending',
+          'progress': 'Progress',
+          'completed': 'Completed'
+        };
+        setSelectedStatus(statusMap[assignTaskData.status] || 'Pending');
+      }
+
+      if (assignTaskData.priority) {
+        const priorityMap = {
+          'low': 'Low',
+          'medium': 'Medium',
+          'high': 'High',
+          'urgent': 'Urgent'
+        };
+        setSelectedPriority(priorityMap[assignTaskData.priority] || 'Low');
+      }
+
+      // Update date and time if available
+      if (assignTaskData.dueDate) {
+        const dueDateObj = new Date(assignTaskData.dueDate);
+        setDueDate(dueDateObj);
+        setDueTime(dueDateObj);
+      }
+
+      // Show the task container if there's task data
+      setShowTaskContainer(true);
+    }
+  }, [assignTaskData]);
 
   const handleAaIconPress = () => {
     setToolbarVisible(!toolbarVisible);
@@ -114,7 +121,7 @@ const CreateNote = ({ navigation }) => {
 
   const saveAndBack = async () => {
     try {
-      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, setAssignTaskData, assignTaskData);
+      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, setAssignTaskData, assignTaskData, addCollaboratorData, setAddCollaboratorData);
       navigation.goBack();
     } catch (error) {
       console.error('API Call Failed:', error);
@@ -138,7 +145,7 @@ const CreateNote = ({ navigation }) => {
   const selectStatus = (status) => {
     setSelectedStatus(status);
     setShowStatusAccordion(false);
-    
+
     // Update the assignTaskData with the new status
     if (assignTaskData) {
       const statusMap = {
@@ -146,7 +153,7 @@ const CreateNote = ({ navigation }) => {
         'Progress': 'progress',
         'Completed': 'completed'
       };
-      
+
       setAssignTaskData({
         ...assignTaskData,
         status: statusMap[status] || 'pending',
@@ -158,7 +165,7 @@ const CreateNote = ({ navigation }) => {
   const selectPriority = (priority) => {
     setSelectedPriority(priority);
     setShowPriorityAccordion(false);
-    
+
     // Update the assignTaskData with the new priority
     if (assignTaskData) {
       const priorityMap = {
@@ -167,7 +174,7 @@ const CreateNote = ({ navigation }) => {
         'High': 'high',
         'Urgent': 'urgent'
       };
-      
+
       setAssignTaskData({
         ...assignTaskData,
         priority: priorityMap[priority] || 'low',
@@ -216,7 +223,7 @@ const CreateNote = ({ navigation }) => {
         time.getMinutes(),
         0
       );
-      
+
       setAssignTaskData({
         ...assignTaskData,
         dueDate: newDueDate.toISOString(),
@@ -480,12 +487,12 @@ const CreateNote = ({ navigation }) => {
 
       {/* Add the modals for adding assignees and viewing all assignees */}
       {addAsignee && (
-        <AddTaskAsignee 
+        <AddTaskAsignee
           addAsignee={addAsignee}
           setAddAsignee={setAddAsignee}
         />
       )}
-      
+
       {allEmailModal && assignTaskData && (
         <AssignTaskAllEmails
           allEmailModal={allEmailModal}
@@ -529,11 +536,13 @@ const CreateNote = ({ navigation }) => {
           <TouchableOpacity>
             <Text style={styles.last_view}>Last Edited on 23rd July, 2024</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setThreeDotModalVisible(true)}>
             <ThreedotIcon />
           </TouchableOpacity>
         </View>
       </View>
+
+      <ThreeDotModal setThreeDotModalVisible={setThreeDotModalVisible} threeDotModalVisible={threeDotModalVisible} />
     </SafeAreaView>
   );
 };
@@ -670,7 +679,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "rgb(255, 255, 255)",
   },
-  
+
   // Accordion styles
   priorityAccordionContainer: {
     position: 'relative',
@@ -693,7 +702,7 @@ const styles = StyleSheet.create({
   },
   accordionContent: {
     position: 'absolute',
-    top:-160,
+    top: -160,
     right: 0,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
@@ -708,7 +717,7 @@ const styles = StyleSheet.create({
   },
   accordionContent2: {
     position: 'absolute',
-    top:-121,
+    top: -121,
     right: 0,
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
@@ -729,7 +738,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     fontSize: rMS(13),
   },
-  
+
   // Date container styles
   dateContainer: {
     flexDirection: 'row',

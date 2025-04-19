@@ -85,6 +85,37 @@ const AssignTask = ({ setAssignTask, assignTask }) => {
 		setAssigneeText('');
 	}, [assigneeText]);
 
+	useEffect(() => {
+		// Initialize from existing assignTaskData if available
+		if (assignTaskData) {
+		  // Initialize priority
+		  if (assignTaskData.priority) {
+			const priorityMap = {
+			  'low': 'Low',
+			  'medium': 'Medium',
+			  'high': 'High',
+			  'urgent': 'Urgent'
+			};
+			setSelectedPriority(priorityMap[assignTaskData.priority] || 'Low');
+		  }
+		  
+		  // Initialize due date and time
+		  if (assignTaskData.dueDate) {
+			const dueDateObj = new Date(assignTaskData.dueDate);
+			setDueDate(dueDateObj);
+			setDueTime(dueDateObj);
+		  }
+		  
+		  // Initialize assignees
+		  if (assignTaskData.assignee && assignTaskData.assignee.length > 0) {
+			setEmail(assignTaskData.assignee.map(assignee => ({
+			  email: assignee.email,
+			  picture: assignee.picture || ''
+			})));
+		  }
+		}
+	  }, [assignTaskData]);
+
 	// useEffect(() => {
 	// 	console.log('email', email)
 	// }, [email])

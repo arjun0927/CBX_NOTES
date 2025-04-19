@@ -6,13 +6,13 @@ import { useGlobalContext } from '../../Context/Context';
 
 const NoteBackhandler = () => {
   const navigation = useNavigation();
-  const { title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, assignTaskData, setAssignTaskData} = useGlobalContext();
+  const { title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, assignTaskData, setAssignTaskData, addCollaboratorData, setAddCollaboratorData} = useGlobalContext();
 
   // Use the handleBackPress with updated dependencies
   const handleBackPress = useCallback(async () => {
     try {
       
-      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor,assignTaskData, setAssignTaskData );
+      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor,assignTaskData, setAssignTaskData, addCollaboratorData, setAddCollaboratorData );
       
       navigation.goBack();
       return true;
@@ -20,7 +20,7 @@ const NoteBackhandler = () => {
       console.error('API Call Failed:', error);
       return false;
     }
-  }, [title, details, setTitle, setDetails, navigation, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, assignTaskData, setAssignTaskData]); 
+  }, [title, details, setTitle, setDetails, navigation, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, assignTaskData, setAssignTaskData, addCollaboratorData, setAddCollaboratorData]); 
 
   // Register/unregister back button handler when handleBackPress changes
   useEffect(() => {

@@ -2,7 +2,7 @@ import { uid } from "uid";
 import { getItem } from "../../../Utils/Storage";
 import axios from "axios";
 
-const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, assignTaskData, setAssignTaskData ) => {
+const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, assignTaskData, setAssignTaskData, addCollaboratorData, setAddCollaboratorData ) => {
 
 	// console.log('assign Task data ', assignTaskData)
 	const userInfo = getItem('userProfileInfo');
@@ -13,7 +13,7 @@ const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , create
 		"versions": [],
 		"userID": userInfo?._id,
 		"email": userInfo?.email,
-		"accessTo": [],
+		"accessTo": addCollaboratorData,
 		"label": [],
 		"password": "",
 		"type": "",
@@ -81,6 +81,7 @@ const ApiSaveNoteData = async (title, details, setTitleFn, setDetailsFn , create
 		  setCreateNoteMask(false);
 		  setBackgroundColor('#FFF');
 		  setAssignTaskData('');
+		  setAddCollaboratorData([]);
 		}
 	  } catch (error) {
 		console.log(error);
