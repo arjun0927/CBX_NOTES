@@ -4,44 +4,19 @@ import { rMS } from '../../Utils/Responsive';
 import Feather from 'react-native-vector-icons/Feather'
 import { useGlobalContext } from '../../Context/Context';
 
-const AddSecurity = ({ setAddSecureModal, addSecureModal }) => {
+const secureNoteModal = ({ notePwd, setNotePwd , modalPassword, setModalPassword }) => {
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [securePassword, setSecurePassword] = useState(true);
-    const [secureConfirmPassword, setSecureConfirmPassword] = useState(true);
     const { setSecureNotePwd, showToast } = useGlobalContext();
 
-    const savePassword = () => {
-        if(password === "" || confirmPassword === ""){
-            showToast({
-                type: 'error',
-                message: 'Password is required'
-            });
-        }else if(password === confirmPassword){
-            setSecureNotePwd(password);
-            setAddSecureModal(false);
-            setPassword("");
-            setConfirmPassword("");
-            showToast({
-                type: 'success',
-                message: 'Password set successfully'
-            });
-        }else{
-            showToast({
-                type: 'error',
-                message: 'Password does not match'
-            });
-        }
-    }
 
     return (
-        <Modal transparent={true} visible={addSecureModal} animationType='fade'>
-            <Pressable style={styles.modalOverlay} onPress={() => setAddSecureModal(false)}>
+        <Modal transparent={true} visible={notePwd} animationType='fade'>
+            <Pressable style={styles.modalOverlay} onPress={() => setNotePwd(false)}>
                 <Pressable style={styles.modalContainer} onPress={(e) => e.stopPropagation()}>
                     <Text style={styles.headerText}>Set Password</Text>
                     <View style={styles.line}></View>
                     
-                    {/* Password Field */}
 					<View>
 						<Text style={styles.passwordText}>Password</Text>
 					</View>
@@ -58,32 +33,12 @@ const AddSecurity = ({ setAddSecureModal, addSecureModal }) => {
                             {securePassword ? <Feather name={'eye-off'} size={20} /> : <Feather name={'eye'} size={20} />}
                         </TouchableOpacity>
                     </View>
-
-					<View>
-						<Text style={styles.passwordText}>Confirm Password</Text>
-					</View>
-                    
-                    {/* Confirm Password Field */}
-                    <View style={styles.inputContainer}>
-                        <TextInput
-                            style={styles.input}
-                            placeholder=""
-                            placeholderTextColor="#7D7D7D"
-                            secureTextEntry={secureConfirmPassword}
-                            value={confirmPassword}
-                            onChangeText={setConfirmPassword}
-                        />
-                        <TouchableOpacity onPress={() => setSecureConfirmPassword(!secureConfirmPassword)}>
-						{secureConfirmPassword ? <Feather name={'eye-off'} size={20} /> : <Feather name={'eye'} size={20} />}
-                        </TouchableOpacity>
-                    </View>
-
-                    {/* Buttons */}
+                
                     <View style={styles.btnContainer}>
-                        <TouchableOpacity onPress={() => setAddSecureModal(false)} style={styles.cancelBtn}>
+                        <TouchableOpacity onPress={() => setNotePwd(false)} style={styles.cancelBtn}>
                             <Text style={styles.cancelText}>CANCEL</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => savePassword()} style={styles.saveBtn}>
+                        <TouchableOpacity onPress={() => setNotePwd(false)} style={styles.saveBtn}>
                             <Text style={styles.saveText}>SAVE</Text>
                         </TouchableOpacity>
                     </View>
@@ -93,7 +48,7 @@ const AddSecurity = ({ setAddSecureModal, addSecureModal }) => {
     );
 };
 
-export default AddSecurity;
+export default secureNoteModal;
 
 const styles = StyleSheet.create({
     modalOverlay: {

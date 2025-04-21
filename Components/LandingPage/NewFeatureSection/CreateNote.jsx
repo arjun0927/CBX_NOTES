@@ -69,7 +69,9 @@ const CreateNote = ({ navigation }) => {
     assigneeText,
     setAssigneeText,
     addCollaboratorData,
-    setAddCollaboratorData
+    setAddCollaboratorData,
+    secureNotePwd,
+    setSecureNotePwd
   } = useGlobalContext();
 
   const editorRef = useRef(null);
@@ -121,7 +123,7 @@ const CreateNote = ({ navigation }) => {
 
   const saveAndBack = async () => {
     try {
-      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, setAssignTaskData, assignTaskData, addCollaboratorData, setAddCollaboratorData);
+      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, setAssignTaskData, assignTaskData, addCollaboratorData, setAddCollaboratorData, secureNotePwd, setSecureNotePwd);
       navigation.goBack();
     } catch (error) {
       console.error('API Call Failed:', error);

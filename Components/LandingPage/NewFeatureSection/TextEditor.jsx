@@ -182,7 +182,7 @@ const TextEditor = ({ toolbarVisible, setToolbarVisible, ref, backgroundColor })
 
       };
       const bool = isValidContent(body);
-      console.log('bool', bool)
+      // console.log('bool', bool)
 
       if (bool) {
         parseQuillContent(contentData);

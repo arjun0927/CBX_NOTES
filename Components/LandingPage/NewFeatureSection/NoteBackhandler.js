@@ -6,32 +6,80 @@ import { useGlobalContext } from '../../Context/Context';
 
 const NoteBackhandler = () => {
   const navigation = useNavigation();
-  const { title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, assignTaskData, setAssignTaskData, addCollaboratorData, setAddCollaboratorData} = useGlobalContext();
+  const { 
+    title, 
+    details, 
+    setTitle, 
+    setDetails, 
+    createNoteStar, 
+    setCreateNoteStar, 
+    createNoteMask, 
+    setCreateNoteMask, 
+    backgroundColor, 
+    setBackgroundColor, 
+    assignTaskData, 
+    setAssignTaskData, 
+    addCollaboratorData, 
+    setAddCollaboratorData,
+    secureNotePwd , 
+    setSecureNotePwd
+  } = useGlobalContext();
 
-  // Use the handleBackPress with updated dependencies
   const handleBackPress = useCallback(async () => {
     try {
-      
-      await ApiSaveNoteData(title, details, setTitle, setDetails, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor,assignTaskData, setAssignTaskData, addCollaboratorData, setAddCollaboratorData );
+      await ApiSaveNoteData(
+        title,
+        details,
+        setTitle,
+        setDetails,
+        createNoteStar,
+        setCreateNoteStar,
+        createNoteMask,
+        setCreateNoteMask,
+        backgroundColor,
+        setBackgroundColor,
+        setAssignTaskData,
+        assignTaskData,
+        addCollaboratorData,
+        setAddCollaboratorData,
+        secureNotePwd,
+        setSecureNotePwd
+      );
       
       navigation.goBack();
       return true;
     } catch (error) {
-      console.error('API Call Failed:', error);
-      return false;
+      console.error('Failed to save note:', error);
+      navigation.goBack();
+      return true;
     }
-  }, [title, details, setTitle, setDetails, navigation, createNoteStar, setCreateNoteStar, createNoteMask, setCreateNoteMask, backgroundColor, setBackgroundColor, assignTaskData, setAssignTaskData, addCollaboratorData, setAddCollaboratorData]); 
+  }, [
+    title, 
+    details, 
+    setTitle, 
+    setDetails, 
+    createNoteStar, 
+    setCreateNoteStar, 
+    createNoteMask, 
+    setCreateNoteMask, 
+    backgroundColor, 
+    setBackgroundColor, 
+    assignTaskData, 
+    setAssignTaskData,
+    addCollaboratorData,
+    setAddCollaboratorData,
+    secureNotePwd,
+    setSecureNotePwd,
+    navigation
+  ]);
 
-  // Register/unregister back button handler when handleBackPress changes
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       handleBackPress
     );
 
-    return () => {
-      backHandler.remove();
-    };
+    return () => backHandler.remove();
   }, [handleBackPress]); 
 
   return null;

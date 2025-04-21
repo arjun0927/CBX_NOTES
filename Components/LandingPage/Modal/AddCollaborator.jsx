@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
 	},
 	inviteText: {
 		flex: 1,
-		color: '#7D7D7D',
+		color: '#000',
 		fontFamily: 'Poppins-Regular',
 		fontSize: rMS(12),
 		paddingHorizontal: 10,

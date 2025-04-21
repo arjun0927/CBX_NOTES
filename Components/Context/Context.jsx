@@ -35,6 +35,7 @@ export const GlobalProvider = ({ children }) => {
   const [ assigneeAllEmail , setAssigneeAllEmail ] = useState([]);
   const [ assignTaskData , setAssignTaskData ] = useState('');
   const [ addCollaboratorData , setAddCollaboratorData ] = useState([]);
+  const [ secureNotePwd , setSecureNotePwd ] = useState("");
 
 
   const headers = {
@@ -264,6 +265,8 @@ export const GlobalProvider = ({ children }) => {
     setAssignTaskData,
     addCollaboratorData,
     setAddCollaboratorData,
+    secureNotePwd,
+    setSecureNotePwd,
   };
 
   return (

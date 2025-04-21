@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, FlatList, Dimensions } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
-import { rS, rVS } from "../../Utils/Responsive";
+import { rMS, rS, rVS } from "../../Utils/Responsive";
 import DownArrow from "../../../SvgIcons/DownArrow";
 import Star from "../../../SvgIcons/Star";
 import Pin from "../../../SvgIcons/Pin";
@@ -11,6 +11,8 @@ import FilledStar from "../../../SvgIcons/FilledStar";
 import { useGlobalContext } from "../../Context/Context";
 import axios from "axios";
 import { getItem } from "../../Utils/Storage";
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import SecureNoteModal from "../Modal/secureNoteModal";
 
 const { width } = Dimensions.get('window');
 
@@ -19,12 +21,18 @@ const NotesCard = ({ item }) => {
 	const [pinned, setPinned] = useState(false);
 	const [userProfileInfo, setUserProfileInfo] = useState(null);
 	const [starred, setStarred] = useState(false);
+	const [notePwd, setNotePwd] = useState(false);
 	const [data, setData] = useState(item);
-
+	const [password, setPassword] = useState('');
+	const [modalPassword, setModalPassword] = useState('');
 	const navigation = useNavigation();
 	const isoDate = item.time;
 	const date = new Date(isoDate);
 	const formattedDate = date.toLocaleString();
+
+	const secureNotePwd = item.password;
+	// setModalPassword(secureNotePwd);	
+
 
 	// Fetch user profile info
 	useEffect(() => {
@@ -132,7 +140,7 @@ const NotesCard = ({ item }) => {
 
 		const token = await getItem('token');
 
-		await axios.patch(`${apiLink}/api/updateUserPreference/${item._id}`, { userID: userProfileInfo?._id, preference: updatedPreference }, 
+		await axios.patch(`${apiLink}/api/updateUserPreference/${item._id}`, { userID: userProfileInfo?._id, preference: updatedPreference },
 			{
 				headers: {
 					Authorization: `Bearer ${token}`,
@@ -165,67 +173,115 @@ const NotesCard = ({ item }) => {
 		? [styles.bottomComponent, styles.listBottomComponent]
 		: styles.bottomComponent;
 	return (
-		<View style={cardStyle}>
-			<View style={styles.mainContentContainer}>
-				<View style={[styles.contentWrapper, contentStyle]}>
-					<View style={[styles.headerRow, listView && styles.listHeaderRow]}>
-						<TouchableOpacity onPress={starring}>
-							{starred ? <FilledStar /> : <Star />}
-						</TouchableOpacity>
-						<TouchableOpacity onPress={pinning}>
-							{pinned ? <MaterialIcons name={'push-pin'} size={12} /> : <Pin />}
-						</TouchableOpacity>
-					</View>
-					<View style={styles.separator} />
-				</View>
-
-				<TouchableOpacity
-					activeOpacity={0.8}
-					style={[styles.contentContainer, listView && styles.listContentContainer]}
-					onPress={() => navigation.navigate("NoteDetailScreen", { item })}
-				>
-					<Text style={[styles.title, listView && styles.listTitle]}>{data?.title}</Text>
-					<FlatList
-						data={data.details}
-						keyExtractor={(detail) => detail.key}
-						renderItem={({ item: detailItem }) => (
-							<View>
-								<Text style={[styles.description, listView && styles.listDescription]}>
-									{detailItem.value}
-								</Text>
+		<>
+			{
+				secureNotePwd === "" ? (
+					<View style={cardStyle}>
+						<View style={styles.mainContentContainer}>
+							<View style={[styles.contentWrapper, contentStyle]}>
+								<View style={[styles.headerRow, listView && styles.listHeaderRow]}>
+									<TouchableOpacity onPress={starring}>
+										{starred ? <FilledStar /> : <Star />}
+									</TouchableOpacity>
+									<TouchableOpacity onPress={pinning}>
+										{pinned ? <MaterialIcons name={'push-pin'} size={12} /> : <Pin />}
+									</TouchableOpacity>
+								</View>
+								<View style={styles.separator} />
 							</View>
-						)}
-					/>
-				</TouchableOpacity>
-			</View>
 
-			<LinearGradient
-				colors={[
-					"rgba(207, 205, 205, 0.00)",
-					"rgba(182, 180, 180, 0.31)",
-					"rgba(149, 147, 147, 0.72)",
-					"rgba(116, 115, 115, 0.84)",
-					"#4A4A4A",
-				]}
-				style={gradientStyle}
-			/>
+							<TouchableOpacity
+								activeOpacity={0.8}
+								style={[styles.contentContainer, listView && styles.listContentContainer]}
+								onPress={() => navigation.navigate("NoteDetailScreen", { item })}
+							>
+								<Text style={[styles.title, listView && styles.listTitle]}>{data?.title}</Text>
+								<FlatList
+									data={data.details}
+									keyExtractor={(detail) => detail.key}
+									renderItem={({ item: detailItem }) => (
+										<View>
+											<Text style={[styles.description, listView && styles.listDescription]}>
+												{detailItem.value}
+											</Text>
+										</View>
+									)}
+								/>
+							</TouchableOpacity>
+						</View>
 
-			<View style={bottomComponentStyle}>
-				<View style={styles.bottomInfo}>
-					<Text style={styles.bottomText}>Last Edited</Text>
-					<Text style={styles.dateText}>{formattedDate}</Text>
-					<View style={{ flexDirection: 'row', gap: 10 }}>
-						<Text style={styles.bottomText}>You</Text>
-						<View style={styles.userIcon}>
-							<Text style={styles.userInitial}>K</Text>
+						<LinearGradient
+							colors={[
+								"rgba(207, 205, 205, 0.00)",
+								"rgba(182, 180, 180, 0.31)",
+								"rgba(149, 147, 147, 0.72)",
+								"rgba(116, 115, 115, 0.84)",
+								"#4A4A4A",
+							]}
+							style={gradientStyle}
+						/>
+
+						<View style={bottomComponentStyle}>
+							<View style={styles.bottomInfo}>
+								<Text style={styles.bottomText}>Last Edited</Text>
+								<Text style={styles.dateText}>{formattedDate}</Text>
+								<View style={{ flexDirection: 'row', gap: 10 }}>
+									<Text style={styles.bottomText}>You</Text>
+									<View style={styles.userIcon}>
+										<Text style={styles.userInitial}>K</Text>
+									</View>
+								</View>
+							</View>
+							<TouchableOpacity>
+								<DownArrow />
+							</TouchableOpacity>
 						</View>
 					</View>
-				</View>
-				<TouchableOpacity>
-					<DownArrow />
-				</TouchableOpacity>
-			</View>
-		</View>
+				) : (
+					<TouchableOpacity activeOpacity={0.8} onPress={() => setNotePwd(true)}>
+						<View style={cardStyle}>
+							<Text style={[styles.title, listView && styles.listTitle]}>{data?.title}</Text>
+							<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 }}>
+								<SimpleLineIcons name="lock" size={rVS(24)} color="#987FA8" style={{ marginBottom: 10 }} />
+								<Text style={{ fontSize: rMS(11), fontFamily: 'Poppins-Regular', textAlign: 'center', color: '#000000' }}>This content is protected.</Text>
+								<Text style={{ fontSize: rMS(9), fontFamily: 'Poppins-Regular', textAlign: 'center', color: '#000000' }}>To view, please <Text style={{ color: '#987FA8' }}>enter password</Text></Text>
+							</View>
+							<LinearGradient
+								colors={[
+									"rgba(207, 205, 205, 0.00)",
+									"rgba(182, 180, 180, 0.31)",
+									"rgba(149, 147, 147, 0.72)",
+									"rgba(116, 115, 115, 0.84)",
+									"#4A4A4A",
+								]}
+								style={gradientStyle}
+							/>
+
+							<View style={bottomComponentStyle}>
+								<View style={styles.bottomInfo}>
+									<Text style={styles.bottomText}>Last Edited</Text>
+									<Text style={styles.dateText}>{formattedDate}</Text>
+									<View style={{ flexDirection: 'row', gap: 10 }}>
+										<Text style={styles.bottomText}>You</Text>
+										<View style={styles.userIcon}>
+											<Text style={styles.userInitial}>K</Text>
+										</View>
+									</View>
+								</View>
+								<TouchableOpacity>
+									<DownArrow />
+								</TouchableOpacity>
+							</View>
+						</View>
+					</TouchableOpacity>
+
+
+
+				)
+			}
+			<SecureNoteModal notePwd={notePwd} setNotePwd={setNotePwd} setModalPassword={setModalPassword}	modalPassword={modalPassword} />
+		</>
+
 	);
 };
 
