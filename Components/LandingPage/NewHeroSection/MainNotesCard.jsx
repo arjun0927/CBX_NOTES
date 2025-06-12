@@ -1,58 +1,113 @@
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, StyleSheet, View, Dimensions, Text, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import NotesCard from "./NoteCard";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useGlobalContext } from "../../Context/Context";
 import VerticalShimmerUi from "../../ShimmerUi/VerticalShimmerUi";
 import HorizontalShimmerUi from "../../ShimmerUi/HorizontalShimmerUi";
+import ShimmerCard from './ShimmerCard';
+import { rS, rVS } from '../../Utils/Responsive';
+import { getItem } from "../../Utils/Storage";
+
+const { width } = Dimensions.get('window');
 
 const MainNotesCard = ({ loading, allNotesData }) => {
-	const { listView } = useGlobalContext();
+	const { paginationPage, listView, setPaginationPage, getAllNotes, totalPaginationPages } = useGlobalContext();
 
+	const handleLoadMore = async () => {
+		if (!isLoading && paginationPage <= totalPaginationPages) {
+			setIsLoading(true);
+			try {
+				const token = await getItem('token');
+				const nextPage = paginationPage + 1;
+				setPaginationPage(nextPage);
+				await getAllNotes(token);
+			} catch (error) {
+				console.error('Error loading more data:', error);
+			} finally {
+				setIsLoading(false);
+			}
+		}
+	};
 
-	const renderShimmer = () => (
-		listView ? (
-			<HorizontalShimmerUi loading={loading} />
-		) : (
-			<VerticalShimmerUi loading={loading} />
-		)
-	);
+	// Create shimmer data array
+	const shimmerData = Array.from({ length: 6 }, (_, index) => ({ id: index }));
 
 	return (
 		<SafeAreaProvider>
 			<SafeAreaView style={styles.container}>
-				{loading ? (
-					<FlatList
-						key={`loading-${listView ? 'list' : 'grid'}`}
-						data={new Array(6).fill(0)}
-						keyExtractor={(_, index) => index.toString()}
-						renderItem={renderShimmer}
-						numColumns={listView ? 1 : 2}
-						columnWrapperStyle={!listView ? styles.rowStyle : null}
-						showsVerticalScrollIndicator={false}
-						contentContainerStyle={listView ? {
-							width: '95%', paddingHorizontal: 5,
-							paddingVertical: 10,
-						} : styles.gridContentContainer}
-					/>
-				) :
-					(
-						<FlatList
-							key={`loaded-${listView ? 'list' : 'grid'}`}
-							data={allNotesData}
-							keyExtractor={(item) => item._id}
-							renderItem={({ item }) => (
-								<View style={listView ? styles.listNoteContainer : styles.noteContainer}>
-									<NotesCard item={item} />
-								</View>
-							)}
-							numColumns={listView ? 1 : 2}
-							showsVerticalScrollIndicator={false}
-							columnWrapperStyle={!listView ? styles.rowStyle : null}
-							contentContainerStyle={listView ? styles.listContentContainer : styles.gridContentContainer}
-						/>
-					)
-				}
+				<ScrollView
+					showsVerticalScrollIndicator={false}
+					onScroll={async (event) => {
+						const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+						const paddingToBottom = 20;
+						const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - paddingToBottom;
+
+						if (isCloseToBottom && !isLoading && paginationPage <= totalPaginationPages) {
+							setIsLoading(true);
+							try {
+								const token = await getItem('token');
+								const nextPage = paginationPage + 1;
+								setPaginationPage(nextPage);
+								await getAllNotes(token);
+							} catch (error) {
+								console.error('Error loading more data:', error);
+							} finally {
+								setIsLoading(false);
+							}
+						}
+					}}
+					scrollEventThrottle={16}
+				>
+					<View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingHorizontal: rS(10) }}>
+						{loading ? (
+							shimmerData.map((item, index) => {
+								return (
+									<View
+										key={index}
+										style={[
+											{
+												marginBottom: '2%',
+											},
+											listView ? { width: '100%' } : { width: '49%' },
+										]}
+									>
+										<ShimmerCard listView={listView} />
+									</View>
+								);
+							})
+						) : (
+							<>
+								{allNotesData.map((item, index) => (
+									<View
+										key={index}
+										style={[
+											{
+												marginBottom: '2%',
+											},
+											listView ? { width: '100%' } : { width: '49%' },
+										]}
+									>
+										<NotesCard item={item} />
+									</View>
+								))}
+								{loading && shimmerData.map((item, index) => (
+									<View
+										key={`loading-${index}`}
+										style={[
+											{
+												marginBottom: '2%',
+											},
+											listView ? { width: '100%' } : { width: '49%' },
+										]}
+									>
+										<ShimmerCard listView={listView} />
+									</View>
+								))}
+							</>
+						)}
+					</View>
+				</ScrollView>
 			</SafeAreaView>
 		</SafeAreaProvider>
 	);
@@ -66,11 +121,12 @@ const styles = StyleSheet.create({
 		height: '100%',
 	},
 	rowStyle: {
-		justifyContent: "space-between",
-		marginBottom: 20,
+		justifyContent: 'space-between',
+		paddingHorizontal: 10,
 	},
 	noteContainer: {
 		marginHorizontal: 5,
+		flex: 1,
 	},
 	listNoteContainer: {
 		marginBottom: 15,
@@ -82,7 +138,29 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 	},
 	gridContentContainer: {
-		paddingHorizontal: 10,
+		// paddingHorizontal: 10,
 		paddingVertical: 10,
+	},
+	gridShimmerContainer: {
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+		justifyContent: 'space-between',
+		paddingHorizontal: 10,
+		paddingBottom: 10,
+		width: '100%',
+	},
+	listShimmerContainer: {
+		paddingHorizontal: 10,
+		paddingBottom: 10,
+		width: '100%',
+	},
+	shimmerItem: {
+		flex: 1,
+		marginHorizontal: 5,
+		marginBottom: 10,
+	},
+	listShimmerItem: {
+		width: '100%',
+		marginBottom: 10,
 	},
 });

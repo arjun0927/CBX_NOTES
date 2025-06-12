@@ -10,15 +10,29 @@ const Logout = ({ setLogoutModalVisible, isLogoutModalVisible }) => {
 	const navigation = useNavigation();
 
 	const handleLogoutConfirm = async () => {
-		const message = await UserLogout();
-		// console.log(message)
-		showToast({
-			type: 'SUCCESS',
-			message: message,
-		})
-		setLogoutModalVisible(false);
-		navigation.replace('SignUp');
+		try {
+			const message = await UserLogout();
+	
+			showToast({
+				type: 'SUCCESS',
+				message: message || 'Logged out successfully',
+			});
+	
+			setLogoutModalVisible(false);
+			navigation.reset({
+				index: 0,
+				routes: [{ name: 'SignUp' }],
+			});
+			
+		} catch (error) {
+			console.error('Logout failed:', error);
+			showToast({
+				type: 'ERROR',
+				message: 'Logout failed. Please try again.',
+			});
+		}
 	};
+	
 
 	return (
 		<Modal transparent={true} visible={isLogoutModalVisible} animationType="fade">

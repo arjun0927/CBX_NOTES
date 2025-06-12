@@ -1,5 +1,5 @@
-import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image } from 'react-native';
-import React, { useState } from 'react';
+import { StyleSheet, Text, TextInput, View, TouchableOpacity, Image, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import Footer from '../LandingPage/Footer';
 import TopNavbar from './TopNavbar';
 import MaterialCommunityIcons from 'react-native-vector-icons/dist/MaterialCommunityIcons';
@@ -9,9 +9,9 @@ import LeftLineSvg from '../../SvgIcons/LeftLineSvg';
 import RightLineSvg from '../../SvgIcons/RightLineSvg';
 import { ActivityIndicator } from 'react-native-paper';
 import { rMS } from '../Utils/Responsive';
-import { getItem } from '../Utils/Storage';
+import { getItem, setItem } from '../Utils/Storage';
 import { useGlobalContext } from '../Context/Context';
-
+import { signInWithGoogleFirebase, configureGoogleSignIn } from '../GoogleLogin/FirebaseConfig';
 
 const CreateAccount = ({ navigation }) => {
 	const [email, setEmail] = useState('');
@@ -20,23 +20,58 @@ const CreateAccount = ({ navigation }) => {
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
 	const [loader, setLoader] = useState(false);
-	const { configureGoogleSignIn, SignInWithEmailAndPassword, signInWithGoogle } = useGlobalContext()
+	const [googleLoader, setGoogleLoader] = useState(false);
+	const { SignInWithEmailAndPassword, signInWithGoogle } = useGlobalContext();
+
+	useEffect(() => {
+		// Configure Google Sign In when component mounts
+		configureGoogleSignIn();
+	}, []);
 
 	const googleLogin = async () => {
 		try {
-			await configureGoogleSignIn();
-			await signInWithGoogle(navigation);
-			const token = getItem('token')
-			if (token) {
-				setLoader(false);
+			setGoogleLoader(true);
+			const response = await signInWithGoogleFirebase();
+			console.log('Google sign in response:', response);
+			
+			if (response.user) {
+				// Store user data in your preferred storage
+				await setItem('token', response.token);
+				await setItem('user', JSON.stringify(response.user));
+				
+				setGoogleLoader(false);
 				navigation.navigate('HomeScreen');
 			}
 		} catch (error) {
+			setGoogleLoader(false);
 			console.error("Google Login Error:", error.message, error.code);
+			Alert.alert('Error', 'Failed to sign in with Google. Please try again.');
 		}
 	};
 
+	const validateInputs = () => {
+		if (!email.trim()) {
+			Alert.alert('Error', 'Please enter your email');
+			return false;
+		}
+		if (!password.trim()) {
+			Alert.alert('Error', 'Please enter your password');
+			return false;
+		}
+		if (!confirmPassword.trim()) {
+			Alert.alert('Error', 'Please confirm your password');
+			return false;
+		}
+		if (password !== confirmPassword) {
+			Alert.alert('Error', 'Passwords do not match');
+			return false;
+		}
+		return true;
+	};
+
 	const login = async () => {
+		if (!validateInputs()) return;
+
 		try {
 			setLoader(true);
 			const userInfo = {
@@ -44,17 +79,25 @@ const CreateAccount = ({ navigation }) => {
 				loginWith: "EMAIL",
 				password: password,
 			};
+			
+			// Uncomment this when you have the function implemented
 			// await SignInWithEmailAndPassword(userInfo);
-			const token = getItem('token');
+			
+			const token = await getItem('token');
 			if (token) {
 				setLoader(false);
 				setEmail('');
 				setPassword('');
+				setConfirmPassword('');
 				navigation.navigate('HomeScreen');
+			} else {
+				setLoader(false);
+				Alert.alert('Error', 'Failed to create account. Please try again.');
 			}
 		} catch (error) {
 			setLoader(false);
-			console.log(error);
+			console.log('Login error:', error);
+			Alert.alert('Error', 'Failed to create account. Please try again.');
 		}
 	};
 
@@ -62,15 +105,17 @@ const CreateAccount = ({ navigation }) => {
 		<View style={styles.container}>
 			<TopNavbar />
 			<View style={styles.inputContainer}>
-				{/* Name Input */}
+				{/* Email Input */}
 				<View style={styles.textInputContainer}>
 					<MaterialCommunityIcons name='email-outline' size={18} color={'#8F8F8F'} />
 					<TextInput
-						placeholder='Name'
+						placeholder='Email'
 						value={email}
 						onChangeText={text => setEmail(text)}
 						style={styles.textInput}
 						placeholderTextColor={'#8F8F8F'}
+						keyboardType="email-address"
+						autoCapitalize="none"
 					/>
 				</View>
 
@@ -96,6 +141,8 @@ const CreateAccount = ({ navigation }) => {
 						)}
 					</TouchableOpacity>
 				</View>
+
+				{/* Confirm Password Input */}
 				<View style={styles.textInputContainer}>
 					<SimpleLineIcons name='lock' size={18} color={'#8F8F8F'} />
 					<TextInput
@@ -118,6 +165,7 @@ const CreateAccount = ({ navigation }) => {
 					</TouchableOpacity>
 				</View>
 			</View>
+
 			<View style={styles.rememberContainer}>
 				<View style={styles.rememberMe}>
 					<TouchableOpacity>
@@ -127,15 +175,14 @@ const CreateAccount = ({ navigation }) => {
 						Remember me
 					</Text>
 				</View>
-
 			</View>
 
-			<TouchableOpacity onPress={login} activeOpacity={0.5}>
-				<View style={styles.signInBtn}>
+			<TouchableOpacity onPress={login} activeOpacity={0.5} disabled={loader}>
+				<View style={[styles.signInBtn, loader && styles.disabledBtn]}>
 					{loader ? (
 						<ActivityIndicator style={{ padding: rMS(14) }} size={'small'} color='white' />
 					) : (
-						<Text style={styles.SignInBtnText}>Sign In</Text>
+						<Text style={styles.SignInBtnText}>Create Account</Text>
 					)}
 				</View>
 			</TouchableOpacity>
@@ -151,10 +198,22 @@ const CreateAccount = ({ navigation }) => {
 				<Text style={{ fontSize: 14, color: '#ACACAC', fontFamily: 'Poppins-SemiBold' }}>or</Text>
 				<RightLineSvg />
 			</View>
-			<TouchableOpacity onPress={googleLogin}>
-				<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, }}>
-					<Image style={{ width: 25, height: 25, resizeMode: 'contain', marginTop: 2, }} source={require('../../assets/images/onboardImg/google.png')} />
-					<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>Google</Text>
+
+			<TouchableOpacity onPress={googleLogin} disabled={googleLoader}>
+				<View style={{ flexDirection: 'row', alignSelf: 'center', marginTop: 20, gap: 2, alignItems: 'center' }}>
+					{googleLoader ? (
+						<ActivityIndicator size={'small'} color={'#598931'} />
+					) : (
+						<>
+							<Image 
+								style={{ width: 25, height: 25, resizeMode: 'contain', marginTop: 2, }} 
+								source={require('../../assets/images/onboardImg/google.png')} 
+							/>
+							<Text style={{ fontFamily: 'Poppins-SemiBold', fontSize: 20, letterSpacing: 0.4 }}>
+								Google
+							</Text>
+						</>
+					)}
 				</View>
 			</TouchableOpacity>
 
@@ -225,12 +284,6 @@ const styles = StyleSheet.create({
 		color: '#8C8C8C',
 		fontStyle: 'normal',
 	},
-	forgetPasswordText: {
-		fontFamily: 'Poppins-Medium',
-		fontSize: 12,
-		color: '#598931',
-		fontStyle: 'normal',
-	},
 	signInBtn: {
 		width: '90%',
 		backgroundColor: '#598931',
@@ -240,6 +293,9 @@ const styles = StyleSheet.create({
 		alignItems: 'center',
 		marginTop: 100,
 	},
+	disabledBtn: {
+		opacity: 0.6,
+	},
 	SignInBtnText: {
 		fontSize: 20,
 		padding: 12,
@@ -247,7 +303,6 @@ const styles = StyleSheet.create({
 		fontFamily: 'Poppins-SemiBold',
 		fontWeight: '600',
 		fontStyle: 'normal',
-
 	},
 	accountText: {
 		fontFamily: 'Poppins-SemiBold',
@@ -257,7 +312,6 @@ const styles = StyleSheet.create({
 		textDecorationStyle: 'solid',
 		textDecorationColor: '#598931',
 		letterSpacing: 0.4,
-
 	},
 	footer: {
 		position: 'absolute',

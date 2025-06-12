@@ -8,7 +8,7 @@ import { useGlobalContext } from '../../Context/Context';
 import { rMS, rS } from '../../Utils/Responsive';
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Notification from '../Modal/Notification';
-import { getItem } from '../../Utils/Storage';
+import { getItem, setItem } from '../../Utils/Storage';
 import UserProfileModal from '../Modal/UserProfileModal';
 import List_View2 from '../../../SvgIcons/List_View2';
 
@@ -22,6 +22,10 @@ const Navbar = () => {
   const { listView, setListView , activeSection , updateSearchQuery ,setUpdateSearchQuery  } = useGlobalContext();
   const userInfo = getItem('userProfileInfo');
   const userImage = userInfo?.picture || null;
+
+  const view = getItem('listView');
+
+  // console.log('view: ',view)
 
   const toggleSearchBar = () => {
     setIsExpanded((prev) => {
@@ -52,6 +56,12 @@ const Navbar = () => {
     outputRange: [0, 2],
   });
 
+  const setView = () => {
+    
+    setItem('listView',!view)
+    setListView(!view)
+  }
+
   return (
     <>
       {activeSection === 'Notes' && (
@@ -64,12 +74,12 @@ const Navbar = () => {
           </View>
 
           <View style={styles.rightNav}>
-            <TouchableOpacity onPress={() => setListView(!listView)}>
+            <TouchableOpacity onPress={() => setView()}>
               {
                 listView ? (
-                  <List_View2 />
-                ) : (
                   <List_view />
+                ) : (
+                  <List_View2 />
                 )
               }
             </TouchableOpacity>

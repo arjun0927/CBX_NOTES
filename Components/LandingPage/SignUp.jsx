@@ -17,7 +17,11 @@ const SignUp = ({ navigation }) => {
 	const [password, setPassword] = useState('');
 	const [passwordVisible, setPasswordVisible] = useState(false);
 	const [loader, setLoader] = useState(false);
-	const { configureGoogleSignIn, SignInWithEmailAndPassword, signInWithGoogle } = useGlobalContext()
+	const { configureGoogleSignIn, SignInWithEmailAndPassword, signInWithGoogle, showToast } = useGlobalContext()
+
+
+	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
 	const googleLogin = async () => {
 		try {
@@ -28,7 +32,6 @@ const SignUp = ({ navigation }) => {
 				setLoader(false);
 				setEmail('');
 				setPassword('');
-				navigation.navigate('HomeScreen');
 			}
 		} catch (error) {
 			console.error("Google Login Error:", error.message, error.code);
@@ -37,20 +40,36 @@ const SignUp = ({ navigation }) => {
 
 	const login = async () => {
 		try {
+			if (email.trim() === '' || password === '') {
+				showToast({
+					type: 'error',
+					message: 'Invalid credentials',
+				});
+				return;
+			}
+			
+			if(!emailRegex.test(email) || email === ''){
+				showToast({
+					type: 'error',
+					message: 'Please enter a valid email address'
+				})
+				return;
+			}
+			
 			setLoader(true);
+			
 			const userInfo = {
-				email: email,
+				email: email.trim(),
 				loginWith: "EMAIL",
 				password: password,
 			};
-			await SignInWithEmailAndPassword(userInfo);
-			const token = getItem('token');
-			if (token) {
-				setLoader(false);
-				setEmail('');
-				setPassword('');
-				navigation.navigate('HomeScreen');
-			}
+			
+			await SignInWithEmailAndPassword(userInfo, navigation);
+			
+			setLoader(false);
+			setEmail('');
+			setPassword('');
+			
 		} catch (error) {
 			setLoader(false);
 			console.log(error);
@@ -62,77 +81,76 @@ const SignUp = ({ navigation }) => {
 			style={styles.container}
 			behavior={Platform.OS === "ios" ? "padding" : "height"}
 		>
-			<ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}>
-				<TopNavbar />
-				<View style={styles.inputContainer}>
-					<View style={styles.textInputContainer}>
-						<MaterialCommunityIcons name="email-outline" size={18} color={'#8F8F8F'} />
-						<TextInput
-							placeholder="Email"
-							value={email}
-							onChangeText={(text) => setEmail(text)}
-							style={styles.textInput}
-							placeholderTextColor={'#8F8F8F'}
-						/>
-					</View>
+			<TopNavbar />
+			{/* <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 60 }}> */}
 
-					<View style={styles.textInputContainer}>
-						<SimpleLineIcons name="lock" size={18} color={'#8F8F8F'} />
-						<TextInput
-							placeholder="Password"
-							value={password}
-							onChangeText={(text) => setPassword(text)}
-							style={styles.textInput}
-							placeholderTextColor={'#8F8F8F'}
-							secureTextEntry={!passwordVisible}
-						/>
-						<TouchableOpacity
-							style={styles.eyeBtn}
-							onPress={() => setPasswordVisible(!passwordVisible)}
-						>
-							{passwordVisible ? (
-								<Feather name="eye" size={19} color={'#8F8F8F'} />
-							) : (
-								<Feather name="eye-off" size={19} color={'#8F8F8F'} />
-							)}
-						</TouchableOpacity>
-					</View>
+			<View style={styles.inputContainer}>
+				<View style={styles.textInputContainer}>
+					<MaterialCommunityIcons name="email-outline" size={18} color={'#8F8F8F'} />
+					<TextInput
+						placeholder="Email"
+						value={email}
+						onChangeText={(text) => setEmail(text)}
+						style={styles.textInput}
+						placeholderTextColor={'#8F8F8F'}
+					/>
 				</View>
 
-				<TouchableOpacity onPress={login} activeOpacity={0.5}>
-					<View style={styles.signInBtn}>
-						{loader ? (
-							<ActivityIndicator style={{ padding: rMS(14) }} size={'small'} color='white' />
+				<View style={styles.textInputContainer}>
+					<SimpleLineIcons name="lock" size={18} color={'#8F8F8F'} />
+					<TextInput
+						placeholder="Password"
+						value={password}
+						onChangeText={(text) => setPassword(text)}
+						style={styles.textInput}
+						placeholderTextColor={'#8F8F8F'}
+						secureTextEntry={!passwordVisible}
+					/>
+					<TouchableOpacity
+						style={styles.eyeBtn}
+						onPress={() => setPasswordVisible(!passwordVisible)}
+					>
+						{passwordVisible ? (
+							<Feather name="eye" size={19} color={'#8F8F8F'} />
 						) : (
-							<Text style={styles.SignInBtnText}>Sign In</Text>
+							<Feather name="eye-off" size={19} color={'#8F8F8F'} />
 						)}
-					</View>
-				</TouchableOpacity>
-
-				<TouchableOpacity onPress={() => navigation.navigate('CreateAccount')}>
-					<View style={{ alignSelf: 'center', marginTop: 55 }}>
-						<Text style={styles.accountText}>Didn't have an account?</Text>
-					</View>
-				</TouchableOpacity>
-
-				<View style={styles.divider}>
-					<LeftLineSvg />
-					<Text style={styles.orText}>or</Text>
-					<RightLineSvg />
+					</TouchableOpacity>
 				</View>
+			</View>
 
-				{/* Google Sign-In Button */}
-				<TouchableOpacity onPress={googleLogin}>
-					<View style={styles.googleButton}>
-						<Image style={styles.googleIcon} source={require('../../assets/images/onboardImg/google.png')} />
-						<Text style={styles.googleText}>Google</Text>
-					</View>
-				</TouchableOpacity>
+			<TouchableOpacity style={styles.signInBtn} onPress={login} activeOpacity={0.5}>
+					{loader ? (
+						<ActivityIndicator style={{ padding: rMS(14) }} size={'small'} color='white' />
+					) : (
+						<Text style={styles.SignInBtnText}>Sign In</Text>
+					)}
+			</TouchableOpacity>
 
-				<View style={styles.footer}>
-					<Footer />
+			<TouchableOpacity onPress={() => navigation.navigate('CreateAccount')}>
+				<View style={{ alignSelf: 'center', marginTop: 55 }}>
+					<Text style={styles.accountText}>Didn't have an account?</Text>
 				</View>
-			</ScrollView>
+			</TouchableOpacity>
+
+			<View style={styles.divider}>
+				<LeftLineSvg />
+				<Text style={styles.orText}>or</Text>
+				<RightLineSvg />
+			</View>
+
+			{/* Google Sign-In Button */}
+			<TouchableOpacity onPress={googleLogin}>
+				<View style={styles.googleButton}>
+					<Image style={styles.googleIcon} source={require('../../assets/images/onboardImg/google.png')} />
+					<Text style={styles.googleText}>Google</Text>
+				</View>
+			</TouchableOpacity>
+
+			<View style={styles.footer}>
+				<Footer />
+			</View>
+			{/* </ScrollView> */}
 		</KeyboardAvoidingView>
 	);
 };

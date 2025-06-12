@@ -43,10 +43,8 @@ const Home = ({ navigation }) => {
 
   useEffect(() => {
     getNoteData();
-    if(allNotesData){
-      // console.log('notes',allNotesData);
-    }
-  }, [getAllNotes]);
+    
+  }, []);
 
 
   const fadeStyle = useAnimatedStyle(() => ({

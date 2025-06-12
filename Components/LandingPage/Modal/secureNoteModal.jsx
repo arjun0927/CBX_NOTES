@@ -4,10 +4,34 @@ import { rMS } from '../../Utils/Responsive';
 import Feather from 'react-native-vector-icons/Feather'
 import { useGlobalContext } from '../../Context/Context';
 
-const secureNoteModal = ({ notePwd, setNotePwd , modalPassword, setModalPassword }) => {
-    const [password, setPassword] = useState('');
+const secureNoteModal = ({ notePwd, setNotePwd , password, setPassword }) => {
+    const [pwd, setPwd] = useState('');
     const [securePassword, setSecurePassword] = useState(true);
-    const { setSecureNotePwd, showToast } = useGlobalContext();
+    const { showToast } = useGlobalContext();
+
+    // console.log(password);
+
+    const savePassword = () => {
+        if(password === ""){
+            showToast({
+                type: 'error',
+                message: 'Password is required'
+            });
+        }
+        if(pwd === password){
+            setPassword("");
+            setNotePwd(false);
+            showToast({
+                type: 'success',
+                message: 'Password saved successfully'
+            });
+        }else{
+            showToast({
+                type: 'error',
+                message: 'Password is incorrect'
+            });
+        }
+    }
 
 
     return (
@@ -26,8 +50,8 @@ const secureNoteModal = ({ notePwd, setNotePwd , modalPassword, setModalPassword
                             placeholder=""
                             placeholderTextColor="#7D7D7D"
                             secureTextEntry={securePassword}
-                            value={password}
-                            onChangeText={setPassword}
+                            value={pwd}
+                            onChangeText={setPwd}
                         />
                         <TouchableOpacity onPress={() => setSecurePassword(!securePassword)}>
                             {securePassword ? <Feather name={'eye-off'} size={20} /> : <Feather name={'eye'} size={20} />}
@@ -38,7 +62,7 @@ const secureNoteModal = ({ notePwd, setNotePwd , modalPassword, setModalPassword
                         <TouchableOpacity onPress={() => setNotePwd(false)} style={styles.cancelBtn}>
                             <Text style={styles.cancelText}>CANCEL</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => setNotePwd(false)} style={styles.saveBtn}>
+                        <TouchableOpacity onPress={() => savePassword()} style={styles.saveBtn}>
                             <Text style={styles.saveText}>SAVE</Text>
                         </TouchableOpacity>
                     </View>

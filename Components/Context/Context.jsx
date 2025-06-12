@@ -6,6 +6,7 @@ import { rMS } from '../Utils/Responsive';
 import { getItem, removeItem, setItem } from '../Utils/Storage';
 import axios from "axios";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { useNavigation } from '@react-navigation/native';
 
 const GlobalContext = createContext();
 
@@ -15,6 +16,7 @@ const api = axios.create({
   baseURL: "https://notes.ceoitbox.com",
 });
 
+
 const apiLink = "https://notes.ceoitbox.com";
 
 export const GlobalProvider = ({ children }) => {
@@ -23,7 +25,7 @@ export const GlobalProvider = ({ children }) => {
   const [allNotesData, setAllNotesData] = useState([]);
   const [singleNoteData, setSingleNoteData] = useState([]);
   const [starredData, setStarredData] = useState(undefined);
-  const [listView, setListView] = useState(false)
+  const [listView, setListView] = useState(false || getItem('listView'))
   const [update, setUpdate] = useState({});
   const [title, setTitle] = useState('');
   const [details, setDetails] = useState(null);
@@ -36,12 +38,18 @@ export const GlobalProvider = ({ children }) => {
   const [ assignTaskData , setAssignTaskData ] = useState('');
   const [ addCollaboratorData , setAddCollaboratorData ] = useState([]);
   const [ secureNotePwd , setSecureNotePwd ] = useState("");
+  const [ paginationPage , setPaginationPage  ] = useState(1);
+  const [ totalPaginationPages , setTotalPaginationPages] = useState(null);
 
 
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
   };
+
+
+  
+  
 
 
   const showToast = ({ type, message }) => {
@@ -97,8 +105,8 @@ export const GlobalProvider = ({ children }) => {
   };
 
   const UserLogout = async () => {
-    await removeItem('userProfileInfo');
-    await removeItem('token');
+    removeItem('userProfileInfo');
+    removeItem('token');
     return "Logged Out Successfully!";
   };
 
@@ -115,6 +123,8 @@ export const GlobalProvider = ({ children }) => {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       const { idToken, serverAuthCode, user } = userInfo.data;
+
+      // console.log('idToken : ',idToken)
 
       const data = {
         idToken,
@@ -144,9 +154,12 @@ export const GlobalProvider = ({ children }) => {
 
       if (response?.data?.token) {
         // console.log('userProfile',response?.data?.body)
-        await setItem('userProfileInfo', response?.data?.body);
-        await setItem('token', response?.data?.token);
+        setItem('listView', false);
+        setItem('userProfileInfo', response?.data?.body);
+        setItem('token', response?.data?.token);
         navigation.navigate('HomeScreen');
+      }else{
+        navigation.navigate('SignUp');
       }
     } catch (error) {
       console.error('Google login error:', error);
@@ -155,13 +168,22 @@ export const GlobalProvider = ({ children }) => {
 
   const getAllNotes = async (token) => {
     try {
-      const { data } = await api.get("/api/getNotes/v2?archived=false&trashed=false", {
+      // https://notes.ceoitbox.com/api/getNotes/v3?archived=false&trashed=false&page=2&limit=10
+      const { data } = await api.get(`/api/getNotes/v3?archived=false&trashed=false&page=${paginationPage}&limit=10`, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
       });
-      setAllNotesData(data);
+      if(data){
+        // console.log('data : ',data?.pagination?.totalPages)
+        setTotalPaginationPages(data?.pagination?.totalPages)
+        if (paginationPage === 1) {
+          setAllNotesData(data?.notes);
+        } else {
+          setAllNotesData(prev => [...prev, ...data?.notes]);
+        }
+      }
     } catch (error) {
       throw error;
     }
@@ -181,11 +203,13 @@ export const GlobalProvider = ({ children }) => {
     }
   };
 
-  const SignInWithEmailAndPassword = async (loginInfo) => {
+  const SignInWithEmailAndPassword = async (loginInfo , navigation) => {
     try {
       const { data } = await api.post(`/api/signin`, loginInfo);
       // console.log('userInfo', data);
       if (data) {
+        navigation.navigate('HomeScreen');
+        setItem('listView', false);
         setItem('token', data?.token);
         setItem('userProfileInfo', data?.body);
       }
@@ -203,7 +227,7 @@ export const GlobalProvider = ({ children }) => {
         },
       })
       if (data) {
-        setStarredData(data)
+        setStarredData(data);
       }
     } catch (error) {
       console.log(error)
@@ -267,6 +291,10 @@ export const GlobalProvider = ({ children }) => {
     setAddCollaboratorData,
     secureNotePwd,
     setSecureNotePwd,
+    paginationPage,
+    setPaginationPage,
+    totalPaginationPages,
+    setTotalPaginationPages
   };
 
   return (

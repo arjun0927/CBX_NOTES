@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "27653541181",
+    "project_id": "cbxnotes-84210",
+    "storage_bucket": "cbxnotes-84210.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:27653541181:android:be58c6f724eb45dc3e0954",
+        "android_client_info": {
+          "package_name": "com.cbx_notes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "27653541181-p8crb3btitsjlrlc2v6gj5ran7qkvtjt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAInCuYHq3mrxn8ygznWKIO0dj-6x4Q3K8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "27653541181-p8crb3btitsjlrlc2v6gj5ran7qkvtjt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

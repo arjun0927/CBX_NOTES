@@ -1,18 +1,15 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import SplaceLogo from '../../SvgIcons/SplaceLogo'
-import { rMS } from '../Utils/Responsive'
+import { rMS, rS, rVS } from '../Utils/Responsive'
 
 const TopNavbar = () => {
 	return (
 		<View style={styles.navContainer}>
 			<View style={styles.leftNav}>
-				<SplaceLogo width={30} height={26} />
+				<SplaceLogo width={rS(26)} height={rVS(26)} />
 				<Text style={styles.cbx}>CBX NOTES</Text>
 			</View>
-			{/* <TouchableOpacity>
-				<Text style={styles.skip}>Skip</Text>
-			</TouchableOpacity> */}
 		</View>
 	)
 }

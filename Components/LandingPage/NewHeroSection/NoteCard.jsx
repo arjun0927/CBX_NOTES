@@ -23,15 +23,16 @@ const NotesCard = ({ item }) => {
 	const [starred, setStarred] = useState(false);
 	const [notePwd, setNotePwd] = useState(false);
 	const [data, setData] = useState(item);
-	const [password, setPassword] = useState('');
-	const [modalPassword, setModalPassword] = useState('');
+	const [password, setPassword] = useState(item?.password);
 	const navigation = useNavigation();
 	const isoDate = item.time;
 	const date = new Date(isoDate);
 	const formattedDate = date.toLocaleString();
 
 	const secureNotePwd = item.password;
-	// setModalPassword(secureNotePwd);	
+
+	// console.log('notePwd', secureNotePwd);
+
 
 
 	// Fetch user profile info
@@ -175,7 +176,7 @@ const NotesCard = ({ item }) => {
 	return (
 		<>
 			{
-				secureNotePwd === "" ? (
+				password === "" ? (
 					<View style={cardStyle}>
 						<View style={styles.mainContentContainer}>
 							<View style={[styles.contentWrapper, contentStyle]}>
@@ -238,13 +239,15 @@ const NotesCard = ({ item }) => {
 						</View>
 					</View>
 				) : (
-					<TouchableOpacity activeOpacity={0.8} onPress={() => setNotePwd(true)}>
-						<View style={cardStyle}>
-							<Text style={[styles.title, listView && styles.listTitle]}>{data?.title}</Text>
-							<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 }}>
-								<SimpleLineIcons name="lock" size={rVS(24)} color="#987FA8" style={{ marginBottom: 10 }} />
-								<Text style={{ fontSize: rMS(11), fontFamily: 'Poppins-Regular', textAlign: 'center', color: '#000000' }}>This content is protected.</Text>
-								<Text style={{ fontSize: rMS(9), fontFamily: 'Poppins-Regular', textAlign: 'center', color: '#000000' }}>To view, please <Text style={{ color: '#987FA8' }}>enter password</Text></Text>
+					<TouchableOpacity activeOpacity={0.8} onPress={() => setNotePwd(true)} style={{ width: listView ? '100%' : '100%' }}>
+						<View style={[cardStyle, { width: '100%', height: rVS(197) }]}>
+							<View style={styles.mainContentContainer}>
+								<Text style={[styles.title, listView && styles.listTitle]}>{data?.title}</Text>
+								<View style={[styles.lockContainer, listView && styles.listLockContainer]}>
+									<SimpleLineIcons name="lock" size={rVS(24)} color="#987FA8" style={{ marginBottom: 10 }} />
+									<Text style={{ fontSize: rMS(11), fontFamily: 'Poppins-Regular', textAlign: 'center', color: '#000000' }}>This content is protected.</Text>
+									<Text style={{ fontSize: rMS(9), fontFamily: 'Poppins-Regular', textAlign: 'center', color: '#000000' }}>To view, please <Text style={{ color: '#987FA8' }}>enter password</Text></Text>
+								</View>
 							</View>
 							<LinearGradient
 								colors={[
@@ -274,12 +277,9 @@ const NotesCard = ({ item }) => {
 							</View>
 						</View>
 					</TouchableOpacity>
-
-
-
 				)
 			}
-			<SecureNoteModal notePwd={notePwd} setNotePwd={setNotePwd} setModalPassword={setModalPassword}	modalPassword={modalPassword} />
+			<SecureNoteModal notePwd={notePwd} setNotePwd={setNotePwd} password={password} setPassword={setPassword} />
 		</>
 
 	);
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
 	card: {
 		backgroundColor: "#fff",
 		padding: 10,
-		width: width / 2.2,
+		// width: width / 2.2,
 		height: rVS(197),
 		borderRadius: 10,
 		overflow: "hidden",
@@ -412,6 +412,19 @@ const styles = StyleSheet.create({
 		backgroundColor: '#F2F1F1',
 		marginVertical: 7,
 		alignSelf: 'center',
+	},
+	lockContainer: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingHorizontal: 10,
+	},
+	listLockContainer: {
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		paddingHorizontal: 10,
+		width: '100%',
 	},
 });
 
